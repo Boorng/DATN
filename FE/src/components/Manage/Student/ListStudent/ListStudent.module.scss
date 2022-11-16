@@ -1,0 +1,41 @@
+.list-student {
+    margin-top: 30px;
+    width: 100%;
+
+    .list-button {
+        display: flex;
+
+        .show-list {
+            border-radius: 6px;
+            background-color: #17a2b8;
+            width: 140px;
+            height: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+
+            &:hover {
+                opacity: 0.6;
+            }
+
+            .icon-show {
+                width: 15px;
+                height: 15px;
+            }
+
+            .rotate-down {
+                transform: rotate(90deg);
+            }
+
+            .button-show-list {
+                border: none;
+                outline: none;
+                background-color: #17a2b8;
+                height: 100%;
+                font-size: 18px;
+                color: white;
+            }
+        }
+    }
+}

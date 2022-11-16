@@ -1,0 +1,77 @@
+.manage-student {
+    width: 70%;
+
+    .manage-student-title {
+        font-size: 35px;
+        font-weight: 700;
+        margin-bottom: 30px;
+        text-align: center;
+    }
+
+    .show-add {
+        border-radius: 6px;
+        background-color: #636363;
+        width: 170px;
+        height: 40px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+
+        &:hover {
+            opacity: 0.6;
+        }
+
+        .icon-show {
+            width: 15px;
+            height: 15px;
+        }
+
+        .rotate-down {
+            transform: rotate(90deg);
+        }
+
+        .button-show-add {
+            border: none;
+            outline: none;
+            background-color: #636363;
+            height: 100%;
+            font-size: 18px;
+            color: white;
+        }
+    }
+
+    .show-list {
+        margin-top: 30px;
+        border-radius: 6px;
+        background-color: #20c997;
+        width: 200px;
+        height: 40px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+
+        &:hover {
+            opacity: 0.6;
+        }
+
+        .icon-show {
+            width: 15px;
+            height: 15px;
+        }
+
+        .rotate-down {
+            transform: rotate(90deg);
+        }
+
+        .button-show-list {
+            border: none;
+            outline: none;
+            background-color: #20c997;
+            height: 100%;
+            font-size: 18px;
+            color: white;
+        }
+    }
+}

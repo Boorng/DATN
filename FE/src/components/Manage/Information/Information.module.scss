@@ -1,0 +1,36 @@
+.information {
+    width: 70%;
+
+    .information-title {
+        display: flex;
+        justify-content: center;
+
+        font-weight: bold;
+        text-align: center;
+        color: #8c1515;
+        margin-top: 5px !important;
+        text-transform: uppercase;
+    }
+
+    .information-content {
+        margin-top: 30px;
+        margin-left: 50px;
+        display: flex;
+        column-gap: 50px;
+
+        .information-content-image {
+            width: 200px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 4px;
+        }
+
+        .information-content-detail {
+            display: flex;
+            flex-direction: column;
+            row-gap: 10px;
+            font-size: 16px;
+        }
+    }
+}

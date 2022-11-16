@@ -1,0 +1,29 @@
+.header-page {
+    box-sizing: border-box;
+    background-color: #2c215c;
+    color: white;
+    width: 100%;
+    height: 120px;
+    padding: 0 50px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .header-left {
+        display: flex;
+        text-decoration: none;
+
+        .header-left-icon {
+            width: 111px;
+            height: 114px;
+        }
+
+        .header-left-title {
+            margin-left: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+    }
+}

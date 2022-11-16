@@ -1,0 +1,23 @@
+.footer {
+    padding-left: 75px;
+    height: 137px;
+    background-image: url("../../assets/images/background-image-footer.png");
+    display: flex;
+    align-items: center;
+
+    .footer-image {
+        height: 100px;
+        width: 100px;
+        object-fit: contain;
+    }
+
+    .footer-content {
+        margin-left: 30px;
+        display: flex;
+        flex-direction: column;
+
+        .footer-content-item {
+            font-size: 14px;
+        }
+    }
+}

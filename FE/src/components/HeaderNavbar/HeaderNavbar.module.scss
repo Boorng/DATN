@@ -1,0 +1,28 @@
+.header-nav {
+    width: 100%;
+    background-color: #222222;
+    padding-left: 40px;
+    color: white;
+    height: 54px;
+    font-size: 16px;
+    display: flex;
+    column-gap: 70px;
+
+    .header-nav-item {
+        height: 100%;
+        padding: 0 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: white;
+
+        &:hover {
+            box-sizing: border-box;
+            color: red;
+            padding-top: 5px;
+            border-bottom: 5px solid red;
+            font-weight: 600;
+            opacity: 0.6;
+        }
+    }
+}
