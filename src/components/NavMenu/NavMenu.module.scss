@@ -1,0 +1,33 @@
+.nav-menu {
+    position: fixed;
+    box-sizing: border-box;
+    background-color: white;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    width: 300px;
+    min-height: 765px;
+
+    .nav-image {
+        margin: 30px auto 70px;
+        .image {
+            width: 150px;
+            height: 150px;
+        }
+    }
+
+    .nav-menu-item,
+    .nav-menu-item-href {
+        padding: 5px 7px;
+        border-bottom: 1px solid rgba(204, 204, 204, 0.3);
+        line-height: 2;
+        font-size: 1.5rem;
+        font-weight: 500;
+        color: black;
+
+        &:hover {
+            background: #ebebeb !important;
+            color: #9e100e;
+        }
+    }
+}

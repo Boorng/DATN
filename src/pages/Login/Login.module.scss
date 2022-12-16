@@ -1,0 +1,119 @@
+body {
+    background: rgb(34, 193, 195);
+    background: linear-gradient(
+        135deg,
+        rgba(34, 193, 195, 1) 0%,
+        rgba(253, 187, 45, 1) 100%
+    );
+}
+
+.login {
+    height: 712px;
+
+    .login-form-header {
+        font-size: 4.5rem;
+        font-weight: 600;
+        text-align: center;
+        color: white;
+        margin: 50px auto;
+        width: 700px;
+    }
+
+    .loginform {
+        max-width: 500px;
+        min-width: 300px;
+        min-height: 500px;
+        width: 30%;
+        height: 60%;
+        margin: 50px auto;
+        background-color: #ffffff;
+        border-radius: 25px;
+
+        .headerTitle {
+            text-align: center;
+            padding: 2rem 0;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin: 0;
+            font-size: 4rem;
+        }
+
+        .row {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 2rem;
+            max-width: 100%;
+
+            input {
+                width: 80%;
+                box-sizing: border-box;
+                border: none;
+                font-size: 1.8rem;
+                padding-left: 1.5rem;
+                padding-bottom: 1rem;
+                box-shadow: inset 0px -3px 0px 0px rgba(187, 187, 187, 0.2);
+                transition: box-shadow 0.2s ease-in;
+
+                &:focus {
+                    box-shadow: inset 0px -3px 0px 0px rgba(34, 193, 195, 0.7);
+                    outline: none;
+                }
+
+                &::-webkit-input-placeholder {
+                    opacity: 1;
+                    transition: opacity 0.25s ease-out;
+                }
+
+                &:hover::-webkit-input-placeholder,
+                &:focus::-webkit-input-placeholder {
+                    opacity: 0;
+                }
+            }
+
+            label {
+                align-self: start;
+                padding-left: 4.5rem;
+                padding-bottom: 0.5rem;
+                color: rgba(187, 187, 187, 0.9);
+                font-size: 1.8rem;
+            }
+
+            button {
+                border-radius: 25px;
+                width: 80%;
+                height: 40px;
+                font-size: 1.6rem;
+                color: white;
+                font-weight: 700;
+                background: rgb(34, 193, 195);
+                background: linear-gradient(
+                    90deg,
+                    rgba(34, 193, 195, 1) 0%,
+                    rgba(253, 187, 45, 1) 100%
+                );
+                border: 0px;
+                cursor: pointer;
+                transition: opacity 0.25s ease-out;
+
+                &:hover {
+                    opacity: 0.8;
+                }
+            }
+
+            .button {
+                padding-bottom: 1.5rem;
+            }
+        }
+
+        .forgot-pass {
+            padding-top: 80px;
+            font-size: 1.5rem;
+            text-align: center;
+
+            .forgot-pass-content {
+                cursor: pointer;
+            }
+        }
+    }
+}
