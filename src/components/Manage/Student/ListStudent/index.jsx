@@ -114,7 +114,7 @@ function ListStudent() {
             <Table striped hover>
                 <thead>
                     <tr>
-                        <th className={cx("table-head")}>STT</th>
+                        <th className={cx("table-head")}>ID</th>
                         <th className={cx("table-head")}>Tên học sinh</th>
                         <th className={cx("table-head")}>Tuổi</th>
                         <th className={cx("table-head")}>Email</th>
@@ -127,10 +127,10 @@ function ListStudent() {
                     {(searchList.input ? searchList.list : listStudent).map(
                         (stu, index) => {
                             return (
-                                <Fragment key={stu.id}>
+                                <Fragment key={stu.Id}>
                                     <tr>
                                         <td className={cx("table-document")}>
-                                            {index + 1}
+                                            {stu.Id}
                                         </td>
                                         <td className={cx("table-document")}>
                                             {stu.Name}
@@ -154,7 +154,7 @@ function ListStudent() {
                                         <td className={cx("list-button")}>
                                             <Button
                                                 onClick={() =>
-                                                    handleDeleteStudent(stu.id)
+                                                    handleDeleteStudent(stu.Id)
                                                 }
                                                 variant="danger"
                                                 className={cx("button")}
@@ -171,6 +171,7 @@ function ListStudent() {
                                             >
                                                 Sửa
                                             </Button>
+
                                             <Button
                                                 variant="info"
                                                 onClick={() =>

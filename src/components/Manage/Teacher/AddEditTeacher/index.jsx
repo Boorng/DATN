@@ -29,8 +29,8 @@ function AddEditTeacher({ action, teacherShow, show, showAdd }) {
         Email: "",
         Address: "",
         PhoneNum: "",
-        Status: "1",
         Level: "1",
+        Status: "1",
         Leader: false,
         ViceLeader: false,
         TeamId: "1",
@@ -230,8 +230,8 @@ function AddEditTeacher({ action, teacherShow, show, showAdd }) {
                                             <Form.Select
                                                 className={cx("form-select")}
                                                 onChange={handleOnChange}
-                                                name="Status"
-                                                value={teacher.Status}
+                                                name="Level"
+                                                value={teacher.Level}
                                             >
                                                 <option value="1">
                                                     Cử nhân
@@ -253,20 +253,48 @@ function AddEditTeacher({ action, teacherShow, show, showAdd }) {
                                     </Col>
                                 </Row>
 
-                                <Form.Group className="mb-3">
-                                    <Form.Label className={cx("form-label")}>
-                                        Email
-                                    </Form.Label>
-                                    <Form.Control
-                                        className={cx("form-control")}
-                                        type="email"
-                                        placeholder="Nhập email"
-                                        required
-                                        onChange={handleOnChange}
-                                        name="Email"
-                                        value={teacher.Email}
-                                    />
-                                </Form.Group>
+                                <Row>
+                                    <Col xs={7}>
+                                        <Form.Group className="mb-3">
+                                            <Form.Label
+                                                className={cx("form-label")}
+                                            >
+                                                Email
+                                            </Form.Label>
+                                            <Form.Control
+                                                className={cx("form-control")}
+                                                type="email"
+                                                placeholder="Nhập email"
+                                                required
+                                                onChange={handleOnChange}
+                                                name="Email"
+                                                value={teacher.Email}
+                                            />
+                                        </Form.Group>
+                                    </Col>
+                                    <Col>
+                                        <Form.Group>
+                                            <Form.Label
+                                                className={cx("form-label")}
+                                            >
+                                                Tình trạng làm việc
+                                            </Form.Label>
+                                            <Form.Select
+                                                className={cx("form-select")}
+                                                onChange={handleOnChange}
+                                                name="Status"
+                                                value={teacher.Status}
+                                            >
+                                                <option value="1">
+                                                    Đang làm
+                                                </option>
+                                                <option value="2">
+                                                    Nghỉ việc
+                                                </option>
+                                            </Form.Select>
+                                        </Form.Group>
+                                    </Col>
+                                </Row>
 
                                 <Form.Group className="mb-3">
                                     <Form.Label className={cx("form-label")}>

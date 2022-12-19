@@ -11,32 +11,32 @@ import { memo, useEffect, useState } from "react";
 
 import styles from "./AddEditClass.module.scss";
 import { addClass, editClass } from "../../../../slices/classSlice";
+import { Modal, ModalFooter } from "react-bootstrap";
 
 const cx = classNames.bind(styles);
 
-function AddEditClass({ action, studentShow, show, showAdd }) {
+function AddEditClass({ action, classShow, show, showAdd }) {
     const dispatch = useDispatch();
 
     const [classes, setClasses] = useState({
-        id: "",
-        name: "",
-        grade: "6",
-        schoolYear: "",
+        Id: "",
+        Name: "",
+        Grade: "6",
+        SchoolYear: "",
     });
 
     useEffect(() => {
-        console.log(studentShow);
-        if (studentShow) {
-            setClasses(studentShow);
+        if (classShow) {
+            setClasses(classShow);
         }
-    }, [studentShow]);
+    }, [classShow]);
 
     const handleOnClickTeacher = async () => {
         console.log(classes);
         const arr = Object.values(classes);
         const check = arr.filter((item) => item === 0 || item === "");
         if (check.length === 0) {
-            if (studentShow) {
+            if (classShow) {
                 dispatch(editClass(classes));
                 toast.info("Cập nhật thông tin lớp thành công");
             } else {
@@ -66,96 +66,116 @@ function AddEditClass({ action, studentShow, show, showAdd }) {
 
     return (
         <div>
-            <Offcanvas
-                show={show}
-                onHide={showAdd}
-                placement="end"
-                style={{ width: "1200px", padding: "0 20px" }}
-            >
-                <Offcanvas.Header closeButton>
-                    <Offcanvas.Title>
-                        {action === "add" && (
-                            <h3 className={cx("form-title")}>Thêm lớp</h3>
-                        )}
-                    </Offcanvas.Title>
-                </Offcanvas.Header>
-                <Offcanvas.Body>
-                    <Form className="mt-3">
+            <Modal show={show} onHide={showAdd} dialogClassName={cx("modal")}>
+                <Modal.Header closeButton>
+                    <Modal.Title>
+                        {
+                            <h3 className={cx("form-title")}>
+                                {action === "add" ? "Thêm" : "Sửa"} thông tin
+                                lớp
+                            </h3>
+                        }
+                    </Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <Form className={cx("form")}>
                         <Row className="mb-3">
-                            <Col xs={9}>
-                                <Row className="mb-3">
-                                    <Col>
-                                        <Form.Group>
-                                            <Form.Label>ID lớp</Form.Label>
-                                            <Form.Control
-                                                type="text"
-                                                placeholder="Nhập ID lớp"
-                                                required
-                                                onChange={handleOnChange}
-                                                value={classes.id}
-                                                name="id"
-                                            />
-                                        </Form.Group>
-                                    </Col>
-
-                                    <Col xs={6}>
-                                        <Form.Group
-                                            className={cx(
-                                                "manage-student-item-7"
-                                            )}
+                            <Row className="mb-3">
+                                <Col>
+                                    <Form.Group>
+                                        <Form.Label
+                                            className={cx("form-label")}
                                         >
-                                            <Form.Label>Tên lớp</Form.Label>
-                                            <Form.Control
-                                                type="text"
-                                                placeholder="Nhập tên lớp"
-                                                required
-                                                onChange={handleOnChange}
-                                                value={classes.name}
-                                                name="name"
-                                            />
-                                        </Form.Group>
-                                    </Col>
+                                            ID lớp
+                                        </Form.Label>
+                                        <Form.Control
+                                            className={cx("form-control")}
+                                            type="text"
+                                            placeholder="Nhập ID lớp"
+                                            required
+                                            onChange={handleOnChange}
+                                            value={classes.Id}
+                                            name="Id"
+                                        />
+                                    </Form.Group>
+                                </Col>
 
-                                    <Col xs={2}>
-                                        <Form.Group>
-                                            <Form.Label>Khối</Form.Label>
-                                            <Form.Select
-                                                onChange={handleOnChange}
-                                                name="grade"
-                                                value={classes.grade}
-                                            >
-                                                <option value="6">6</option>
-                                                <option value="7">7</option>
-                                                <option value="8">8</option>
-                                                <option value="9">9</option>
-                                            </Form.Select>
-                                        </Form.Group>
-                                    </Col>
-                                </Row>
+                                <Col xs={6}>
+                                    <Form.Group
+                                        className={cx("manage-student-item-7")}
+                                    >
+                                        <Form.Label
+                                            className={cx("form-label")}
+                                        >
+                                            Tên lớp
+                                        </Form.Label>
+                                        <Form.Control
+                                            className={cx("form-control")}
+                                            type="text"
+                                            placeholder="Nhập tên lớp"
+                                            required
+                                            onChange={handleOnChange}
+                                            value={classes.Name}
+                                            name="Name"
+                                        />
+                                    </Form.Group>
+                                </Col>
 
-                                <Form.Group className="mb-3">
-                                    <Form.Label>Khóa học</Form.Label>
-                                    <Form.Control
-                                        type="email"
-                                        placeholder="Nhập khóa"
-                                        required
-                                        onChange={handleOnChange}
-                                        name="schoolYear"
-                                        value={classes.schoolYear}
-                                    />
-                                </Form.Group>
+                                <Col xs={2}>
+                                    <Form.Group>
+                                        <Form.Label
+                                            className={cx("form-label")}
+                                        >
+                                            Khối
+                                        </Form.Label>
+                                        <Form.Select
+                                            className={cx("form-select")}
+                                            onChange={handleOnChange}
+                                            name="Grade"
+                                            value={classes.Grade}
+                                        >
+                                            <option value="6">6</option>
+                                            <option value="7">7</option>
+                                            <option value="8">8</option>
+                                            <option value="9">9</option>
+                                        </Form.Select>
+                                    </Form.Group>
+                                </Col>
+                            </Row>
 
-                                <Button
-                                    onClick={handleOnClickTeacher}
-                                    className={cx("button-add-class")}
-                                >
-                                    {action === "add" ? "Thêm" : "Sửa"}
-                                </Button>
-                            </Col>
+                            <Form.Group className="mb-3">
+                                <Form.Label className={cx("form-label")}>
+                                    Khóa học
+                                </Form.Label>
+                                <Form.Control
+                                    className={cx("form-control")}
+                                    type="text"
+                                    placeholder="Nhập khóa"
+                                    required
+                                    onChange={handleOnChange}
+                                    name="SchoolYear"
+                                    value={classes.SchoolYear}
+                                />
+                            </Form.Group>
                         </Row>
                     </Form>
-                </Offcanvas.Body>
-            </Offcanvas>
+                </Modal.Body>
+                <ModalFooter>
+                    <Button
+                        onClick={handleOnClickTeacher}
+                        className={cx("button-add-class")}
+                    >
+                        {action === "add" ? "Thêm" : "Sửa"}
+                    </Button>
+                    <Button
+                        variant="secondary"
+                        className={cx("button-back")}
+                        onClick={showAdd}
+                    >
+                        Quay lại
+                    </Button>
+                </ModalFooter>
+            </Modal>
         </div>
     );
 }

@@ -1,9 +1,46 @@
-.form-title {
-    font-size: 30px;
-    text-transform: uppercase;
-    font-weight: 600;
-}
+.modal {
+    min-width: 1100px;
 
-.button-add-class {
-    width: 90px;
+    .form-title {
+        font-size: 2.8rem;
+        text-transform: uppercase;
+        font-weight: 600;
+    }
+
+    .form {
+        min-height: 200px;
+
+        .form-image {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            row-gap: 10px;
+
+            .avatar-image {
+                height: 250px;
+                width: 200px;
+                border-radius: 5px;
+                border: 2px #e9ecef solid;
+                object-fit: cover;
+            }
+        }
+
+        .form-label,
+        .form-control,
+        .form-select {
+            font-size: 1.4rem;
+        }
+    }
+
+    .button-add-class {
+        width: 60px;
+        height: 35px;
+        font-size: 1.6rem;
+    }
+
+    .button-back {
+        height: 35px;
+        width: 100px;
+        font-size: 1.6rem;
+    }
 }

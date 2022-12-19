@@ -4,7 +4,7 @@ import InputGroup from "react-bootstrap/InputGroup";
 import Form from "react-bootstrap/Form";
 
 import styles from "./DetailTeacher.module.scss";
-import { Col, Image, Row, Table } from "react-bootstrap";
+import { Col, Image, Modal, Row, Table } from "react-bootstrap";
 import { FaUserAlt } from "react-icons/fa";
 
 const cx = classNames.bind(styles);
@@ -12,18 +12,17 @@ const cx = classNames.bind(styles);
 function DetailTeacher({ teacherShow, show, showDetail }) {
     return (
         <div>
-            <Offcanvas
+            <Modal
                 show={show}
                 onHide={showDetail}
-                placement="end"
-                style={{ width: "1200px", padding: "0 20px" }}
+                dialogClassName={cx("modal")}
             >
-                <Offcanvas.Header closeButton>
-                    <Offcanvas.Title>
+                <Modal.Header closeButton>
+                    <Modal.Title className={cx("modal-title")}>
                         Chi tiết thông tin giáo viên
-                    </Offcanvas.Title>
-                </Offcanvas.Header>
-                <Offcanvas.Body>
+                    </Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
                     <Row>
                         <Col xs={5}>
                             {teacherShow.avatar ? (
@@ -41,7 +40,7 @@ function DetailTeacher({ teacherShow, show, showDetail }) {
                         <Col>
                             <Table responsive>
                                 <thead>
-                                    <tr style={{}}>
+                                    <tr>
                                         <th style={{ width: "200px" }}>
                                             Thông tin
                                         </th>
@@ -50,63 +49,70 @@ function DetailTeacher({ teacherShow, show, showDetail }) {
                                 </thead>
                                 <tbody>
                                     <tr style={{ fontSize: "14px" }}>
-                                        <td>ID học sinh:</td>
-                                        <td>{teacherShow.id}</td>
+                                        <td>ID giáo viên:</td>
+                                        <td>{teacherShow.Id}</td>
                                     </tr>
                                     <tr style={{ fontSize: "14px" }}>
-                                        <td>Tên học sinh:</td>
-                                        <td>{teacherShow.name}</td>
+                                        <td>Tên giáo viên:</td>
+                                        <td>{teacherShow.Name}</td>
                                     </tr>
                                     <tr style={{ fontSize: "14px" }}>
                                         <td>Tuổi:</td>
-                                        <td>{teacherShow.age}</td>
+                                        <td>{teacherShow.Age}</td>
                                     </tr>
                                     <tr style={{ fontSize: "14px" }}>
                                         <td>Giới tính:</td>
-                                        <td>{teacherShow.gender}</td>
+                                        <td>{teacherShow.Gender}</td>
                                     </tr>
                                     <tr style={{ fontSize: "14px" }}>
                                         <td>Ngày tháng năm sinh:</td>
-                                        <td>{teacherShow.dob}</td>
+                                        <td>{teacherShow.Dob}</td>
                                     </tr>
                                     <tr style={{ fontSize: "14px" }}>
                                         <td>Dân tộc:</td>
-                                        <td>{teacherShow.name}</td>
+                                        <td>{teacherShow.Ethnic}</td>
                                     </tr>
                                     <tr style={{ fontSize: "14px" }}>
                                         <td>Email:</td>
-                                        <td>{teacherShow.email}</td>
+                                        <td>{teacherShow.Email}</td>
                                     </tr>
                                     <tr style={{ fontSize: "14px" }}>
                                         <td>Địa chỉ:</td>
-                                        <td>{teacherShow.address}</td>
+                                        <td>{teacherShow.Address}</td>
                                     </tr>
                                     <tr style={{ fontSize: "14px" }}>
                                         <td>Số điện thoại:</td>
-                                        <td>{teacherShow.phone}</td>
+                                        <td>{teacherShow.PhoneNum}</td>
                                     </tr>
                                     <tr style={{ fontSize: "14px" }}>
                                         <td>Tình trạng làm việc:</td>
-                                        <td>{teacherShow.Status}</td>
+                                        <td>
+                                            {teacherShow.Status === "1"
+                                                ? "Đang làm"
+                                                : "Nghỉ việc"}
+                                        </td>
                                     </tr>
                                     <tr style={{ fontSize: "14px" }}>
-                                        <td>:</td>
-                                        <td>{teacherShow.Leader}</td>
-                                    </tr>
-                                    <tr style={{ fontSize: "14px" }}>
-                                        <td>Số điện thoại:</td>
-                                        <td>{teacherShow.ViceLeader}</td>
-                                    </tr>
-                                    <tr style={{ fontSize: "14px" }}>
-                                        <td>Số điện thoại:</td>
+                                        <td>Tổ chuyên môn:</td>
                                         <td>{teacherShow.TeamId}</td>
                                     </tr>
+                                    {teacherShow.Leader ||
+                                        (teacherShow.ViceLeader && (
+                                            <tr style={{ fontSize: "14px" }}>
+                                                <td>Chức vụ:</td>
+                                                <td>
+                                                    {teacherShow.Leader
+                                                        ? "Tổ trưởng"
+                                                        : "Tổ phó"}
+                                                </td>
+                                            </tr>
+                                        ))}
                                 </tbody>
                             </Table>
                         </Col>
                     </Row>
-                </Offcanvas.Body>
-            </Offcanvas>
+                </Modal.Body>
+            </Modal>
         </div>
     );
 }

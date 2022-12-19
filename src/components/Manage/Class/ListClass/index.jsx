@@ -16,7 +16,7 @@ const cx = classNames.bind(styles);
 
 function ListClass() {
     const data = useSelector((state) => state.class.listClass);
-    // let listClass = useSelector((state) => state.class.listClass);
+
     const [listClass, setListClass] = useState([]);
 
     const [isShow, setIsShow] = useState(false);
@@ -37,7 +37,7 @@ function ListClass() {
     }, [data]);
 
     const handleExport = () => {
-        const headings = [["id", "name", "grade", "schoolYear"]];
+        const headings = [["Id", "Name", "Grade", "SchoolYear"]];
         const wb = utils.book_new();
         const ws = utils.json_to_sheet([]);
         utils.sheet_add_aoa(ws, headings);
@@ -97,64 +97,69 @@ function ListClass() {
     );
 
     return (
-        <div className={cx("list-student")}>
+        <div className={cx("list-class")}>
             <FindClass handleSearch={handleSearch} />
-            <Button onClick={handleExport}>Export</Button>
-            <input
-                type="file"
-                name="file"
-                className="custom-file-input"
-                id="inputGroupFile"
-                required
-                onChange={handleImport}
-                accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
-            />
-            <label className="custom-file-label" htmlFor="inputGroupFile">
-                Import
-            </label>
-            <Table striped bordered hover>
+            <Button
+                variant="warning"
+                onClick={handleExport}
+                className={cx("button-export")}
+            >
+                Xuất file
+            </Button>
+
+            <Table striped hover>
                 <thead>
                     <tr>
-                        <th>STT</th>
-                        <th>Tên lớp</th>
-                        <th>Khối</th>
-                        <th>Khóa</th>
-                        <th></th>
+                        <th className={cx("table-head")}>ID</th>
+                        <th className={cx("table-head")}>Tên lớp</th>
+                        <th className={cx("table-head")}>Khối</th>
+                        <th className={cx("table-head")}>Khóa</th>
+                        <th className={cx("table-head")}></th>
                     </tr>
                 </thead>
                 <tbody>
                     {(searchList.input ? searchList.list : listClass).map(
                         (cls, index) => {
                             return (
-                                <Fragment key={cls.id}>
+                                <Fragment key={cls.Id}>
                                     <tr>
-                                        <td>{index + 1}</td>
-                                        <td>{cls.name}</td>
-                                        <td>{cls.grade}</td>
-                                        <td>{cls.schoolYear}</td>
+                                        <td className={cx("table-document")}>
+                                            {index + 1}
+                                        </td>
+                                        <td className={cx("table-document")}>
+                                            {cls.Name}
+                                        </td>
+                                        <td className={cx("table-document")}>
+                                            {cls.Grade}
+                                        </td>
+                                        <td className={cx("table-document")}>
+                                            {cls.SchoolYear}
+                                        </td>
 
                                         <td className={cx("list-button")}>
                                             <Button
                                                 onClick={() =>
-                                                    handleDeleteClass(cls.id)
+                                                    handleDeleteClass(cls.Id)
                                                 }
                                                 variant="danger"
-                                                className="me-3"
+                                                className={cx("button")}
                                             >
                                                 Xóa
                                             </Button>
 
-                                            <button
-                                                className={cx("show-list")}
+                                            <Button
+                                                variant="success"
                                                 onClick={() =>
                                                     handleClickEditInfo(cls)
                                                 }
+                                                className={cx("button")}
                                             >
                                                 Sửa
-                                            </button>
+                                            </Button>
+
                                             <Button
                                                 variant="info"
-                                                className="ms-3"
+                                                className={cx("button")}
                                                 onClick={() =>
                                                     handleClickDetailInfo(cls)
                                                 }
@@ -171,14 +176,14 @@ function ListClass() {
             </Table>
             {isShow && (
                 <AddEditClass
-                    studentShow={classShow}
+                    classShow={classShow}
                     show={isShow}
                     showAdd={handleClickEditInfo}
                 />
             )}
             {isDetail && (
                 <DetailClass
-                    studentShow={classShow}
+                    classShow={classShow}
                     show={isDetail}
                     showDetail={handleClickDetailInfo}
                 />

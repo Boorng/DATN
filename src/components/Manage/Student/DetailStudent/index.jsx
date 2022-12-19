@@ -37,7 +37,7 @@ function DetailStudent({ studentShow, show, showDetail }) {
                         <Col>
                             <Table responsive>
                                 <thead>
-                                    <tr style={{}}>
+                                    <tr>
                                         <th style={{ width: "200px" }}>
                                             Thông tin
                                         </th>

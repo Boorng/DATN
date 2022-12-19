@@ -87,7 +87,7 @@ function ListTeacher() {
         (input) => {
             if (input) {
                 const checkList = listTeacher.filter(
-                    (stu) => stu.id === input || stu.name.includes(input)
+                    (tc) => tc.Id === input || tc.Name.includes(input)
                 );
 
                 setSearchList({ list: checkList, input });
@@ -111,7 +111,7 @@ function ListTeacher() {
             <Table striped hover>
                 <thead>
                     <tr>
-                        <th className={cx("table-head")}>STT</th>
+                        <th className={cx("table-head")}>ID</th>
                         <th className={cx("table-head")}>Tên giáo viên</th>
                         <th className={cx("table-head")}>Tuổi</th>
                         <th className={cx("table-head")}>Email</th>
@@ -124,10 +124,10 @@ function ListTeacher() {
                     {(searchList.input ? searchList.list : listTeacher).map(
                         (tea, index) => {
                             return (
-                                <Fragment key={tea.id}>
+                                <Fragment key={tea.Id}>
                                     <tr>
                                         <td className={cx("table-document")}>
-                                            {index + 1}
+                                            {tea.Id}
                                         </td>
                                         <td className={cx("table-document")}>
                                             {tea.Name}
@@ -155,7 +155,7 @@ function ListTeacher() {
                                         <td className={cx("list-button")}>
                                             <Button
                                                 onClick={() =>
-                                                    handleDeleteTeacher(tea.id)
+                                                    handleDeleteTeacher(tea.Id)
                                                 }
                                                 variant="danger"
                                                 className={cx("button")}

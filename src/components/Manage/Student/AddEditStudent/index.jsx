@@ -41,7 +41,6 @@ function AddEditStudent({ action, studentShow, show, showAdd }) {
     });
 
     useEffect(() => {
-        console.log(studentShow);
         if (studentShow) {
             setStudent(studentShow);
         }
