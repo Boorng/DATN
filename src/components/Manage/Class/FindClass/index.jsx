@@ -27,15 +27,16 @@ function FindClass({ handleSearch }) {
     };
     console.log("Render Search");
     return (
-        <div className={cx("find-student")}>
+        <div className={cx("find-class")}>
             <InputGroup className="mb-3">
                 <InputGroup.Text>
-                    <GoSearch />
+                    <GoSearch className={cx("find-icon")} />
                 </InputGroup.Text>
                 <Form.Control
-                    placeholder="Nhập tên/ID lớp cần tìm kiếm"
+                    placeholder="Nhập tên lớp cần tìm kiếm"
                     value={search}
                     onChange={handleOnChangeSearch}
+                    className={cx("input-search")}
                 />
             </InputGroup>
         </div>

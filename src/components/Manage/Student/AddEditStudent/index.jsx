@@ -37,7 +37,6 @@ function AddEditStudent({ action, studentShow, show, showAdd }) {
         MotherPhone: 0,
         MotherCareer: "",
         Status: "1",
-        GraduationDate: "1999-01-01",
     });
 
     useEffect(() => {
@@ -56,7 +55,7 @@ function AddEditStudent({ action, studentShow, show, showAdd }) {
                 toast.info("Cập nhật thông tin học sinh thành công");
             } else {
                 dispatch(addStudent(student));
-                // await postStudentAPI(student);
+                await postStudentAPI(student);
                 toast.success("Thêm học sinh thành công");
             }
             showAdd();
@@ -159,7 +158,6 @@ function AddEditStudent({ action, studentShow, show, showAdd }) {
                                                 className={cx("form-select")}
                                                 onChange={handleOnChange}
                                                 name="Gender"
-                                                value={student.Gender}
                                             >
                                                 <option value="Nam">Nam</option>
                                                 <option value="Nữ">Nữ</option>
@@ -244,27 +242,7 @@ function AddEditStudent({ action, studentShow, show, showAdd }) {
                                                 <option value="2">
                                                     Nghỉ học
                                                 </option>
-                                                <option value="3">
-                                                    Đã tốt nghiệp
-                                                </option>
                                             </Form.Select>
-                                        </Form.Group>
-                                    </Col>
-
-                                    <Col>
-                                        <Form.Group>
-                                            <Form.Label
-                                                className={cx("form-label")}
-                                            >
-                                                Ngày tốt nghiệp
-                                            </Form.Label>
-                                            <Form.Control
-                                                className={cx("form-control")}
-                                                type="date"
-                                                onChange={handleOnChange}
-                                                name="GraduationDate"
-                                                value={student.GraduationDate}
-                                            ></Form.Control>
                                         </Form.Group>
                                     </Col>
                                 </Row>

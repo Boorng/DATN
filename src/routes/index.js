@@ -16,6 +16,8 @@ import Class from "../components/Manage/Class";
 import Result from "../components/Manage/Result";
 import Information from "../components/Manage/Information";
 import ManageLayout from "../layouts/ManageLayout";
+import TrainingResult from "../components/Manage/TrainingResult";
+import TrainingManageMent from "../components/Manage/TrainingManagement'";
 
 // Public routes
 const publicRoutes = [
@@ -74,6 +76,18 @@ const manageRoutes = [
         id: 5,
         path: config.routes.information,
         component: Information,
+        layout: ManageLayout,
+    },
+    {
+        id: 6,
+        path: config.routes.manageTrainingResult,
+        component: TrainingResult,
+        layout: ManageLayout,
+    },
+    {
+        id: 7,
+        path: config.routes.manageTrainingManagement,
+        component: TrainingManageMent,
         layout: ManageLayout,
     },
 ];

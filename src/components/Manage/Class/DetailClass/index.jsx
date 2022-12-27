@@ -4,7 +4,7 @@ import InputGroup from "react-bootstrap/InputGroup";
 import Form from "react-bootstrap/Form";
 
 import styles from "./DetailClass.module.scss";
-import { Col, Image, Row, Table } from "react-bootstrap";
+import { Col, Image, Modal, Row, Table } from "react-bootstrap";
 import { FaUserAlt } from "react-icons/fa";
 
 const cx = classNames.bind(styles);
@@ -12,18 +12,17 @@ const cx = classNames.bind(styles);
 function DetailClass({ studentShow, show, showDetail }) {
     return (
         <div>
-            <Offcanvas
+            <Modal
                 show={show}
                 onHide={showDetail}
-                placement="end"
-                style={{ width: "1200px", padding: "0 20px" }}
+                dialogClassName={cx("modal")}
             >
-                <Offcanvas.Header closeButton>
-                    <Offcanvas.Title>
-                        Chi tiết thông tin lớp học
-                    </Offcanvas.Title>
-                </Offcanvas.Header>
-                <Offcanvas.Body>
+                <Modal.Header closeButton>
+                    <Modal.Title className={cx("modal-title")}>
+                        Chi tiết thông tin lớp
+                    </Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
                     <Row>
                         <Col xs={5}></Col>
                         <Col>
@@ -40,8 +39,8 @@ function DetailClass({ studentShow, show, showDetail }) {
                             </Table>
                         </Col>
                     </Row>
-                </Offcanvas.Body>
-            </Offcanvas>
+                </Modal.Body>
+            </Modal>
         </div>
     );
 }

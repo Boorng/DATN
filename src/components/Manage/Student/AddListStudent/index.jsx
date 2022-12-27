@@ -74,100 +74,64 @@ function AddListStudent({ show, setShow, listStudent, fileName }) {
                         <tbody>
                             {listStudent.map((stu) => {
                                 return (
-                                    <Fragment key={stu.Id}>
-                                        <tr>
-                                            <td
-                                                className={cx("table-document")}
-                                            >
-                                                {stu.Id}
-                                            </td>
-                                            <td
-                                                className={cx("table-document")}
-                                            >
-                                                {stu.Name}
-                                            </td>
-                                            <td
-                                                className={cx("table-document")}
-                                            >
-                                                {stu.Age}
-                                            </td>
-                                            <td
-                                                className={cx("table-document")}
-                                            >
-                                                {stu.Gender}
-                                            </td>
-                                            <td
-                                                className={cx("table-document")}
-                                            >
-                                                {stu.Ethnic}
-                                            </td>
-                                            <td
-                                                className={cx("table-document")}
-                                            >
-                                                {stu.Dob}
-                                            </td>
-                                            <td
-                                                className={cx("table-document")}
-                                            >
-                                                {stu.Email}
-                                            </td>
-                                            <td
-                                                className={cx("table-document")}
-                                            >
-                                                {stu.Address}
-                                            </td>
-                                            <td
-                                                className={cx("table-document")}
-                                            >
-                                                {stu.PhoneNum}
-                                            </td>
-                                            <td
-                                                className={cx("table-document")}
-                                            >
-                                                {stu.FatherName}
-                                            </td>
-                                            <td
-                                                className={cx("table-document")}
-                                            >
-                                                {stu.FatherPhone}
-                                            </td>
-                                            <td
-                                                className={cx("table-document")}
-                                            >
-                                                {stu.FatherCareer}
-                                            </td>
-                                            <td
-                                                className={cx("table-document")}
-                                            >
-                                                {stu.MotherName}
-                                            </td>
-                                            <td
-                                                className={cx("table-document")}
-                                            >
-                                                {stu.MotherPhone}
-                                            </td>
-                                            <td
-                                                className={cx("table-document")}
-                                            >
-                                                {stu.MotherCareer}
-                                            </td>
+                                    <tr key={stu.Id}>
+                                        <td className={cx("table-document")}>
+                                            {stu.Id}
+                                        </td>
+                                        <td className={cx("table-document")}>
+                                            {stu.Name}
+                                        </td>
+                                        <td className={cx("table-document")}>
+                                            {stu.Age}
+                                        </td>
+                                        <td className={cx("table-document")}>
+                                            {stu.Gender}
+                                        </td>
+                                        <td className={cx("table-document")}>
+                                            {stu.Ethnic}
+                                        </td>
+                                        <td className={cx("table-document")}>
+                                            {stu.Dob}
+                                        </td>
+                                        <td className={cx("table-document")}>
+                                            {stu.Email}
+                                        </td>
+                                        <td className={cx("table-document")}>
+                                            {stu.Address}
+                                        </td>
+                                        <td className={cx("table-document")}>
+                                            {stu.PhoneNum}
+                                        </td>
+                                        <td className={cx("table-document")}>
+                                            {stu.FatherName}
+                                        </td>
+                                        <td className={cx("table-document")}>
+                                            {stu.FatherPhone}
+                                        </td>
+                                        <td className={cx("table-document")}>
+                                            {stu.FatherCareer}
+                                        </td>
+                                        <td className={cx("table-document")}>
+                                            {stu.MotherName}
+                                        </td>
+                                        <td className={cx("table-document")}>
+                                            {stu.MotherPhone}
+                                        </td>
+                                        <td className={cx("table-document")}>
+                                            {stu.MotherCareer}
+                                        </td>
 
-                                            <td
-                                                className={cx("table-document")}
-                                            >
-                                                {stu.Status === "1"
-                                                    ? "Đang học"
-                                                    : stu.Status === "2"
-                                                    ? "Nghỉ học"
-                                                    : "Đã tốt nghiệp"}
-                                            </td>
-                                            <td
-                                                className={cx("table-document")}
-                                            >
-                                                {stu.GraduationDate}
-                                            </td>
-                                        </tr>
-                                    </Fragment>
+                                        <td className={cx("table-document")}>
+                                            {stu.Status === "1"
+                                                ? "Đang học"
+                                                : stu.Status === "2"
+                                                ? "Nghỉ học"
+                                                : "Đã tốt nghiệp"}
+                                        </td>
+                                        <td className={cx("table-document")}>
+                                            {stu.GraduationDate}
+                                        </td>
+                                    </tr>
                                 );
                             })}
                         </tbody>

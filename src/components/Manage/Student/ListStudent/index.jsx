@@ -11,6 +11,7 @@ import AddEditStudent from "../AddEditStudent";
 import styles from "./ListStudent.module.scss";
 import FindStudent from "../FindStudent";
 import DetailStudent from "../DetailStudent";
+import { getStudentAPI } from "../../../../services/getRequest";
 
 const cx = classNames.bind(styles);
 
@@ -18,19 +19,22 @@ function ListStudent() {
     const data = useSelector((state) => state.student.listStudent);
 
     const [listStudent, setListStudent] = useState([]);
-
+    const [pageIndex, setPageIndex] = useState(1);
     const [isShow, setIsShow] = useState(false);
-
     const [isDetail, setIsDetail] = useState(false);
-
     const [studentShow, setStudentShow] = useState({});
-
-    const [searchList, setSearchList] = useState({
-        list: [],
-        input: "",
-    });
+    const [search, setSearch] = useState("");
 
     const dispatch = useDispatch();
+
+    const getStudent = async () => {
+        const data = await getStudentAPI(pageIndex, search);
+        console.log(data);
+        setListStudent(data.data);
+    };
+    useEffect(() => {
+        getStudent();
+    }, []);
 
     useEffect(() => {
         setListStudent(data);
@@ -40,22 +44,21 @@ function ListStudent() {
         const headings = [
             [
                 "Id",
-                "Name",
-                "Age",
-                "Gender",
-                "Ethnic",
-                "Dob",
+                "Họ và tên",
+                "Tuổi",
+                "Giới tính",
+                "Dân tộc",
+                "Ngày tháng năm sinh",
                 "Email",
-                "Address",
-                "PhoneNum",
-                "FatherName",
-                "FatherPhone",
-                "FatherCareer",
-                "MotherName",
-                "MotherPhone",
-                "MotherCareer",
-                "Status",
-                "GraduationDate",
+                "Địa chỉ",
+                "Số điện thoại",
+                "Tên bố",
+                "Số điện thoại bố",
+                "Nghề nghiệp bố",
+                "Tên mẹ",
+                "Số điện thoại mẹ",
+                "Nghề nghiệp mẹ",
+                "Tình trạng học tập",
             ],
         ];
         const wb = utils.book_new();
@@ -86,31 +89,33 @@ function ListStudent() {
         setIsDetail(!isDetail);
     };
 
-    const handleSearch = useCallback(
-        (input) => {
-            if (input) {
-                const checkList = listStudent.filter(
-                    (stu) => stu.Id === input || stu.Name.includes(input)
-                );
+    // const handleSearch = useCallback(
+    //     (input) => {
+    //         if (input) {
+    //             const checkList = listStudent.filter(
+    //                 (stu) => stu.Id === input || stu.Name.includes(input)
+    //             );
 
-                setSearchList({ list: checkList, input });
-            } else if (input !== searchList.input) {
-                setSearchList({ list: [], input: "" });
-            }
-        },
-        [listStudent, searchList.input]
-    );
+    //             setSearchList({ list: checkList, input });
+    //         } else if (input !== searchList.input) {
+    //             setSearchList({ list: [], input: "" });
+    //         }
+    //     },
+    //     [listStudent, searchList.input]
+    // );
 
     return (
         <div className={cx("list-student")}>
-            <FindStudent handleSearch={handleSearch} />
-            <Button
-                variant="warning"
-                onClick={handleExport}
-                className={cx("button-export")}
-            >
-                Xuất file
-            </Button>
+            {/* <FindStudent handleSearch={handleSearch} /> */}
+            <div style={{ display: "flex", justifyContent: "flex-end" }}>
+                <Button
+                    variant="warning"
+                    onClick={handleExport}
+                    className={cx("button-export")}
+                >
+                    Xuất file
+                </Button>
+            </div>
             <Table striped hover>
                 <thead>
                     <tr>
@@ -124,69 +129,61 @@ function ListStudent() {
                     </tr>
                 </thead>
                 <tbody>
-                    {(searchList.input ? searchList.list : listStudent).map(
-                        (stu, index) => {
-                            return (
-                                <Fragment key={stu.Id}>
-                                    <tr>
-                                        <td className={cx("table-document")}>
-                                            {stu.Id}
-                                        </td>
-                                        <td className={cx("table-document")}>
-                                            {stu.Name}
-                                        </td>
-                                        <td className={cx("table-document")}>
-                                            {stu.Age}
-                                        </td>
-                                        <td className={cx("table-document")}>
-                                            {stu.Email}
-                                        </td>
-                                        <td className={cx("table-document")}>
-                                            {stu.PhoneNum}
-                                        </td>
-                                        <td className={cx("table-document")}>
-                                            {stu.Status === "1"
-                                                ? "Đang học"
-                                                : stu.Status === "2"
-                                                ? "Nghỉ học"
-                                                : "Đã tốt nghiệp"}
-                                        </td>
-                                        <td className={cx("list-button")}>
-                                            <Button
-                                                onClick={() =>
-                                                    handleDeleteStudent(stu.Id)
-                                                }
-                                                variant="danger"
-                                                className={cx("button")}
-                                            >
-                                                Xóa
-                                            </Button>
+                    {listStudent.map((stu, index) => {
+                        return (
+                            <tr key={stu.Id}>
+                                <td className={cx("table-document")}>
+                                    {stu.id}
+                                </td>
+                                <td className={cx("table-document")}>
+                                    {stu.fullName}
+                                </td>
+                                <td className={cx("table-document")}>
+                                    {stu.age}
+                                </td>
+                                <td className={cx("table-document")}>
+                                    {stu.email}
+                                </td>
+                                <td className={cx("table-document")}>
+                                    {stu.phone}
+                                </td>
+                                <td className={cx("table-document")}>
+                                    {stu.Status === "1"
+                                        ? "Đang học"
+                                        : "Nghỉ học"}
+                                </td>
+                                <td className={cx("list-button")}>
+                                    <Button
+                                        onClick={() =>
+                                            handleDeleteStudent(stu.Id)
+                                        }
+                                        variant="danger"
+                                        className={cx("button")}
+                                    >
+                                        Xóa
+                                    </Button>
 
-                                            <Button
-                                                variant="success"
-                                                onClick={() =>
-                                                    handleClickEditInfo(stu)
-                                                }
-                                                className={cx("button")}
-                                            >
-                                                Sửa
-                                            </Button>
+                                    <Button
+                                        variant="success"
+                                        onClick={() => handleClickEditInfo(stu)}
+                                        className={cx("button")}
+                                    >
+                                        Sửa
+                                    </Button>
 
-                                            <Button
-                                                variant="info"
-                                                onClick={() =>
-                                                    handleClickDetailInfo(stu)
-                                                }
-                                                className={cx("button")}
-                                            >
-                                                Xem chi tiết
-                                            </Button>
-                                        </td>
-                                    </tr>
-                                </Fragment>
-                            );
-                        }
-                    )}
+                                    <Button
+                                        variant="info"
+                                        onClick={() =>
+                                            handleClickDetailInfo(stu)
+                                        }
+                                        className={cx("button")}
+                                    >
+                                        Xem chi tiết
+                                    </Button>
+                                </td>
+                            </tr>
+                        );
+                    })}
                 </tbody>
             </Table>
             {isShow && (

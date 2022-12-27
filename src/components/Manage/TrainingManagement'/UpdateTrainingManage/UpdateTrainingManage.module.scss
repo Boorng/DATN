@@ -1,0 +1,63 @@
+.canvas-title {
+    font-size: 2.8rem;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.select-teacher {
+    display: flex;
+    align-items: center;
+
+    .form-select {
+        margin-left: 20px;
+        width: 250px;
+        font-size: 1.6rem;
+    }
+}
+
+.wrap-button-find {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 80px;
+    margin-bottom: 30px;
+
+    .find-student {
+        display: flex;
+
+        .form-control {
+            margin-left: 15px;
+            width: 260px;
+            font-size: 1.6rem;
+        }
+    }
+    .list-button {
+        display: flex;
+        justify-content: flex-end;
+
+        .button-add-byid {
+            width: 120px;
+            font-size: 1.6rem;
+            margin-right: 20px;
+        }
+
+        .button-add-file {
+            width: 150px;
+            font-size: 1.6rem;
+        }
+    }
+}
+
+.table-head {
+    font-size: 1.6rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.table-body {
+    font-size: 1.5rem;
+}
+
+.button-change-class {
+    font-size: 1.6rem;
+}

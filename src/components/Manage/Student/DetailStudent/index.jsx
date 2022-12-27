@@ -1,8 +1,8 @@
 import * as classNames from "classnames/bind";
-
-import styles from "./DetailStudent.module.scss";
 import { Col, Image, Modal, Row, Table } from "react-bootstrap";
 import { FaUserAlt } from "react-icons/fa";
+
+import styles from "./DetailStudent.module.scss";
 
 const cx = classNames.bind(styles);
 

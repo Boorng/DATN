@@ -7,7 +7,9 @@ const routes = {
     manageStudent: "/manage/student",
     manageTeacher: "/manage/teacher",
     manageClass: "/manage/class",
-    manageResult: "/manage/result",
+    manageResult: "/manage/result/grade/:gradeName",
+    manageTrainingResult: "/manage/training-result/grade/:gradeName",
+    manageTrainingManagement: "/manage/training-management/grade/:gradeName",
 };
 
 export default routes;

@@ -101,13 +101,15 @@ function ListTeacher() {
     return (
         <div className={cx("list-teacher")}>
             <FindTeacher handleSearch={handleSearch} />
-            <Button
-                variant="warning"
-                onClick={handleExport}
-                className={cx("button-export")}
-            >
-                Xuất file
-            </Button>
+            <div style={{ display: "flex", justifyContent: "flex-end" }}>
+                <Button
+                    variant="warning"
+                    onClick={handleExport}
+                    className={cx("button-export")}
+                >
+                    Xuất file
+                </Button>
+            </div>
             <Table striped hover>
                 <thead>
                     <tr>
