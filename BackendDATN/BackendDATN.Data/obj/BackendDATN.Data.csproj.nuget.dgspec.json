@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "E:\\Workspace\\DATN\\BackendDATN\\BackendDATN.Data\\BackendDATN.Data.csproj": {}
+    "E:\\Workspace\\DATN\\ProjectDATN\\BackendDATN\\BackendDATN.Data\\BackendDATN.Data.csproj": {}
   },
   "projects": {
-    "E:\\Workspace\\DATN\\BackendDATN\\BackendDATN.Data\\BackendDATN.Data.csproj": {
+    "E:\\Workspace\\DATN\\ProjectDATN\\BackendDATN\\BackendDATN.Data\\BackendDATN.Data.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\Workspace\\DATN\\BackendDATN\\BackendDATN.Data\\BackendDATN.Data.csproj",
+        "projectUniqueName": "E:\\Workspace\\DATN\\ProjectDATN\\BackendDATN\\BackendDATN.Data\\BackendDATN.Data.csproj",
         "projectName": "BackendDATN.Data",
-        "projectPath": "E:\\Workspace\\DATN\\BackendDATN\\BackendDATN.Data\\BackendDATN.Data.csproj",
+        "projectPath": "E:\\Workspace\\DATN\\ProjectDATN\\BackendDATN\\BackendDATN.Data\\BackendDATN.Data.csproj",
         "packagesPath": "C:\\Users\\Dell\\.nuget\\packages\\",
-        "outputPath": "E:\\Workspace\\DATN\\BackendDATN\\BackendDATN.Data\\obj\\",
+        "outputPath": "E:\\Workspace\\DATN\\ProjectDATN\\BackendDATN\\BackendDATN.Data\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Dell\\AppData\\Roaming\\NuGet\\NuGet.Config",

@@ -6,8 +6,6 @@ import AddEditStudent from "./AddEditStudent";
 import { useState } from "react";
 import ListStudent from "./ListStudent";
 import { read, utils } from "xlsx";
-import { useDispatch } from "react-redux";
-import { addListStudent } from "../../../slices/studentSlice";
 import AddListStudent from "./AddListStudent";
 
 const cx = classNames.bind(styles);
@@ -52,10 +50,7 @@ function Student() {
                             motherName: item["Tên mẹ"],
                             motherPhone: item["Số điện thoại mẹ"],
                             motherCareer: item["Nghề nghiệp mẹ"],
-                            status:
-                                item["Tình trạng học tập"] === "Đang học"
-                                    ? 1
-                                    : 2,
+                            status: 1,
                         };
                     });
                     setListAdd(listAddImport);
@@ -69,34 +64,37 @@ function Student() {
 
     return (
         <div className={cx("manage-student")}>
-            <h2 className={cx("manage-student-title")}>QUẢN LÝ SINH VIÊN</h2>
+            <h2 className={cx("manage-student-title")}>QUẢN LÝ HỌC SINH</h2>
             <div className={cx("manage-student-content")}>
                 <div className={cx("list-button")}>
-                    <div className={cx("show-add")}>
-                        <button
-                            className={cx("button-show-add")}
-                            onClick={handleClickShowAddForm}
+                    <div className={cx("list-button-add")}>
+                        <div className={cx("show-add")}>
+                            <button
+                                className={cx("button-show-add")}
+                                onClick={handleClickShowAddForm}
+                            >
+                                Thêm sinh viên
+                            </button>
+                        </div>
+
+                        <input
+                            type="file"
+                            name="file"
+                            className={cx("custom-file-input")}
+                            id="inputGroupFile"
+                            required
+                            hidden
+                            onChange={handleAddByImport}
+                            accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+                        />
+                        <label
+                            className={cx("custom-file-label")}
+                            htmlFor="inputGroupFile"
                         >
-                            Thêm sinh viên
-                        </button>
+                            Thêm bằng file
+                        </label>
                     </div>
 
-                    <input
-                        type="file"
-                        name="file"
-                        className={cx("custom-file-input")}
-                        id="inputGroupFile"
-                        required
-                        hidden
-                        onChange={handleAddByImport}
-                        accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
-                    />
-                    <label
-                        className={cx("custom-file-label")}
-                        htmlFor="inputGroupFile"
-                    >
-                        Thêm bằng file
-                    </label>
                     <AddListStudent
                         show={showAddList}
                         setShow={setShowAddList}

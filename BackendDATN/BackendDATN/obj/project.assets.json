@@ -2325,11 +2325,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "E:\\Workspace\\DATN\\BackendDATN\\BackendDATN\\BackendDATN.csproj",
+      "projectUniqueName": "E:\\Workspace\\DATN\\ProjectDATN\\BackendDATN\\BackendDATN\\BackendDATN.csproj",
       "projectName": "BackendDATN",
-      "projectPath": "E:\\Workspace\\DATN\\BackendDATN\\BackendDATN\\BackendDATN.csproj",
+      "projectPath": "E:\\Workspace\\DATN\\ProjectDATN\\BackendDATN\\BackendDATN\\BackendDATN.csproj",
       "packagesPath": "C:\\Users\\Dell\\.nuget\\packages\\",
-      "outputPath": "E:\\Workspace\\DATN\\BackendDATN\\BackendDATN\\obj\\",
+      "outputPath": "E:\\Workspace\\DATN\\ProjectDATN\\BackendDATN\\BackendDATN\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Dell\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -2346,8 +2346,8 @@
         "net6.0": {
           "targetAlias": "net6.0",
           "projectReferences": {
-            "E:\\Workspace\\DATN\\BackendDATN\\BackendDATN.Data\\BackendDATN.Data.csproj": {
-              "projectPath": "E:\\Workspace\\DATN\\BackendDATN\\BackendDATN.Data\\BackendDATN.Data.csproj"
+            "E:\\Workspace\\DATN\\ProjectDATN\\BackendDATN\\BackendDATN.Data\\BackendDATN.Data.csproj": {
+              "projectPath": "E:\\Workspace\\DATN\\ProjectDATN\\BackendDATN\\BackendDATN.Data\\BackendDATN.Data.csproj"
             }
           }
         }

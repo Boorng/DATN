@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "VUMz5QfoszyeAljGLsm9hhMWiv9AUea2WD0maBn2VXg=",
+  "Hash": "qAcjpCua3yZEky/t8Vh6SJbk0mFP7U4Iloa6jxFMmtw=",
   "Source": "BackendDATN",
   "BasePath": "_content/BackendDATN",
   "Mode": "Default",
@@ -10,7 +10,7 @@
     {
       "Name": "BackendDATN\\wwwroot",
       "Source": "BackendDATN",
-      "ContentRoot": "E:\\Workspace\\DATN\\BackendDATN\\BackendDATN\\wwwroot\\",
+      "ContentRoot": "E:\\Workspace\\DATN\\ProjectDATN\\BackendDATN\\BackendDATN\\wwwroot\\",
       "BasePath": "_content/BackendDATN",
       "Pattern": "**"
     }

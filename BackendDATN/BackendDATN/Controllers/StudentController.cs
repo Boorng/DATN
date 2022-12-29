@@ -1,9 +1,7 @@
 ﻿using BackendDATN.Data.Response;
 using BackendDATN.Entity.VM.Student;
 using BackendDATN.IServices;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Cryptography;
 
 namespace BackendDATN.Controllers
 {
@@ -22,25 +20,11 @@ namespace BackendDATN.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll([FromQuery] string? search)
         {
             try
             {
-                return Ok(await _studentServ.GetAllAsync());
-            }
-            catch (Exception e)
-            {
-                return BadRequest(e.Message);
-            }
-        }
-
-
-        [HttpGet("page/{pageIndex}")]
-        public async Task<IActionResult> GetByPage([FromRoute] int pageIndex = 1, [FromQuery] string? search = null)
-        {
-            try
-            {
-                return Ok(await _studentServ.GetByPageAsync(pageIndex, search));
+                return Ok(await _studentServ.GetAllAsync(search));
             }
             catch (Exception e)
             {
@@ -61,6 +45,7 @@ namespace BackendDATN.Controllers
             }
             catch (Exception e)
             {
+                Console.WriteLine(e.Message);
                 return BadRequest(new MessageResponse
                 {
                     Message = "Fail"
@@ -132,22 +117,31 @@ namespace BackendDATN.Controllers
         {
             try
             {
-                var data = await _studentServ.GetByIdAsync(studentVM.Id);
-                if (data != null)
+                await _studentServ.UpdateAsync(studentVM);
+                return Ok(new MessageResponse
                 {
-                    await _studentServ.UpdateAsync(studentVM);
-                    return Ok(new MessageResponse
-                    {
-                        Message = "Success"
-                    });
-                }
-                else
+                    Message = "Success"
+                });
+            }
+            catch (Exception e)
+            {
+                return BadRequest(new MessageResponse
                 {
-                    return NotFound(new MessageResponse
-                    {
-                        Message = "Not Found"
-                    });
-                }
+                    Message = "Fail"
+                });
+            }
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateStatus(string id, int status)
+        {
+            try
+            {
+                await _studentServ.UpdateStatus(id, status);
+                return Ok(new MessageResponse
+                {
+                    Message = "Success"
+                });
             }
             catch (Exception e)
             {
@@ -163,25 +157,15 @@ namespace BackendDATN.Controllers
         {
             try
             {
-                var data = await _studentServ.GetByIdAsync(id);
-                if (data != null)
+                await _studentServ.DeleteAsync(id);
+                return Ok(new MessageResponse
                 {
-                    await _studentServ.DeleteAsync(id);
-                    return Ok(new MessageResponse
-                    {
-                        Message = "Success"
-                    });
-                }
-                else
-                {
-                    return NotFound(new MessageResponse
-                    {
-                        Message = "Not Found"
-                    });
-                }
+                    Message = "Success"
+                });
             }
             catch (Exception e)
             {
+                Console.WriteLine(e.Message);
                 return BadRequest(new MessageResponse
                 {
                     Message = "Fail"

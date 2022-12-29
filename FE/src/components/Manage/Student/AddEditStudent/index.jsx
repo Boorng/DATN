@@ -43,9 +43,9 @@ function AddEditStudent({ action, studentShow, show, showAdd }) {
     });
 
     useEffect(() => {
-        const arr = studentShow.birthDay.split("/");
-        const birthDay = `${arr[2]}-${arr[1]}-${arr[0]}`;
         if (studentShow) {
+            const arr = studentShow.birthDay.split("/");
+            const birthDay = `${arr[2]}-${arr[1]}-${arr[0]}`;
             setStudent({ ...studentShow, birthDay: birthDay });
         }
     }, []);
@@ -67,7 +67,7 @@ function AddEditStudent({ action, studentShow, show, showAdd }) {
                     dispatch(addStudent(student));
                     toast.success("Thêm học sinh thành công");
                 } else {
-                    toast.success("Thêm học sinh thất bại");
+                    toast.error("Thêm học sinh thất bại");
                 }
             }
             showAdd();
@@ -202,7 +202,7 @@ function AddEditStudent({ action, studentShow, show, showAdd }) {
                                 </Row>
 
                                 <Row className="mb-3">
-                                    <Col xs={2}>
+                                    <Col xs={5}>
                                         <Form.Group>
                                             <Form.Label
                                                 className={cx("form-label")}
@@ -236,29 +236,6 @@ function AddEditStudent({ action, studentShow, show, showAdd }) {
                                                 name="birthDay"
                                                 value={student.birthDay}
                                             />
-                                        </Form.Group>
-                                    </Col>
-
-                                    <Col>
-                                        <Form.Group>
-                                            <Form.Label
-                                                className={cx("form-label")}
-                                            >
-                                                Tình trạng học tập
-                                            </Form.Label>
-                                            <Form.Select
-                                                className={cx("form-select")}
-                                                onChange={handleOnChange}
-                                                name="status"
-                                                value={student.status}
-                                            >
-                                                <option value="1">
-                                                    Đang học
-                                                </option>
-                                                <option value="2">
-                                                    Nghỉ học
-                                                </option>
-                                            </Form.Select>
                                         </Form.Group>
                                     </Col>
                                 </Row>

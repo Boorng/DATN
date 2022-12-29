@@ -6,6 +6,7 @@ using BackendDATN.Entity.VM.Student;
 using BackendDATN.Helper;
 using BackendDATN.IServices;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Principal;
 
 namespace BackendDATN.Services
 {
@@ -50,7 +51,7 @@ namespace BackendDATN.Services
                 MotherName = studentAdd.MotherName,
                 MotherCareer = studentAdd.MotherCareer,
                 MotherPhone = studentAdd.MotherPhone,
-                Status = studentAdd.Status,
+                Status = 1,
                 AccountId = account.Id,
             };
 
@@ -61,6 +62,7 @@ namespace BackendDATN.Services
         public async Task AddListAsync(List<StudentAdd> studentAdds)
         {
             List<Student> datas = new List<Student>();
+            List<StudentVM> res = new List<StudentVM>();
 
             for (int i = 0; i < studentAdds.Count; i++)
             {
@@ -86,7 +88,7 @@ namespace BackendDATN.Services
                     MotherName = studentAdds[i].MotherName,
                     MotherCareer = studentAdds[i].MotherCareer,
                     MotherPhone = studentAdds[i].MotherPhone,
-                    Status = studentAdds[i].Status,
+                    Status = 1,
                     AccountId = account.Id,
                 };
 
@@ -109,110 +111,38 @@ namespace BackendDATN.Services
             }
         }
 
-        public async Task<List<StudentVM>> GetAllAsync()
+        public async Task<List<StudentVM>> GetAllAsync(string? search)
         {
             var data = await _context.Students.ToListAsync();
             var res = data.AsQueryable();
 
-            var result = res.Select(d => new StudentVM
+            var result = res.Select(s => new StudentVM
             {
-                Id = d.Id,
-                FullName = d.FullName,
-                Age = d.Age,
-                Gender = d.Gender,
-                Phone = d.Phone,
-                Ethnic = d.Ethnic,
-                Address = d.Address,
-                BirthDay = d.Birthday.ToString("dd/MM/yyyy"),
-                FatherName = d.FatherName,
-                FatherCareer = d.FatherCareer,
-                FatherPhone = d.FatherPhone,
-                MotherName = d.MotherName,
-                MotherCareer = d.MotherCareer,
-                MotherPhone = d.MotherPhone,
-                Status = d.Status,
-                Email = _context.Accounts.Find(d.AccountId)!.Email,
-                AccountId = d.AccountId,
+                Id = s.Id,
+                FullName = s.FullName,
+                Age = s.Age,
+                Gender = s.Gender,
+                Phone = s.Phone,
+                Ethnic = s.Ethnic,
+                Address = s.Address,
+                BirthDay = s.Birthday.ToString("dd/MM/yyyy"),
+                FatherName = s.FatherName,
+                FatherCareer = s.FatherCareer,
+                FatherPhone = s.FatherPhone,
+                MotherName = s.MotherName,
+                MotherCareer = s.MotherCareer,
+                MotherPhone = s.MotherPhone,
+                Status = s.Status,
+                Email = _context.Accounts.Find(s.AccountId)!.Email,
+                AccountId = s.AccountId,
             });
-
-            return result.ToList();
-        }
-
-        public async Task<StudentVM?> GetByIdAsync(string id)
-        {
-            var data = await _context.Students.FindAsync(id);
-
-            if (data != null)
-            {
-                return new StudentVM
-                {
-                    Id = data.Id,
-                    FullName = data.FullName,
-                    Age = data.Age,
-                    Gender = data.Gender,
-                    Phone = data.Phone,
-                    Ethnic = data.Ethnic,
-                    Address = data.Address,
-                    BirthDay = data.Birthday.ToString("dd/MM/yyyy"),
-                    FatherName = data.FatherName,
-                    FatherCareer = data.FatherCareer,
-                    FatherPhone = data.FatherPhone,
-                    MotherName = data.MotherName,
-                    MotherCareer = data.MotherCareer,
-                    MotherPhone = data.MotherPhone,
-                    Status = data.Status,
-                    Email = _context.Accounts.Find(data.AccountId)!.Email,
-                    AccountId = data.AccountId,
-                };
-            }
-            return null;
-        }
-
-        public async Task<StudentResponse> GetByPageAsync(int page, string? search)
-        {
-            var students = await _context.Students.ToListAsync();
-            var data = students.AsQueryable();
 
             if (!string.IsNullOrEmpty(search))
             {
-                data = data.Where(st => st.FullName.Contains(search) || st.Id.Contains(search));
+                result = result.Where(st => st.FullName.Contains(search) || st.Id.Contains(search));
             }
 
-            var dataRes = data.Select(d => new StudentVM
-            {
-                Id = d.Id,
-                FullName = d.FullName,
-                Age = d.Age,
-                Gender = d.Gender,
-                Phone = d.Phone,
-                Ethnic = d.Ethnic,
-                Address = d.Address,
-                BirthDay = d.Birthday.ToString("dd/MM/yyyy"),
-                FatherName = d.FatherName,
-                FatherCareer = d.FatherCareer,
-                FatherPhone = d.FatherPhone,
-                MotherName = d.MotherName,
-                MotherCareer = d.MotherCareer,
-                MotherPhone = d.MotherPhone,
-                Status = d.Status,
-                Email = _context.Accounts.Find(d.AccountId)!.Email,
-                AccountId = d.AccountId,
-
-            });
-
-            var result = PaginatedList<StudentVM>.Create(dataRes, page, PAGE_SIZE);
-
-            var res = result.ToList();
-
-            StudentResponse studentResponse = new StudentResponse
-            {
-                Data = res,
-                HasPreviousPage = result.HasPreviousPage,
-                HasNextPage = result.HasNextPage
-            };
-
-            return studentResponse;
-
+            return _mapper.Map<List<StudentVM>>(result.ToList());
         }
 
         public async Task UpdateAsync(StudentVM studentVM)
@@ -233,7 +163,18 @@ namespace BackendDATN.Services
                 data.MotherName = studentVM.MotherName;
                 data.MotherCareer = studentVM.MotherCareer;
                 data.MotherPhone = studentVM.MotherPhone;
-                data.Status = studentVM.Status;
+
+                await _context.SaveChangesAsync();
+            }
+        }
+
+        public async Task UpdateStatus(string id, int status)
+        {
+            var data = await _context.Students.FindAsync(id);
+
+            if(data != null)
+            {
+                data.Status = status;
 
                 await _context.SaveChangesAsync();
             }

@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "uWYa28mGmmXHofGX7TAT7pVdvFYNuGINESsqk0HKWCCYdaQL+cQECjriMFtw/qWvVzgCJBKaIp7N/ISPCXE6bQ==",
+  "dgSpecHash": "MVzViDCc79eOOSryWqJqvsaylzjpz/7aBlHdWc57xFSnB6tirWuhdlSUY0Uzt1LcHOAUBzQknBkyQErtHb2VdA==",
   "success": true,
-  "projectFilePath": "E:\\Workspace\\DATN\\BackendDATN\\BackendDATN.Data\\BackendDATN.Data.csproj",
+  "projectFilePath": "E:\\Workspace\\DATN\\ProjectDATN\\BackendDATN\\BackendDATN.Data\\BackendDATN.Data.csproj",
   "expectedPackageFiles": [],
   "logs": []
 }

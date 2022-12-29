@@ -19,6 +19,8 @@ function AddListStudent({ show, setShow, listStudent, fileName }) {
             dispatch(addListStudent(listStudent));
             toast.success("Thêm học sinh thành công");
             setShow(false);
+        } else {
+            toast.success("Thêm học sinh thất bại");
         }
     };
     return (
@@ -66,9 +68,6 @@ function AddListStudent({ show, setShow, listStudent, fileName }) {
                                 </th>
                                 <th className={cx("table-head")}>
                                     Nghề nghiệp mẹ
-                                </th>
-                                <th className={cx("table-head")}>
-                                    Tình trạng học tập
                                 </th>
                             </tr>
                         </thead>
@@ -120,12 +119,6 @@ function AddListStudent({ show, setShow, listStudent, fileName }) {
                                         </td>
                                         <td className={cx("table-document")}>
                                             {stu.motherCareer}
-                                        </td>
-
-                                        <td className={cx("table-document")}>
-                                            {stu.status === 1
-                                                ? "Đang học"
-                                                : "Nghỉ học"}
                                         </td>
                                     </tr>
                                 );

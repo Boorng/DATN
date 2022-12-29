@@ -1,23 +1,22 @@
 import * as classNames from "classnames/bind";
 import { useDispatch, useSelector } from "react-redux";
 import Table from "react-bootstrap/Table";
-import { Fragment, useCallback, useEffect, useState } from "react";
-import { Button } from "react-bootstrap";
+import { useEffect, useState } from "react";
+import { Button, Modal, ModalBody } from "react-bootstrap";
 import { toast } from "react-toastify";
 import { utils, writeFile } from "xlsx";
 
 import {
-    addListStudent,
-    deleteStudent,
-    getStudent,
+    resetStudent,
+    updateStatusStudent,
 } from "../../../../slices/studentSlice";
 import AddEditStudent from "../AddEditStudent";
 import styles from "./ListStudent.module.scss";
 import FindStudent from "../FindStudent";
 import DetailStudent from "../DetailStudent";
 import {
-    deleteStudentAPI,
     getStudentAPI,
+    updateStatusStudentAPI,
 } from "../../../../services/getRequest";
 
 const cx = classNames.bind(styles);
@@ -27,19 +26,18 @@ function ListStudent() {
 
     const [listStudent, setListStudent] = useState([]);
     const [listStudentExport, setListStudentExport] = useState([]);
-    const [pageIndex, setPageIndex] = useState(1);
     const [isShow, setIsShow] = useState(false);
     const [isDetail, setIsDetail] = useState(false);
+    const [isDelete, setIsDelete] = useState(false);
+    const [idDelete, setIdDelete] = useState("");
     const [studentShow, setStudentShow] = useState({});
-    const [search, setSearch] = useState("");
 
     const dispatch = useDispatch();
 
-    const getStudent = async () => {
-        const data = await getStudentAPI(pageIndex, search);
+    const getStudent = async (search) => {
+        const data = await getStudentAPI(search);
         console.log(data);
-
-        dispatch(addListStudent(data.data));
+        dispatch(resetStudent(data));
     };
     useEffect(() => {
         getStudent();
@@ -63,7 +61,7 @@ function ListStudent() {
                 motherName: item.motherName,
                 motherCareer: item.motherCareer,
                 motherPhone: item.motherPhone,
-                status: item.status,
+                status: item.status === 1 ? "Đang học" : "Nghỉ học",
             };
         });
         setListStudent(data);
@@ -102,15 +100,22 @@ function ListStudent() {
         writeFile(wb, "Student Report.xlsx");
     };
 
-    const handleDeleteStudent = async (id) => {
-        const status = await deleteStudentAPI(id);
+    const handleUpdateStatus = async () => {
+        const status = await updateStatusStudentAPI(idDelete);
         console.log(status);
         if (status.message === "Success") {
-            dispatch(deleteStudent(id));
-            toast.success("Xóa học sinh thành công");
+            dispatch(updateStatusStudent(idDelete));
+            toast.success("Cập nhật tình trạng học tập thành công");
         } else {
-            toast.error("Xóa học sinh thất bại");
+            toast.error("Cập nhật tình trạng học tập thất bại");
         }
+        setIdDelete("");
+        setIsDelete(false);
+    };
+
+    const handleConfirmUpdate = (id) => {
+        setIdDelete(id);
+        setIsDelete(true);
     };
 
     const handleClickEditInfo = (stu) => {
@@ -125,24 +130,13 @@ function ListStudent() {
         setIsDetail(!isDetail);
     };
 
-    // const handleSearch = useCallback(
-    //     (input) => {
-    //         if (input) {
-    //             const checkList = listStudent.filter(
-    //                 (stu) => stu.Id === input || stu.Name.includes(input)
-    //             );
-
-    //             setSearchList({ list: checkList, input });
-    //         } else if (input !== searchList.input) {
-    //             setSearchList({ list: [], input: "" });
-    //         }
-    //     },
-    //     [listStudent, searchList.input]
-    // );
+    const handleSearch = async (input) => {
+        await getStudent(input);
+    };
 
     return (
         <div className={cx("list-student")}>
-            {/* <FindStudent handleSearch={handleSearch} /> */}
+            <FindStudent handleSearch={handleSearch} />
             <div style={{ display: "flex", justifyContent: "flex-end" }}>
                 <Button
                     variant="warning"
@@ -186,25 +180,8 @@ function ListStudent() {
                                 <td className={cx("table-document")}>
                                     {stu.status === 1 ? "Đang học" : "Nghỉ học"}
                                 </td>
+
                                 <td className={cx("list-button")}>
-                                    <Button
-                                        onClick={() =>
-                                            handleDeleteStudent(stu.id)
-                                        }
-                                        variant="danger"
-                                        className={cx("button")}
-                                    >
-                                        Xóa
-                                    </Button>
-
-                                    <Button
-                                        variant="success"
-                                        onClick={() => handleClickEditInfo(stu)}
-                                        className={cx("button")}
-                                    >
-                                        Sửa
-                                    </Button>
-
                                     <Button
                                         variant="info"
                                         onClick={() =>
@@ -214,6 +191,29 @@ function ListStudent() {
                                     >
                                         Xem chi tiết
                                     </Button>
+
+                                    {stu.status === 1 && (
+                                        <>
+                                            <Button
+                                                variant="success"
+                                                onClick={() =>
+                                                    handleClickEditInfo(stu)
+                                                }
+                                                className={cx("button")}
+                                            >
+                                                Sửa
+                                            </Button>
+                                            <Button
+                                                onClick={() =>
+                                                    handleConfirmUpdate(stu.id)
+                                                }
+                                                variant="danger"
+                                                className={cx("button")}
+                                            >
+                                                Nghỉ học
+                                            </Button>
+                                        </>
+                                    )}
                                 </td>
                             </tr>
                         );
@@ -234,6 +234,37 @@ function ListStudent() {
                     showDetail={handleClickDetailInfo}
                 />
             )}
+            <Modal
+                show={isDelete}
+                onHide={() => setIsDelete(false)}
+                dialogClassName={cx("modal")}
+                centered
+            >
+                <Modal.Header>
+                    <Modal.Title className={cx("modal-title")}>
+                        Cảnh báo
+                    </Modal.Title>
+                </Modal.Header>
+                <Modal.Body className={cx("modal-content")}>
+                    Bạn có chắc chắn muốn cho học sinh nghỉ học không?
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button
+                        variant="primary"
+                        className={cx("button-confirm")}
+                        onClick={handleUpdateStatus}
+                    >
+                        Xác nhận
+                    </Button>
+                    <Button
+                        variant="secondary"
+                        className={cx("button-back")}
+                        onClick={() => setIsDelete(false)}
+                    >
+                        Quay lại
+                    </Button>
+                </Modal.Footer>
+            </Modal>
         </div>
     );
 }
