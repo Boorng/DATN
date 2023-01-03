@@ -1,64 +1,97 @@
 import * as classNames from "classnames/bind";
 import { useDispatch, useSelector } from "react-redux";
 import Table from "react-bootstrap/Table";
-import { Fragment, useCallback, useEffect, useState } from "react";
-import { Button } from "react-bootstrap";
+import { useEffect, useState } from "react";
+import { Button, Modal } from "react-bootstrap";
 import { toast } from "react-toastify";
 import { utils, writeFile } from "xlsx";
 
 import styles from "./ListTeacher.module.scss";
-import { deleteTeacher } from "../../../../slices/teacherSlice";
+import {
+    resetTeacher,
+    updateStatusTeacher,
+} from "../../../../slices/teacherSlice";
 import FindTeacher from "../FindTeacher";
 import DetailTeacher from "../DetailTeacher";
 import AddEditTeacher from "../AddEditTeacher";
-
+import {
+    getTeacherAPI,
+    updateStatusTeacherAPI,
+} from "../../../../services/teacherService";
 const cx = classNames.bind(styles);
 
 function ListTeacher() {
     const data = useSelector((state) => state.teacher.listTeacher);
 
     const [listTeacher, setListTeacher] = useState([]);
-
+    const [listTeacherExport, setListTeacherExport] = useState([]);
     const [isShow, setIsShow] = useState(false);
-
     const [isDetail, setIsDetail] = useState(false);
-
+    const [isDelete, setIsDelete] = useState(false);
+    const [idDelete, setIdDelete] = useState("");
     const [teacherShow, setTeacherShow] = useState({});
-
-    const [searchList, setSearchList] = useState({
-        list: [],
-        input: "",
-    });
 
     const dispatch = useDispatch();
 
+    const getTeacher = async (search) => {
+        const dataAPI = await getTeacherAPI(search);
+        console.log(dataAPI);
+        dispatch(resetTeacher(dataAPI));
+    };
+
     useEffect(() => {
+        getTeacher();
+    }, []);
+
+    useEffect(() => {
+        const lstExport = data.map((item) => {
+            return {
+                id: item.id,
+                fullName: item.fullName,
+                age: item.age,
+                gender: item.gender,
+                ethnic: item.ethnic,
+                dob: item.birthDay,
+                email: item.email,
+                address: item.address,
+                phone: item.phone,
+                status: item.status === 1 ? "Đang làm" : "Nghỉ việc",
+                level:
+                    item.level === 1
+                        ? "Cử nhân"
+                        : item.level === 2
+                        ? "Thạc sĩ"
+                        : item.level === 3
+                        ? "Tiến sĩ"
+                        : item.level === 4
+                        ? "Phó giáo sư"
+                        : "Giáo sư",
+            };
+        });
         setListTeacher(data);
+        setListTeacherExport(lstExport);
     }, [data]);
 
     const handleExport = () => {
         const headings = [
             [
                 "Id",
-                "Name",
-                "Age",
-                "Gender",
-                "Ethnic",
-                "Dob",
+                "Họ và tên",
+                "Tuổi",
+                "Giới tính",
+                "Dân tộc",
+                "Ngày tháng năm sinh",
                 "Email",
-                "Address",
-                "PhoneNum",
-                "Status",
-                "Level",
-                "Leader",
-                "ViceLeader",
-                "TeamId",
+                "Địa chỉ",
+                "Số điên thoại",
+                "Tình trạng làm việc",
+                "Bằng cấp",
             ],
         ];
         const wb = utils.book_new();
         const ws = utils.json_to_sheet([]);
         utils.sheet_add_aoa(ws, headings);
-        utils.sheet_add_json(ws, listTeacher, {
+        utils.sheet_add_json(ws, listTeacherExport, {
             origin: "A2",
             skipHeader: true,
         });
@@ -66,9 +99,22 @@ function ListTeacher() {
         writeFile(wb, "TeacherReport.xlsx");
     };
 
-    const handleDeleteTeacher = (id) => {
-        dispatch(deleteTeacher(id));
-        toast.success("Xóa giáo viên thành công");
+    const handleUpdateStatus = async () => {
+        const status = await updateStatusTeacherAPI(idDelete);
+        console.log(status);
+        if (status.message === "Success") {
+            dispatch(updateStatusTeacher(idDelete));
+            toast.success("Cập nhật tình trạng làm việc thành công");
+        } else {
+            toast.error("Cập nhật tình trạng làm việc thất bại");
+        }
+        setIdDelete("");
+        setIsDelete(false);
+    };
+
+    const handleConfirmUpdate = (id) => {
+        setIdDelete(id);
+        setIsDelete(true);
     };
 
     const handleClickEditInfo = (stu) => {
@@ -83,20 +129,9 @@ function ListTeacher() {
         setIsDetail(!isDetail);
     };
 
-    const handleSearch = useCallback(
-        (input) => {
-            if (input) {
-                const checkList = listTeacher.filter(
-                    (tc) => tc.Id === input || tc.Name.includes(input)
-                );
-
-                setSearchList({ list: checkList, input });
-            } else if (input !== searchList.input) {
-                setSearchList({ list: [], input: "" });
-            }
-        },
-        [listTeacher, searchList.input]
-    );
+    const handleSearch = async (input) => {
+        await getTeacher(input);
+    };
 
     return (
         <div className={cx("list-teacher")}>
@@ -119,52 +154,71 @@ function ListTeacher() {
                         <th className={cx("table-head")}>Email</th>
                         <th className={cx("table-head")}>Số điện thoại</th>
                         <th className={cx("table-head")}>Chức danh</th>
+                        <th className={cx("table-head")}>
+                            Tình trạng làm việc
+                        </th>
                         <th className={cx("table-head")}></th>
                     </tr>
                 </thead>
                 <tbody>
-                    {(searchList.input ? searchList.list : listTeacher).map(
-                        (tea, index) => {
-                            return (
-                                <Fragment key={tea.Id}>
-                                    <tr>
-                                        <td className={cx("table-document")}>
-                                            {tea.Id}
-                                        </td>
-                                        <td className={cx("table-document")}>
-                                            {tea.Name}
-                                        </td>
-                                        <td className={cx("table-document")}>
-                                            {tea.Age}
-                                        </td>
-                                        <td className={cx("table-document")}>
-                                            {tea.Email}
-                                        </td>
-                                        <td className={cx("table-document")}>
-                                            {tea.PhoneNum}
-                                        </td>
-                                        <td className={cx("table-document")}>
-                                            {tea.Level === "1"
-                                                ? "Cử nhân"
-                                                : tea.level === "2"
-                                                ? "Thạc sĩ"
-                                                : tea.level === "2"
-                                                ? "Tiến sĩ"
-                                                : tea.level === "4"
-                                                ? "Phó giáo sư"
-                                                : "Giáo sư"}
-                                        </td>
-                                        <td className={cx("list-button")}>
+                    {listTeacher.map((tea) => {
+                        return (
+                            <tr key={tea.id}>
+                                <td className={cx("table-document")}>
+                                    {tea.id}
+                                </td>
+                                <td className={cx("table-document")}>
+                                    {tea.fullName}
+                                </td>
+                                <td className={cx("table-document")}>
+                                    {tea.age}
+                                </td>
+                                <td className={cx("table-document")}>
+                                    {tea.email}
+                                </td>
+                                <td className={cx("table-document")}>
+                                    {tea.phone}
+                                </td>
+
+                                <td className={cx("table-document")}>
+                                    {tea.level === 1
+                                        ? "Cử nhân"
+                                        : tea.level === 2
+                                        ? "Thạc sĩ"
+                                        : tea.level === 3
+                                        ? "Tiến sĩ"
+                                        : tea.level === 4
+                                        ? "Phó giáo sư"
+                                        : "Giáo sư"}
+                                </td>
+                                <td className={cx("table-document")}>
+                                    {tea.status === 1
+                                        ? "Đang làm"
+                                        : "Nghỉ việc"}
+                                </td>
+                                <td className={cx("list-button")}>
+                                    <Button
+                                        variant="info"
+                                        onClick={() =>
+                                            handleClickDetailInfo(tea)
+                                        }
+                                        className={cx("button")}
+                                    >
+                                        Xem chi tiết
+                                    </Button>
+
+                                    {tea.status === 1 && (
+                                        <>
+                                            {" "}
                                             <Button
                                                 onClick={() =>
-                                                    handleDeleteTeacher(tea.Id)
+                                                    handleConfirmUpdate(tea.id)
                                                 }
                                                 variant="danger"
                                                 className={cx("button")}
                                             >
-                                                Xóa
+                                                Nghỉ việc
                                             </Button>
-
                                             <Button
                                                 variant="success"
                                                 onClick={() =>
@@ -174,21 +228,12 @@ function ListTeacher() {
                                             >
                                                 Sửa
                                             </Button>
-                                            <Button
-                                                variant="info"
-                                                onClick={() =>
-                                                    handleClickDetailInfo(tea)
-                                                }
-                                                className={cx("button")}
-                                            >
-                                                Xem chi tiết
-                                            </Button>
-                                        </td>
-                                    </tr>
-                                </Fragment>
-                            );
-                        }
-                    )}
+                                        </>
+                                    )}
+                                </td>
+                            </tr>
+                        );
+                    })}
                 </tbody>
             </Table>
             {isShow && (
@@ -205,6 +250,37 @@ function ListTeacher() {
                     showDetail={handleClickDetailInfo}
                 />
             )}
+            <Modal
+                show={isDelete}
+                onHide={() => setIsDelete(false)}
+                dialogClassName={cx("modal")}
+                centered
+            >
+                <Modal.Header>
+                    <Modal.Title className={cx("modal-title")}>
+                        Cảnh báo
+                    </Modal.Title>
+                </Modal.Header>
+                <Modal.Body className={cx("modal-content")}>
+                    Bạn có chắc chắn muốn cho giáo viên nghỉ việc không?
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button
+                        variant="primary"
+                        className={cx("button-confirm")}
+                        onClick={handleUpdateStatus}
+                    >
+                        Xác nhận
+                    </Button>
+                    <Button
+                        variant="secondary"
+                        className={cx("button-back")}
+                        onClick={() => setIsDelete(false)}
+                    >
+                        Quay lại
+                    </Button>
+                </Modal.Footer>
+            </Modal>
         </div>
     );
 }

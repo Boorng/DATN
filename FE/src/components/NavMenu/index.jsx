@@ -30,6 +30,12 @@ function NavMenu() {
             id: 4,
             name: "/manage/class",
             title: "Quản lý lớp",
+            content: [
+                { id: 41, name: "Khối 6", to: "/manage/class/grade/6" },
+                { id: 42, name: "Khối 7", to: "/manage/class/grade/7" },
+                { id: 43, name: "Khối 8", to: "/manage/class/grade/8" },
+                { id: 44, name: "Khối 9", to: "/manage/class/grade/9" },
+            ],
         },
         {
             id: 5,

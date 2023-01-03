@@ -1,6 +1,6 @@
-﻿using BackendDATN.Entity.VM.Teacher;
+﻿using BackendDATN.Data.Response;
+using BackendDATN.Entity.VM.Teacher;
 using BackendDATN.IServices;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BackendDATN.Controllers
@@ -16,14 +16,14 @@ namespace BackendDATN.Controllers
             _teacherServ = teacherServ;
         }
 
-        [HttpGet] 
-        public async Task<IActionResult> GetAll()
+        [HttpGet]
+        public async Task<IActionResult> GetAll(string? search)
         {
             try
             {
-                return Ok(await _teacherServ.GetAllAsync());
+                return Ok(await _teacherServ.GetAllAsync(search));
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 return BadRequest(e.Message);
             }
@@ -35,11 +35,18 @@ namespace BackendDATN.Controllers
         {
             try
             {
-                return Ok(await _teacherServ.AddAsync(teacherAdd));
+                await _teacherServ.AddAsync(teacherAdd);
+                return Ok(new MessageResponse
+                {
+                    Message = "Success"
+                });
             }
-            catch(Exception e)
+            catch (Exception e)
             {
-                return BadRequest(e.Message);
+                return BadRequest(new MessageResponse
+                {
+                    Message = "Fail"
+                });
             }
         }
 
@@ -48,33 +55,59 @@ namespace BackendDATN.Controllers
         {
             try
             {
-                return Ok(await _teacherServ.AddListAsync(teacherAdds));
+                await _teacherServ.AddListAsync(teacherAdds);
+                return Ok(new MessageResponse
+                {
+                    Message = "Success"
+                });
             }
-            catch(Exception e)
+            catch (Exception e)
             {
-                return BadRequest(e.Message);
+                return BadRequest(new MessageResponse
+                {
+                    Message = "Fail"
+                });
+            }
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> Update(TeacherVM teacherVM)
+        {
+            try
+            {
+                await _teacherServ.UpdateAsync(teacherVM);
+                return Ok(new MessageResponse
+                {
+                    Message = "Success"
+                });
+
+            }
+            catch (Exception e)
+            {
+                return BadRequest(new MessageResponse
+                {
+                    Message = "Fail"
+                });
             }
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(string id, TeacherModel teacherModel)
+        public async Task<IActionResult> UpdateStatus(string id, int status)
         {
             try
             {
-                var data = await _teacherServ.GetByIdAsync(id);
-                if (data != null)
+                await _teacherServ.UpdateStatus(id, status);
+                return Ok(new MessageResponse
                 {
-                    await _teacherServ.UpdateAsync(id, teacherModel);
-                    return Ok();
-                }
-                else
-                {
-                    return NotFound();
-                }
+                    Message = "Success"
+                });
             }
-            catch(Exception e)
+            catch (Exception e)
             {
-                return BadRequest(e.Message);
+                return BadRequest(new MessageResponse
+                {
+                    Message = "Fail"
+                });
             }
         }
 
@@ -83,18 +116,10 @@ namespace BackendDATN.Controllers
         {
             try
             {
-                var data = await _teacherServ.GetByIdAsync(id);
-                if (data != null)
-                {
-                    await _teacherServ.DeleteAsync(id);
-                    return Ok();
-                }
-                else
-                {
-                    return NotFound();
-                }
+                await _teacherServ.DeleteAsync(id);
+                return Ok();
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 return BadRequest(e.Message);
             }

@@ -21,6 +21,7 @@ function TrainingManageMent() {
     const [isDetail, setIsDetail] = useState(false);
 
     const listSemester = ["20221", "20222"];
+
     const listClass = [
         {
             Id: 1,

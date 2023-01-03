@@ -32,7 +32,31 @@ function Teacher() {
 
                 if (sheets.length) {
                     const rows = utils.sheet_to_json(wb.Sheets[sheets[0]]);
-                    setListAdd(rows);
+                    const listAddImport = rows.map((item) => {
+                        return {
+                            id: item["Id"],
+                            fullName: item["Họ và tên"],
+                            age: item["Tuổi"],
+                            gender: item["Giới tính"],
+                            ethnic: item["Dân tộc"],
+                            birthDay: item["Ngày tháng năm sinh"],
+                            email: item["Email"],
+                            address: item["Địa chỉ"],
+                            phone: item["Số điên thoại"],
+                            level:
+                                item["Bằng cấp"] === "Cử nhân"
+                                    ? 1
+                                    : item["Bằng cấp"] === "Thạc sĩ"
+                                    ? 2
+                                    : item["Bằng cấp"] === "Tiến sĩ"
+                                    ? 3
+                                    : item["Bằng cấp"] === "Phó giáo sư"
+                                    ? 4
+                                    : 5,
+                            status: 1,
+                        };
+                    });
+                    setListAdd(listAddImport);
                     setShowAddList(true);
                     setFileName(file.name);
                 }

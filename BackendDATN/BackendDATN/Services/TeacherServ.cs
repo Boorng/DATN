@@ -1,9 +1,7 @@
 ﻿using AutoMapper;
 using BackendDATN.Data;
-using BackendDATN.Data.Response;
 using BackendDATN.Entity.VM.Account;
 using BackendDATN.Entity.VM.Teacher;
-using BackendDATN.Helper;
 using BackendDATN.IServices;
 using Microsoft.EntityFrameworkCore;
 
@@ -26,7 +24,7 @@ namespace BackendDATN.Services
             _accountServ = accountServ;
         }
 
-        public async Task<TeacherVM> AddAsync(TeacherAdd teacherAdd)
+        public async Task AddAsync(TeacherAdd teacherAdd)
         {
             var account = await _accountServ.AddAsync(new AccountModel
             {
@@ -43,25 +41,22 @@ namespace BackendDATN.Services
                 Address = teacherAdd.Address,
                 Ethnic = teacherAdd.Ethnic,
                 Phone = teacherAdd.Phone,
-                Birthday = teacherAdd.BirthDay,
+                Birthday = DateTime.Parse(teacherAdd.BirthDay),
                 Level = teacherAdd.Level,
-                Status = teacherAdd.Status,
-                Leader = teacherAdd.Leader,
-                ViceLeader = teacherAdd.ViceLeader,
+                Status = 1,
+                Leader = false,
+                ViceLeader = false,
                 AccountId = account.Id,
-                TeamId = teacherAdd.TeamId
             };
 
             await _context.AddAsync(data);
             await _context.SaveChangesAsync();
-
-            return _mapper.Map<TeacherVM>(data);
         }
-        public async Task<List<TeacherVM>> AddListAsync(List<TeacherAdd> teacherAdds)
+        public async Task AddListAsync(List<TeacherAdd> teacherAdds)
         {
             List<Teacher> datas = new List<Teacher>();
 
-            for(int i = 0; i < teacherAdds.Count; i++)
+            for (int i = 0; i < teacherAdds.Count; i++)
             {
                 var account = await _accountServ.AddAsync(new AccountModel
                 {
@@ -78,13 +73,12 @@ namespace BackendDATN.Services
                     Address = teacherAdds[i].Address,
                     Ethnic = teacherAdds[i].Ethnic,
                     Phone = teacherAdds[i].Phone,
-                    Birthday = teacherAdds[i].BirthDay,
+                    Birthday = DateTime.Parse(teacherAdds[i].BirthDay),
                     Level = teacherAdds[i].Level,
-                    Status = teacherAdds[i].Status,
-                    Leader = teacherAdds[i].Leader,
-                    ViceLeader = teacherAdds[i].ViceLeader,
+                    Status = 1,
+                    Leader = false,
+                    ViceLeader = false,
                     AccountId = account.Id,
-                    TeamId = teacherAdds[i].TeamId
                 };
 
                 datas.Add(data);
@@ -92,76 +86,77 @@ namespace BackendDATN.Services
 
             await _context.AddRangeAsync(datas);
             await _context.SaveChangesAsync();
-
-            return _mapper.Map<List<TeacherVM>>(datas);
         }
 
         public async Task DeleteAsync(string id)
         {
             var data = await _context.Teachers.FindAsync(id);
-            if(data != null)
+            if (data != null)
             {
                 _context.Remove(data);
                 await _context.SaveChangesAsync();
             }
         }
 
-        public async Task<List<TeacherVM>> GetAllAsync()
+        public async Task<List<TeacherVM>> GetAllAsync(string? search)
         {
             var data = await _context.Teachers.ToListAsync();
 
-            return _mapper.Map<List<TeacherVM>>(data);
-        }
+            var res = data.AsQueryable();
 
-        public async Task<TeacherVM?> GetByIdAsync(string id)
-        {
-            var data = await _context.Teachers.FindAsync(id);
-            
-            return _mapper.Map<TeacherVM>(data);
-        }
-
-        public async Task<TeacherResponse> GetByPageAsync(int page, string? search)
-        {
-            var teachers = await _context.Teachers.ToListAsync();
-            var data = teachers.AsQueryable();
+            var result = res.Select(t => new TeacherVM
+            {
+                Id = t.Id,
+                FullName = t.FullName,
+                Age = t.Age,
+                Gender = t.Gender,
+                Phone = t.Phone,
+                Ethnic = t.Ethnic,
+                Address = t.Address,
+                Avatar = t.Avatar,
+                BirthDay = t.Birthday.ToString("dd/MM/yyyy"),
+                Level = t.Level,
+                Status = t.Status,
+                Email = _context.Accounts.Find(t.AccountId)!.Email,
+                AccountId = t.AccountId,
+            });
 
             if (!string.IsNullOrEmpty(search))
             {
-                data = data.Where(tc => tc.FullName.Contains(search) || tc.Id.Contains(search));
+                result = result.Where(st => st.FullName.Contains(search) || st.Id.Contains(search));
             }
 
-            var result = PaginatedList<Teacher>.Create(data, page, PAGE_SIZE);
-
-            var res = result.ToList();
-
-            TeacherResponse teacherResponse = new TeacherResponse
-            {
-                Data = _mapper.Map<List<TeacherVM>>(res),
-                HasPreviousPage = result.HasPreviousPage,
-                HasNextPage = result.HasNextPage
-            };
-
-            return teacherResponse;
+            return result.ToList();
         }
 
-        public async Task UpdateAsync(string id, TeacherModel teacherModel)
+        public async Task UpdateAsync(TeacherVM teacherVM)
+        {
+            var data = await _context.Teachers.FindAsync(teacherVM.Id);
+
+            if (data != null)
+            {
+                data.FullName = teacherVM.FullName;
+                data.Age = teacherVM.Age;
+                data.Gender = teacherVM.Gender;
+                data.Address = teacherVM.Address;
+                data.Ethnic = teacherVM.Ethnic;
+                data.Phone = teacherVM.Phone;
+                data.Birthday = DateTime.Parse(teacherVM.BirthDay);
+                data.Level = teacherVM.Level;
+                data.Leader = teacherVM.Leader;
+                data.ViceLeader = teacherVM.ViceLeader;
+                await _context.SaveChangesAsync();
+            }
+        }
+
+        public async Task UpdateStatus(string id, int status)
         {
             var data = await _context.Teachers.FindAsync(id);
 
             if (data != null)
             {
-                data.FullName = teacherModel.FullName;
-                data.Age = teacherModel.Age;
-                data.Gender = teacherModel.Gender;
-                data.Address = teacherModel.Address;
-                data.Ethnic = teacherModel.Ethnic;
-                data.Phone = teacherModel.Phone;
-                data.Birthday = teacherModel.BirthDay;
-                data.Level = teacherModel.Level;
-                data.Status = teacherModel.Status;
-                data.Leader = teacherModel.Leader;
-                data.ViceLeader = teacherModel.ViceLeader;
-                data.TeamId = teacherModel.TeamId;
+                data.Status = status;
+
                 await _context.SaveChangesAsync();
             }
         }

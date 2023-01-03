@@ -142,7 +142,7 @@ namespace BackendDATN.Services
                 result = result.Where(st => st.FullName.Contains(search) || st.Id.Contains(search));
             }
 
-            return _mapper.Map<List<StudentVM>>(result.ToList());
+            return result.ToList();
         }
 
         public async Task UpdateAsync(StudentVM studentVM)

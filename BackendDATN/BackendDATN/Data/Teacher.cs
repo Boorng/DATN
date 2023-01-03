@@ -24,11 +24,11 @@ namespace BackendDATN.Data
         public int Status { get; set; }
         public bool Leader { get; set; }
         public bool ViceLeader { get; set; }
-        public int TeamId { get; set; }
+        public int? TeamId { get; set; }
         public Guid AccountId { get; set; }
 
         public virtual Account Account { get; set; } = null!;
-        public virtual Team Team { get; set; } = null!;
+        public virtual Team? Team { get; set; }
         public virtual ICollection<Assign> Assigns { get; set; }
         public virtual ICollection<Class> Classes { get; set; }
     }

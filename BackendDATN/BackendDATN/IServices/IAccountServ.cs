@@ -7,8 +7,6 @@ namespace BackendDATN.IServices
     {
         Task<List<AccountVM>> GetAllAsync();
 
-        Task<AccountResponse> GetByPageAsync(int page, string? search);
-
         Task<List<AccountVM>> GetByNameAsync(int page = 1);
 
         Task<AccountVM?> GetByIdAsync(Guid id);

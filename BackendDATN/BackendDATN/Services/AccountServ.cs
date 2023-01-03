@@ -30,31 +30,6 @@ namespace BackendDATN.Services
             return _mapper.Map<List<AccountVM>>(data);
         }
 
-        public async Task<AccountResponse> GetByPageAsync(int page, string? search)
-        {
-            var allDAtas = await _context.Accounts.ToListAsync();
-            var data = allDAtas.AsQueryable();
-
-            if(!string.IsNullOrEmpty(search))
-            {
-                data = data.Where(ac => ac.Email.Contains(search));
-            }
-
-            var result = PaginatedList<Account>.Create(data, page, PAGE_SIZE);
-
-            var res = result.ToList();
-
-            AccountResponse accountResponse = new AccountResponse
-            {
-                Data = _mapper.Map<List<AccountVM>>(res),
-               HasPreviousPage = result.HasPreviousPage,
-               HasNextPage = result.HasNextPage,
-            };
-
-            return accountResponse;
-
-        }
-
         public Task<List<AccountVM>> GetByNameAsync(int page = 1)
         {
             throw new NotImplementedException();

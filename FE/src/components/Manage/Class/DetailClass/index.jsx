@@ -9,7 +9,7 @@ import { FaUserAlt } from "react-icons/fa";
 
 const cx = classNames.bind(styles);
 
-function DetailClass({ studentShow, show, showDetail }) {
+function DetailClass({ classShow, show, showDetail }) {
     return (
         <div>
             <Modal
@@ -24,18 +24,38 @@ function DetailClass({ studentShow, show, showDetail }) {
                 </Modal.Header>
                 <Modal.Body>
                     <Row>
-                        <Col xs={5}></Col>
                         <Col>
                             <Table responsive>
                                 <thead>
-                                    <tr style={{}}>
+                                    <tr style={{ width: "200px" }}>
                                         <th style={{ width: "200px" }}>
                                             Thông tin
                                         </th>
                                         <th>Nội dung</th>
                                     </tr>
                                 </thead>
-                                <tbody></tbody>
+                                <tbody>
+                                    <tr style={{ fontSize: "14px" }}>
+                                        <td>ID Lớp:</td>
+                                        <td>{classShow.id}</td>
+                                    </tr>
+                                    <tr style={{ fontSize: "14px" }}>
+                                        <td>Tên Lớp:</td>
+                                        <td>{classShow.name}</td>
+                                    </tr>
+                                    <tr style={{ fontSize: "14px" }}>
+                                        <td>Khối:</td>
+                                        <td>{classShow.grade}</td>
+                                    </tr>
+                                    <tr style={{ fontSize: "14px" }}>
+                                        <td>Năm học:</td>
+                                        <td>{classShow.academicYear}</td>
+                                    </tr>
+                                    <tr style={{ fontSize: "14px" }}>
+                                        <td>Giáo viên chủ nhiệm:</td>
+                                        <td>{classShow.headerTeacherName}</td>
+                                    </tr>
+                                </tbody>
                             </Table>
                         </Col>
                     </Row>

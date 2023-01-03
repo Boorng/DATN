@@ -13,6 +13,10 @@ import { FaUserAlt } from "react-icons/fa";
 import styles from "./AddEditTeacher.module.scss";
 import { Modal } from "react-bootstrap";
 import { addTeacher, editTeacher } from "../../../../slices/teacherSlice";
+import {
+    postTeacherAPI,
+    updateTeacherAPI,
+} from "../../../../services/teacherService";
 
 const cx = classNames.bind(styles);
 
@@ -20,25 +24,24 @@ function AddEditTeacher({ action, teacherShow, show, showAdd }) {
     const dispatch = useDispatch();
 
     const [teacher, setTeacher] = useState({
-        Id: "",
-        Name: "",
-        Age: 0,
-        Gender: "Nam",
-        Ethnic: "kinh",
-        Dob: "1999-01-01",
-        Email: "",
-        Address: "",
-        PhoneNum: "",
-        Level: "1",
-        Status: "1",
-        Leader: false,
-        ViceLeader: false,
-        TeamId: "1",
+        id: "",
+        fullName: "",
+        age: 0,
+        gender: "Nam",
+        ethnic: "Kinh",
+        birthDay: "1999-01-01",
+        email: "",
+        address: "",
+        phone: "",
+        level: 1,
+        status: 1,
     });
 
     useEffect(() => {
         if (teacherShow) {
-            setTeacher(teacherShow);
+            const arr = teacherShow.birthDay.split("/");
+            const birthDay = `${arr[2]}-${arr[1]}-${arr[0]}`;
+            setTeacher({ ...teacherShow, birthDay: birthDay });
         }
     }, []);
 
@@ -47,13 +50,28 @@ function AddEditTeacher({ action, teacherShow, show, showAdd }) {
         const check = arr.filter((item) => item === 0 || item === "");
         if (check.length === 0) {
             if (teacherShow) {
-                dispatch(editTeacher(teacher));
-                toast.info("Cập nhật thông tin giáo viên thành công");
+                const response = await updateTeacherAPI(teacher);
+                if (response.message === "Success") {
+                    dispatch(editTeacher(teacher));
+                    toast.info("Cập nhật thông tin giáo viên thành công");
+                    showAdd();
+                } else {
+                    toast.error(
+                        "Cập nhật thông tin thất bại do thông tin nhập không đúng định dạng"
+                    );
+                }
             } else {
-                dispatch(addTeacher(teacher));
-                toast.success("Thêm giáo viên thành công");
+                const response = await postTeacherAPI(teacher);
+                if (response.message === "Success") {
+                    dispatch(addTeacher(teacher));
+                    toast.success("Thêm giáo viên thành công");
+                    showAdd();
+                } else {
+                    toast.error(
+                        "Thêm thông tin thất bại do nhập thông tin không đúng ddinh dạng hoặc ID đã tồn tại"
+                    );
+                }
             }
-            showAdd();
         } else {
             toast.error("Thêm thất bại do chưa nhập đủ thông tin");
         }
@@ -63,7 +81,10 @@ function AddEditTeacher({ action, teacherShow, show, showAdd }) {
         if (e.target.value.trim() !== "") {
             setTeacher({
                 ...teacher,
-                [e.target.name]: e.target.value,
+                [e.target.name]:
+                    e.target.name === "level"
+                        ? +e.target.value
+                        : e.target.value,
             });
         } else {
             setTeacher({
@@ -94,7 +115,7 @@ function AddEditTeacher({ action, teacherShow, show, showAdd }) {
                                 {teacher.avatar ? (
                                     <Image
                                         src={URL.createObjectURL(
-                                            teacher.Avatar
+                                            teacher.avatar
                                         )}
                                         alt="Avatar"
                                         className={cx("avatar-image")}
@@ -118,8 +139,8 @@ function AddEditTeacher({ action, teacherShow, show, showAdd }) {
                                                 placeholder="Nhập ID giáo viên"
                                                 required
                                                 onChange={handleOnChange}
-                                                value={teacher.Id}
-                                                name="Id"
+                                                value={teacher.id}
+                                                name="id"
                                             />
                                         </Form.Group>
                                     </Col>
@@ -137,8 +158,8 @@ function AddEditTeacher({ action, teacherShow, show, showAdd }) {
                                                 placeholder="Nhập tên giáo viên"
                                                 required
                                                 onChange={handleOnChange}
-                                                value={teacher.Name}
-                                                name="Name"
+                                                value={teacher.fullName}
+                                                name="fullName"
                                             />
                                         </Form.Group>
                                     </Col>
@@ -153,8 +174,8 @@ function AddEditTeacher({ action, teacherShow, show, showAdd }) {
                                             <Form.Select
                                                 className={cx("form-select")}
                                                 onChange={handleOnChange}
-                                                name="Gender"
-                                                value={teacher.Gender}
+                                                name="gender"
+                                                value={teacher.gender}
                                             >
                                                 <option value="Nam">Nam</option>
                                                 <option value="Nữ">Nữ</option>
@@ -175,8 +196,8 @@ function AddEditTeacher({ action, teacherShow, show, showAdd }) {
                                                 placeholder="Nhập tuổi"
                                                 required
                                                 onChange={handleOnChange}
-                                                value={teacher.Age}
-                                                name="Age"
+                                                value={teacher.age}
+                                                name="age"
                                             />
                                         </Form.Group>
                                     </Col>
@@ -193,10 +214,10 @@ function AddEditTeacher({ action, teacherShow, show, showAdd }) {
                                             <Form.Select
                                                 className={cx("form-select")}
                                                 onChange={handleOnChange}
-                                                name="Ethnic"
-                                                value={teacher.Ethnic}
+                                                name="ethnic"
+                                                value={teacher.ethnic}
                                             >
-                                                <option value="kinh">
+                                                <option value="Kinh">
                                                     Kinh
                                                 </option>
                                             </Form.Select>
@@ -214,8 +235,8 @@ function AddEditTeacher({ action, teacherShow, show, showAdd }) {
                                                 className={cx("form-control")}
                                                 type="date"
                                                 onChange={handleOnChange}
-                                                name="Dob"
-                                                value={teacher.Dob}
+                                                name="birthDay"
+                                                value={teacher.birthDay}
                                             />
                                         </Form.Group>
                                     </Col>
@@ -230,22 +251,22 @@ function AddEditTeacher({ action, teacherShow, show, showAdd }) {
                                             <Form.Select
                                                 className={cx("form-select")}
                                                 onChange={handleOnChange}
-                                                name="Level"
-                                                value={teacher.Level}
+                                                name="level"
+                                                value={teacher.level}
                                             >
-                                                <option value="1">
+                                                <option value={1}>
                                                     Cử nhân
                                                 </option>
-                                                <option value="2">
+                                                <option value={2}>
                                                     Thạc sĩ
                                                 </option>
-                                                <option value="3">
+                                                <option value={3}>
                                                     Tiến sĩ
                                                 </option>
-                                                <option value="4">
+                                                <option value={4}>
                                                     Phó giáo sư
                                                 </option>
-                                                <option value="5">
+                                                <option value={5}>
                                                     Giáo sư
                                                 </option>
                                             </Form.Select>
@@ -254,46 +275,22 @@ function AddEditTeacher({ action, teacherShow, show, showAdd }) {
                                 </Row>
 
                                 <Row>
-                                    <Col xs={7}>
-                                        <Form.Group className="mb-3">
-                                            <Form.Label
-                                                className={cx("form-label")}
-                                            >
-                                                Email
-                                            </Form.Label>
-                                            <Form.Control
-                                                className={cx("form-control")}
-                                                type="email"
-                                                placeholder="Nhập email"
-                                                required
-                                                onChange={handleOnChange}
-                                                name="Email"
-                                                value={teacher.Email}
-                                            />
-                                        </Form.Group>
-                                    </Col>
-                                    <Col>
-                                        <Form.Group>
-                                            <Form.Label
-                                                className={cx("form-label")}
-                                            >
-                                                Tình trạng làm việc
-                                            </Form.Label>
-                                            <Form.Select
-                                                className={cx("form-select")}
-                                                onChange={handleOnChange}
-                                                name="Status"
-                                                value={teacher.Status}
-                                            >
-                                                <option value="1">
-                                                    Đang làm
-                                                </option>
-                                                <option value="2">
-                                                    Nghỉ việc
-                                                </option>
-                                            </Form.Select>
-                                        </Form.Group>
-                                    </Col>
+                                    <Form.Group className="mb-3">
+                                        <Form.Label
+                                            className={cx("form-label")}
+                                        >
+                                            Email
+                                        </Form.Label>
+                                        <Form.Control
+                                            className={cx("form-control")}
+                                            type="email"
+                                            placeholder="Nhập email"
+                                            required
+                                            onChange={handleOnChange}
+                                            name="email"
+                                            value={teacher.email}
+                                        />
+                                    </Form.Group>
                                 </Row>
 
                                 <Form.Group className="mb-3">
@@ -306,55 +303,28 @@ function AddEditTeacher({ action, teacherShow, show, showAdd }) {
                                         placeholder="Nhập địa chỉ"
                                         required
                                         onChange={handleOnChange}
-                                        name="Address"
-                                        value={teacher.Address}
+                                        name="address"
+                                        value={teacher.address}
                                     />
                                 </Form.Group>
 
                                 <Row>
-                                    <Col xs={8}>
-                                        <Form.Group className="mb-3">
-                                            <Form.Label
-                                                className={cx("form-label")}
-                                            >
-                                                Số điện thoại
-                                            </Form.Label>
-                                            <Form.Control
-                                                className={cx("form-control")}
-                                                type="text"
-                                                placeholder="Nhập số điện thoại"
-                                                required
-                                                onChange={handleOnChange}
-                                                name="PhoneNum"
-                                                value={teacher.PhoneNum}
-                                            />
-                                        </Form.Group>
-                                    </Col>
-                                    <Col>
-                                        <Form.Group>
-                                            <Form.Label
-                                                className={cx("form-label")}
-                                            >
-                                                Tổ chuyên môn
-                                            </Form.Label>
-                                            <Form.Select
-                                                className={cx("form-select")}
-                                                onChange={handleOnChange}
-                                                name="TeamId"
-                                                value={teacher.TeamId}
-                                            >
-                                                <option value="1">
-                                                    Khoa học tự nhiên
-                                                </option>
-                                                <option value="2">
-                                                    Văn hóa xã hội
-                                                </option>
-                                                <option value="3">
-                                                    Thể dục thể thao
-                                                </option>
-                                            </Form.Select>
-                                        </Form.Group>
-                                    </Col>
+                                    <Form.Group className="mb-3">
+                                        <Form.Label
+                                            className={cx("form-label")}
+                                        >
+                                            Số điện thoại
+                                        </Form.Label>
+                                        <Form.Control
+                                            className={cx("form-control")}
+                                            type="text"
+                                            placeholder="Nhập số điện thoại"
+                                            required
+                                            onChange={handleOnChange}
+                                            name="phone"
+                                            value={teacher.phone}
+                                        />
+                                    </Form.Group>
                                 </Row>
                             </Col>
                         </Row>

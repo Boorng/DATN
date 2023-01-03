@@ -15,7 +15,7 @@ import { addStudent, editStudent } from "../../../../slices/studentSlice";
 import {
     postStudentAPI,
     updateStudentAPI,
-} from "../../../../services/getRequest";
+} from "../../../../services/studentService";
 import { Modal } from "react-bootstrap";
 
 const cx = classNames.bind(styles);

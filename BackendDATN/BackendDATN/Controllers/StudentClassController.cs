@@ -52,19 +52,6 @@ namespace BackendDATN.Controllers
             }
         }
 
-        [HttpGet("page/{pageIndex}")]
-        public async Task<IActionResult> GetByPage(int ClassId, string? search, int pageIndex = 1)
-        {
-            try
-            {
-                return Ok(await _studentClassServ.GetByPage(pageIndex, search, ClassId));
-            }
-            catch(Exception e)
-            {
-                return BadRequest(e.Message);
-            }
-        }
-
         [HttpPost]
         public async Task<IActionResult> Add(StudentClassModel studentClassModel)
         {

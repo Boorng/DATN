@@ -16,7 +16,7 @@ function FindTeacher({ handleSearch }) {
 
     useEffect(() => {
         handleSearch(debounce);
-    }, [debounce, handleSearch]);
+    }, [debounce]);
 
     const handleOnChangeSearch = (e) => {
         if (e.target.value.trim()) {

@@ -6,7 +6,7 @@ const routes = {
     information: "manage/information/:id",
     manageStudent: "/manage/student",
     manageTeacher: "/manage/teacher",
-    manageClass: "/manage/class",
+    manageClass: "/manage/class/grade/:gradeName",
     manageResult: "/manage/result/grade/:gradeName",
     manageTrainingResult: "/manage/training-result/grade/:gradeName",
     manageTrainingManagement: "/manage/training-management/grade/:gradeName",

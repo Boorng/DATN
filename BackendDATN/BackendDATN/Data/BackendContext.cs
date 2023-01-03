@@ -348,7 +348,6 @@ namespace BackendDATN.Data
                 entity.HasOne(d => d.Team)
                     .WithMany(p => p.Teachers)
                     .HasForeignKey(d => d.TeamId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Teacher_Team");
             });
 

@@ -4,7 +4,6 @@ import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
-import Offcanvas from "react-bootstrap/Offcanvas";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import { memo, useEffect, useState } from "react";
@@ -12,18 +11,35 @@ import { memo, useEffect, useState } from "react";
 import styles from "./AddEditClass.module.scss";
 import { addClass, editClass } from "../../../../slices/classSlice";
 import { Modal, ModalFooter } from "react-bootstrap";
+import { getTeacherAPI } from "../../../../services/teacherService";
+import {
+    postClassAPI,
+    updateClassAPI,
+} from "../../../../services/classService";
 
 const cx = classNames.bind(styles);
 
-function AddEditClass({ action, classShow, show, showAdd }) {
+function AddEditClass({ action, classShow, show, showAdd, gradeName }) {
     const dispatch = useDispatch();
 
     const [classes, setClasses] = useState({
-        Id: "",
-        Name: "",
-        Grade: "6",
-        SchoolYear: "",
+        name: "",
+        grade: gradeName,
+        academicYear: "",
+        headerTeacherId: "",
     });
+
+    const [listTeacher, setListTeacher] = useState([]);
+
+    const getTeacher = async () => {
+        const data = await getTeacherAPI();
+        console.log(data);
+        setListTeacher(data);
+    };
+
+    useEffect(() => {
+        getTeacher();
+    }, []);
 
     useEffect(() => {
         if (classShow) {
@@ -31,19 +47,33 @@ function AddEditClass({ action, classShow, show, showAdd }) {
         }
     }, [classShow]);
 
-    const handleOnClickTeacher = async () => {
-        console.log(classes);
+    const handleOnClickClass = async () => {
         const arr = Object.values(classes);
         const check = arr.filter((item) => item === 0 || item === "");
         if (check.length === 0) {
             if (classShow) {
-                dispatch(editClass(classes));
-                toast.info("Cập nhật thông tin lớp thành công");
+                const response = await updateClassAPI(classes);
+                if (response.message === "Success") {
+                    dispatch(editClass(classes));
+                    toast.info("Cập nhật thông tin lớp thành công");
+                    showAdd();
+                } else {
+                    toast.info(
+                        "Cập nhật thông tin lớp thất bại do nhập thông tin không hợp lệ"
+                    );
+                }
             } else {
-                dispatch(addClass(classes));
-                toast.success("Thêm lớp thành công");
+                const response = await postClassAPI(classes);
+                if (response === "Success") {
+                    dispatch(addClass(classes));
+                    toast.success("Thêm lớp thành công");
+                    showAdd();
+                } else {
+                    toast.error(
+                        "Thêm lớp thất bại do có thông tin nhập không hợp lệ"
+                    );
+                }
             }
-            showAdd();
         } else {
             toast.error("Thêm thất bại do chưa nhập đủ thông tin");
         }
@@ -82,25 +112,6 @@ function AddEditClass({ action, classShow, show, showAdd }) {
                         <Row className="mb-3">
                             <Row className="mb-3">
                                 <Col>
-                                    <Form.Group>
-                                        <Form.Label
-                                            className={cx("form-label")}
-                                        >
-                                            ID lớp
-                                        </Form.Label>
-                                        <Form.Control
-                                            className={cx("form-control")}
-                                            type="text"
-                                            placeholder="Nhập ID lớp"
-                                            required
-                                            onChange={handleOnChange}
-                                            value={classes.Id}
-                                            name="Id"
-                                        />
-                                    </Form.Group>
-                                </Col>
-
-                                <Col xs={6}>
                                     <Form.Group
                                         className={cx("manage-student-item-7")}
                                     >
@@ -115,13 +126,13 @@ function AddEditClass({ action, classShow, show, showAdd }) {
                                             placeholder="Nhập tên lớp"
                                             required
                                             onChange={handleOnChange}
-                                            value={classes.Name}
-                                            name="Name"
+                                            value={classes.name}
+                                            name="name"
                                         />
                                     </Form.Group>
                                 </Col>
 
-                                <Col xs={2}>
+                                <Col xs={4}>
                                     <Form.Group>
                                         <Form.Label
                                             className={cx("form-label")}
@@ -131,8 +142,9 @@ function AddEditClass({ action, classShow, show, showAdd }) {
                                         <Form.Select
                                             className={cx("form-select")}
                                             onChange={handleOnChange}
-                                            name="Grade"
-                                            value={classes.Grade}
+                                            name="grade"
+                                            value={classes.grade}
+                                            disabled
                                         >
                                             <option value="6">6</option>
                                             <option value="7">7</option>
@@ -143,26 +155,58 @@ function AddEditClass({ action, classShow, show, showAdd }) {
                                 </Col>
                             </Row>
 
-                            <Form.Group className="mb-3">
-                                <Form.Label className={cx("form-label")}>
-                                    Khóa học
-                                </Form.Label>
-                                <Form.Control
-                                    className={cx("form-control")}
-                                    type="text"
-                                    placeholder="Nhập khóa"
-                                    required
-                                    onChange={handleOnChange}
-                                    name="SchoolYear"
-                                    value={classes.SchoolYear}
-                                />
-                            </Form.Group>
+                            <Row>
+                                <Col>
+                                    <Form.Group>
+                                        <Form.Label
+                                            className={cx("form-label")}
+                                        >
+                                            Giáo viên chủ nhiệm
+                                        </Form.Label>
+                                        <Form.Select
+                                            className={cx("form-select")}
+                                            onChange={handleOnChange}
+                                            name="headerTeacherId"
+                                            value={classes.headerTeacherId}
+                                        >
+                                            <option>
+                                                --- Chọn giáo viên chủ nhiệm ---
+                                            </option>
+                                            {listTeacher.map((item) => {
+                                                return (
+                                                    <option value={item.id}>
+                                                        {item.fullName}
+                                                    </option>
+                                                );
+                                            })}
+                                        </Form.Select>
+                                    </Form.Group>
+                                </Col>
+                                <Col>
+                                    <Form.Group className="mb-3">
+                                        <Form.Label
+                                            className={cx("form-label")}
+                                        >
+                                            Năm học
+                                        </Form.Label>
+                                        <Form.Control
+                                            className={cx("form-control")}
+                                            type="text"
+                                            placeholder="Nhập năm học"
+                                            required
+                                            onChange={handleOnChange}
+                                            name="academicYear"
+                                            value={classes.academicYear}
+                                        />
+                                    </Form.Group>
+                                </Col>
+                            </Row>
                         </Row>
                     </Form>
                 </Modal.Body>
                 <ModalFooter>
                     <Button
-                        onClick={handleOnClickTeacher}
+                        onClick={handleOnClickClass}
                         className={cx("button-add-class")}
                     >
                         {action === "add" ? "Thêm" : "Sửa"}

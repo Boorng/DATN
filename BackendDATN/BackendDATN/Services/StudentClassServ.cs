@@ -98,45 +98,6 @@ namespace BackendDATN.Services
             }
         }
 
-        public async Task<StudentClassResponse> GetByPage(int page, string? search, int ClassId)
-        {
-            var students = await _context.Students.ToListAsync();
-            var studentclasses = await _context.StudentClasses.ToListAsync();
-            var dataStudent = students.AsQueryable();
-            var dataStudentClass = studentclasses.AsQueryable();
-
-            var data = dataStudentClass
-                .Where(sc => sc.ClassId == ClassId)
-                .Join(dataStudent, sc => sc.StudentId, s => s.Id, (sc, s) => s);
-
-            if(data != null)
-            {
-                if (!string.IsNullOrEmpty(search))
-                {
-                    data = data.Where(s => s.FullName.Contains(search) || s.Id.Contains(search));
-                }
-                var result = PaginatedList<Student>.Create(data, page, PAGE_SIZE);
-
-                var res = data.ToList();
-
-                return new StudentClassResponse
-                {
-                    Data = _mapper.Map<List<StudentVM>>(res),
-                    HasPreviousPage = result.HasPreviousPage,
-                    HasNextPage = result.HasNextPage
-                };
-            }
-            else
-            {
-                return new StudentClassResponse
-                {
-                    Data = null,
-                    HasPreviousPage = false,
-                    HasNextPage = false
-                };
-            } 
-        }
-
         public async Task UpdateAsync(StudentClassVM studentClassVM)
         {
             var data = await _context.StudentClasses.FindAsync(studentClassVM.Id);

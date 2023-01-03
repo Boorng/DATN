@@ -3,7 +3,7 @@ import { Fragment } from "react";
 import { Button, Modal, Table } from "react-bootstrap";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
-import { postListStudentAPI } from "../../../../services/getRequest";
+import { postListStudentAPI } from "../../../../services/studentService";
 import { addListStudent } from "../../../../slices/studentSlice";
 
 import styles from "./AddListStudent.module.scss";
@@ -20,7 +20,7 @@ function AddListStudent({ show, setShow, listStudent, fileName }) {
             toast.success("Thêm học sinh thành công");
             setShow(false);
         } else {
-            toast.success("Thêm học sinh thất bại");
+            toast.error("Thêm học sinh thất bại");
         }
     };
     return (

@@ -28,19 +28,6 @@ namespace BackendDATN.Controllers
             }
         }
 
-        [HttpGet("page/{pageNum}")]
-        public async Task<IActionResult> GetByPage([FromRoute] int pageNum = 1, [FromQuery] string? search = null)
-        {
-            try
-            {
-                return Ok(await _accountServ.GetByPageAsync(pageNum, search));
-            }
-            catch(Exception e)
-            {
-                return BadRequest(e.Message);
-            }
-        }
-
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById([FromRoute] Guid id)
         {

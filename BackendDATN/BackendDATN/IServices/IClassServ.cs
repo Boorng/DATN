@@ -1,17 +1,14 @@
 ﻿using BackendDATN.Data.Response;
+using BackendDATN.Data.VM.Class;
 using BackendDATN.Entity.VM.Class;
 
 namespace BackendDATN.IServices
 {
     public interface IClassServ
     {
-        List<ClassVM> GetAll();
+        Task<List<ClassRepModel>> GetAll(string? search, int grade);
 
-        Task<ClassResponse> GetByPageAsync(int page, int grade, string? search);
-
-        ClassVM? GetById(int id);
-
-        Task<ClassVM> AddAsync(ClassModel classModel);
+        Task AddAsync(ClassModel classModel);
 
         Task UpdateAsync(ClassVM classVM);
 

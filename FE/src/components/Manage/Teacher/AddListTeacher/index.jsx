@@ -3,6 +3,7 @@ import { Fragment } from "react";
 import { Button, Modal, Table } from "react-bootstrap";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
+import { postListTeacherAPI } from "../../../../services/teacherService";
 import { addListTeacher } from "../../../../slices/teacherSlice";
 
 import styles from "./AddListTeacher.module.scss";
@@ -12,10 +13,15 @@ const cx = classNames.bind(styles);
 function AddListTeacher({ show, setShow, listTeacher, fileName }) {
     const dispatch = useDispatch();
 
-    const hanelAddList = () => {
-        dispatch(addListTeacher(listTeacher));
-        toast.success("Thêm giáo viên thành công");
-        setShow(false);
+    const hanelAddList = async () => {
+        const status = await postListTeacherAPI(listTeacher);
+        if (status.message === "Success") {
+            dispatch(addListTeacher(listTeacher));
+            toast.success("Thêm giáo viên thành công");
+            setShow(false);
+        } else {
+            toast.error("Thêm giáo viên thất bại");
+        }
     };
     return (
         <>
@@ -48,80 +54,50 @@ function AddListTeacher({ show, setShow, listTeacher, fileName }) {
                                 <th className={cx("table-head")}>
                                     Số điện thoại
                                 </th>
-                                <th className={cx("table-head")}>Chức danh</th>
-                                <th className={cx("table-head")}>
-                                    Tinh trạng làm việc
-                                </th>
-                                <th className={cx("table-head")}>
-                                    Tổ chuyên môn
-                                </th>
+                                <th className={cx("table-head")}>Bằng cấp</th>
                             </tr>
                         </thead>
                         <tbody>
                             {listTeacher.map((tc) => {
                                 return (
-                                    <Fragment key={tc.Id}>
-                                        <tr>
-                                            <td
-                                                className={cx("table-document")}
-                                            >
-                                                {tc.Id}
-                                            </td>
-                                            <td
-                                                className={cx("table-document")}
-                                            >
-                                                {tc.Name}
-                                            </td>
-                                            <td
-                                                className={cx("table-document")}
-                                            >
-                                                {tc.Age}
-                                            </td>
-                                            <td
-                                                className={cx("table-document")}
-                                            >
-                                                {tc.Gender}
-                                            </td>
-                                            <td
-                                                className={cx("table-document")}
-                                            >
-                                                {tc.Dob}
-                                            </td>
-                                            <td
-                                                className={cx("table-document")}
-                                            >
-                                                {tc.Email}
-                                            </td>
-                                            <td
-                                                className={cx("table-document")}
-                                            >
-                                                {tc.Address}
-                                            </td>
-                                            <td
-                                                className={cx("table-document")}
-                                            >
-                                                {tc.PhoneNum}
-                                            </td>
+                                    <tr key={tc.id}>
+                                        <td className={cx("table-document")}>
+                                            {tc.id}
+                                        </td>
+                                        <td className={cx("table-document")}>
+                                            {tc.fullName}
+                                        </td>
+                                        <td className={cx("table-document")}>
+                                            {tc.age}
+                                        </td>
+                                        <td className={cx("table-document")}>
+                                            {tc.gender}
+                                        </td>
+                                        <td className={cx("table-document")}>
+                                            {tc.birthDay}
+                                        </td>
+                                        <td className={cx("table-document")}>
+                                            {tc.email}
+                                        </td>
+                                        <td className={cx("table-document")}>
+                                            {tc.address}
+                                        </td>
+                                        <td className={cx("table-document")}>
+                                            {tc.phone}
+                                        </td>
 
-                                            <td
-                                                className={cx("table-document")}
-                                            >
-                                                {tc.Level}
-                                            </td>
-                                            <td
-                                                className={cx("table-document")}
-                                            >
-                                                {tc.Status === "1"
-                                                    ? "Đang làm"
-                                                    : "Nghỉ làm"}
-                                            </td>
-                                            <td
-                                                className={cx("table-document")}
-                                            >
-                                                {tc.TeamId}
-                                            </td>
-                                        </tr>
-                                    </Fragment>
+                                        <td className={cx("table-document")}>
+                                            {tc.level === 1
+                                                ? "Cử nhân"
+                                                : tc.level === 2
+                                                ? "Thạc sĩ"
+                                                : tc.level === 3
+                                                ? "Tiến sĩ"
+                                                : tc.level === 4
+                                                ? "Phó giáo sư"
+                                                : "Giáo sư"}
+                                        </td>
+                                    </tr>
                                 );
                             })}
                         </tbody>

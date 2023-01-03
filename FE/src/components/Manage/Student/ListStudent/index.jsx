@@ -2,7 +2,7 @@ import * as classNames from "classnames/bind";
 import { useDispatch, useSelector } from "react-redux";
 import Table from "react-bootstrap/Table";
 import { useEffect, useState } from "react";
-import { Button, Modal, ModalBody } from "react-bootstrap";
+import { Button, Modal } from "react-bootstrap";
 import { toast } from "react-toastify";
 import { utils, writeFile } from "xlsx";
 
@@ -17,7 +17,7 @@ import DetailStudent from "../DetailStudent";
 import {
     getStudentAPI,
     updateStatusStudentAPI,
-} from "../../../../services/getRequest";
+} from "../../../../services/studentService";
 
 const cx = classNames.bind(styles);
 
@@ -35,10 +35,11 @@ function ListStudent() {
     const dispatch = useDispatch();
 
     const getStudent = async (search) => {
-        const data = await getStudentAPI(search);
-        console.log(data);
-        dispatch(resetStudent(data));
+        const dataAPI = await getStudentAPI(search);
+        console.log(dataAPI);
+        dispatch(resetStudent(dataAPI));
     };
+
     useEffect(() => {
         getStudent();
     }, []);
@@ -97,7 +98,7 @@ function ListStudent() {
             skipHeader: true,
         });
         utils.book_append_sheet(wb, ws, "Report");
-        writeFile(wb, "Student Report.xlsx");
+        writeFile(wb, "StudentReport.xlsx");
     };
 
     const handleUpdateStatus = async () => {

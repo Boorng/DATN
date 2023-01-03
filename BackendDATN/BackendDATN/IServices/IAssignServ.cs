@@ -7,8 +7,6 @@ namespace BackendDATN.IServices
     {
         Task<List<AssignVM>> GetAllAsync();
 
-        Task<AssignResponse> GetByPageAsync(int grade, int subjectId, int semesterId, string? search, int page = 1);
-
         Task<AssignVM?> GetByIdAsync(Guid id);
 
         Task<AssignVM> AddAsync(AssignModel assignModel);

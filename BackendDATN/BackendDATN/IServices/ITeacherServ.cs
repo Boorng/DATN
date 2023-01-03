@@ -5,17 +5,15 @@ namespace BackendDATN.IServices
 {
     public interface ITeacherServ
     {
-        Task<List<TeacherVM>> GetAllAsync();
+        Task<List<TeacherVM>> GetAllAsync(string? search);
 
-        Task<TeacherResponse> GetByPageAsync(int page, string? search);
+        Task AddAsync(TeacherAdd teacherAdd);
 
-        Task<TeacherVM?> GetByIdAsync(string id);
+        Task AddListAsync(List<TeacherAdd> teacherAdds);
 
-        Task<TeacherVM> AddAsync(TeacherAdd teacherAdd);
+        Task UpdateAsync(TeacherVM teacherVM);
 
-        Task<List<TeacherVM>> AddListAsync(List<TeacherAdd> teacherAdds);
-
-        Task UpdateAsync(string id, TeacherModel teacherModel);
+        Task UpdateStatus(string id, int status);
 
         Task DeleteAsync(string id);
 

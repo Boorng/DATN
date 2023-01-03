@@ -63,46 +63,6 @@ namespace BackendDATN.Services
             
         }
 
-        public async Task<AssignResponse> GetByPageAsync(int grade, int subjectId, int semesterId, string? search, int page = 1)
-        {
-            var assigns = await _context.Assigns.ToListAsync();
-            var classes = await _context.Classes.ToListAsync();
-            var dataAssign = assigns.AsQueryable();
-            var dataClass = classes.AsQueryable();
-
-            var data = dataClass.Where(c => c.Grade == grade)
-                                .Join(dataAssign.Where(ass => ass.SubjectId == subjectId && ass.SemesterId == semesterId),
-                                      c => c.Id,
-                                      ass => ass.ClassId,
-                                      (c, ass) => new AssignRepModel
-                                      {
-                                          Id = ass.Id,
-                                          ClassId = c.Id,
-                                          ClassName = c.Name,
-                                          TeacherId = ass.TeacherId,
-                                          TeacherName = _context.Teachers.Find(ass.TeacherId)!.FullName,
-                                          SubjectId = ass.SubjectId,
-                                          SubjectName = _context.Subjects.Find(ass.SubjectId)!.Name,
-                                          SemesterId = ass.SemesterId,
-                                          SemesterName = _context.Semesters.Find(ass.SemesterId)!.Name
-                                      });
-            if (!string.IsNullOrEmpty(search))
-            {
-                data = data.Where(da => da.ClassName.Contains(search) || da.TeacherName.Contains(search));
-            }
-            var result = PaginatedList<AssignRepModel>.Create(data, page, PAGE_SIZE);
-
-            var res = result.ToList();
-
-            return new AssignResponse
-            {
-                Data = res,
-                HasPreviousPage = result.HasPreviousPage,
-                HasNextPage = result.HasNextPage,
-            };
-
-        }
-
         public async Task UpdateAsync(AssignVM assignVM)
         {
             var data = await _context.Assigns.FindAsync(assignVM.Id);

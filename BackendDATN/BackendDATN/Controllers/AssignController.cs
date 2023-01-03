@@ -50,19 +50,6 @@ namespace BackendDATN.Controllers
             }
         }
 
-        [HttpGet("page/{pageIndex}")]
-        public async Task<IActionResult> GetByPage(int grade, int subjectId, int semesterId, string? search, int pageIndex = 1)
-        {
-            try
-            {
-                return Ok(await _assignServ.GetByPageAsync(grade, subjectId, semesterId, search, pageIndex));
-            }
-            catch(Exception e)
-            {
-                return BadRequest(e.Message);
-            }
-        }
-
         [HttpPost]
         public async Task<IActionResult> Add(AssignModel assignModel)
         {

@@ -16,7 +16,7 @@
 
         public string Phone { get; set; } = null!;
 
-        public DateTime BirthDay { get; set; }
+        public string BirthDay { get; set; }
 
         public string? Avatar { get; set; }
 
@@ -28,6 +28,6 @@
 
         public bool ViceLeader { get; set; }
 
-        public int TeamId { get; set; }
+        public int? TeamId { get; set; }
     }
 }

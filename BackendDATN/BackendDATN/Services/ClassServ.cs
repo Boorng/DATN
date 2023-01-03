@@ -6,6 +6,7 @@ using BackendDATN.Entity.VM.Class;
 using BackendDATN.Helper;
 using BackendDATN.IServices;
 using Microsoft.EntityFrameworkCore;
+using System.Diagnostics;
 
 namespace BackendDATN.Services
 {
@@ -23,7 +24,7 @@ namespace BackendDATN.Services
             _mapper = mapper;
         }
 
-        public async Task<ClassVM> AddAsync(ClassModel classModel)
+        public async Task AddAsync(ClassModel classModel)
         {
             var data = new Class
             {
@@ -35,8 +36,6 @@ namespace BackendDATN.Services
 
             await _context.AddAsync(data);
             await _context.SaveChangesAsync();
-
-            return _mapper.Map<ClassVM>(data);
         }
 
         public async Task DeleteAsync(int id)
@@ -50,40 +49,7 @@ namespace BackendDATN.Services
             }   
         }
 
-        public List<ClassVM> GetAll()
-        {
-            return _context.Classes.Select(c => new ClassVM
-            {
-                Id = c.Id,
-                Name = c.Name,
-                AcademicYear = c.AcademicYear,
-                Grade = c.Grade,
-                HeaderTeacherId = c.HeaderTeacherId
-
-            }).ToList();
-        }
-
-        public ClassVM? GetById(int id)
-        {
-            var data = _context.Classes.SingleOrDefault(c => c.Id == id);
-            if (data != null)
-            {
-                return new ClassVM
-                {
-                    Id = data.Id,
-                    Name = data.Name,
-                    AcademicYear = data.AcademicYear,
-                    Grade = data.Grade,
-                    HeaderTeacherId = data.HeaderTeacherId
-                };
-            }
-            else
-            {
-                return null;
-            }
-        }
-
-        public async Task<ClassResponse> GetByPageAsync(int page, int grade, string? search)
+        public async Task<List<ClassRepModel>> GetAll(string? search, int grade)
         {
             var classes = await _context.Classes.ToListAsync();
             var studentClasses = await _context.StudentClasses.ToListAsync();
@@ -106,18 +72,8 @@ namespace BackendDATN.Services
                 data = data.Where(st => st.Name.Contains(search));
             }
 
-            var result = PaginatedList<ClassRepModel>.Create(data, page, PAGE_SIZE);
+            return data.ToList();
 
-            var res = result.ToList();
-
-            ClassResponse classResponse = new ClassResponse
-            {
-                Data = res,
-                HasPreviousPage = result.HasPreviousPage,
-                HasNextPage = result.HasNextPage
-            };
-
-            return classResponse;
         }
 
         public async Task UpdateAsync(ClassVM classVM)
@@ -128,7 +84,6 @@ namespace BackendDATN.Services
             {
                 data.Name = classVM.Name;
                 data.AcademicYear = classVM.AcademicYear;
-                data.Grade = classVM.Grade;
                 data.HeaderTeacherId = classVM.HeaderTeacherId;
 
                 await _context.SaveChangesAsync();

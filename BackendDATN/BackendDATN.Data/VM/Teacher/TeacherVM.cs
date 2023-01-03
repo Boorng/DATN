@@ -9,5 +9,7 @@ namespace BackendDATN.Entity.VM.Teacher
     public class TeacherVM : TeacherAdd
     {
         public Guid AccountId { get; set; }
+
+        public string? TeamName { get; set; }
     }
 }
