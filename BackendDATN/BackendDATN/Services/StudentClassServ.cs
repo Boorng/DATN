@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using BackendDATN.Data;
 using BackendDATN.Data.Response;
+using BackendDATN.Data.VM.StudentClass;
 using BackendDATN.Entity.VM.Student;
 using BackendDATN.Entity.VM.StudentClass;
 using BackendDATN.Helper;
@@ -23,7 +24,7 @@ namespace BackendDATN.Services
             _mapper = mapper;
         }
 
-        public async Task<StudentClassVM> AddAsync(StudentClassModel studentClassModel)
+        public async Task AddAsync(StudentClassModel studentClassModel)
         {
             var data = new StudentClass
             {
@@ -33,11 +34,9 @@ namespace BackendDATN.Services
 
             await _context.AddAsync(data);
             await _context.SaveChangesAsync();
-
-            return _mapper.Map<StudentClassVM>(data);
         }
 
-        public async Task<List<StudentClassVM>> AddListAsync(List<StudentClassModel> studentClassModels)
+        public async Task AddListAsync(List<StudentClassModel> studentClassModels)
         {
             List<StudentClass> datas = new List<StudentClass>();
             for(int i = 0; i < studentClassModels.Count; i++)
@@ -53,8 +52,6 @@ namespace BackendDATN.Services
 
             await _context.AddRangeAsync(datas);
             await _context.SaveChangesAsync();
-
-            return _mapper.Map<List<StudentClassVM>>(datas);
         }
  
 
@@ -69,33 +66,30 @@ namespace BackendDATN.Services
             }
         }
 
-        public List<StudentClassVM> GetAll()
+        public async Task<List<StudentClassRepModel>> GetAll(int classId, string? search = null)
         {
-            return _context.StudentClasses.Select(sc => new StudentClassVM
-            {
-                Id = sc.Id,
-                ClassId = sc.ClassId,
-                StudentId = sc.StudentId
-            }).ToList();
-        }
+            var studentClasses = await _context.StudentClasses.ToListAsync();
+            var students = await _context.Students.ToListAsync();
 
-        public StudentClassVM? GetById(int id)
-        {
-            var data = _context.StudentClasses.SingleOrDefault(sc => sc.Id == id);
+            var dataSc = studentClasses.AsQueryable();
+            var dataS = students.AsQueryable();
 
-            if(data != null)
+            var data = dataSc.Where(sc => sc.ClassId == classId)
+                .Join(dataS, sc => sc.StudentId, s => s.Id, (sc, s) => new StudentClassRepModel
+                    {
+                        Id = sc.Id,
+                        ClassId = sc.ClassId,
+                        StudentId = sc.StudentId,
+                        StudentName = s.FullName,
+                        StudentPhone = s.Phone
+                    });
+
+            if(!string.IsNullOrEmpty(search))
             {
-                return new StudentClassVM
-                {
-                    Id = data.Id,
-                    ClassId = data.ClassId,
-                    StudentId = data.StudentId
-                };
+                data = data.Where(sc => sc.StudentName.Contains(search));
             }
-            else
-            {
-                return null;
-            }
+
+            return data.ToList();
         }
 
         public async Task UpdateAsync(StudentClassVM studentClassVM)

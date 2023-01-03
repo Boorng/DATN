@@ -69,7 +69,7 @@ namespace BackendDATN.Services
 
             if (!string.IsNullOrEmpty(search))
             {
-                data = data.Where(st => st.Name.Contains(search));
+                data = data.Where(st => st.AcademicYear.Contains(search));
             }
 
             return data.ToList();

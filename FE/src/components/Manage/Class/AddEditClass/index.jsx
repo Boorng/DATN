@@ -27,13 +27,13 @@ function AddEditClass({ action, classShow, show, showAdd, gradeName }) {
         grade: gradeName,
         academicYear: "",
         headerTeacherId: "",
+        countStudent: 0,
     });
 
     const [listTeacher, setListTeacher] = useState([]);
 
     const getTeacher = async () => {
         const data = await getTeacherAPI();
-        console.log(data);
         setListTeacher(data);
     };
 
@@ -49,7 +49,7 @@ function AddEditClass({ action, classShow, show, showAdd, gradeName }) {
 
     const handleOnClickClass = async () => {
         const arr = Object.values(classes);
-        const check = arr.filter((item) => item === 0 || item === "");
+        const check = arr.filter((item) => item === "");
         if (check.length === 0) {
             if (classShow) {
                 const response = await updateClassAPI(classes);
@@ -64,7 +64,7 @@ function AddEditClass({ action, classShow, show, showAdd, gradeName }) {
                 }
             } else {
                 const response = await postClassAPI(classes);
-                if (response === "Success") {
+                if (response.message === "Success") {
                     dispatch(addClass(classes));
                     toast.success("Thêm lớp thành công");
                     showAdd();
@@ -81,10 +81,20 @@ function AddEditClass({ action, classShow, show, showAdd, gradeName }) {
 
     const handleOnChange = (e) => {
         if (e.target.value.trim() !== "") {
-            setClasses({
-                ...classes,
-                [e.target.name]: e.target.value,
-            });
+            if (e.target.name === "headerTeacherId") {
+                setClasses({
+                    ...classes,
+                    [e.target.name]: e.target.value,
+                    headerTeacherName: listTeacher.find(
+                        (tc) => tc.id === e.target.value
+                    ).fullName,
+                });
+            } else {
+                setClasses({
+                    ...classes,
+                    [e.target.name]: e.target.value,
+                });
+            }
         } else {
             setClasses({
                 ...classes,
@@ -169,7 +179,7 @@ function AddEditClass({ action, classShow, show, showAdd, gradeName }) {
                                             name="headerTeacherId"
                                             value={classes.headerTeacherId}
                                         >
-                                            <option>
+                                            <option value="">
                                                 --- Chọn giáo viên chủ nhiệm ---
                                             </option>
                                             {listTeacher.map((item) => {

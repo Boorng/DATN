@@ -51,19 +51,12 @@ namespace BackendDATN.Controllers
             }
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, ClassModel classModel)
+        [HttpPut]
+        public async Task<IActionResult> Update(ClassVM classVM)
         {
             try
             { 
-                await _classServ.UpdateAsync(new ClassVM
-                {
-                    Id = id,
-                    Name = classModel.Name,
-                    AcademicYear = classModel.AcademicYear,
-                    Grade = classModel.Grade,
-                    HeaderTeacherId = classModel.HeaderTeacherId,
-                });
+                await _classServ.UpdateAsync(classVM);
 
                 return Ok(new MessageResponse
                 {

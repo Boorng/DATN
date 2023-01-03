@@ -1,17 +1,16 @@
 ﻿using BackendDATN.Data.Response;
+using BackendDATN.Data.VM.StudentClass;
 using BackendDATN.Entity.VM.StudentClass;
 
 namespace BackendDATN.IServices
 {
     public interface IStudentClassServ
     {
-        List<StudentClassVM> GetAll();
+        Task<List<StudentClassRepModel>> GetAll(int classId, string? search = null);
 
-        StudentClassVM? GetById(int id);
+        Task AddAsync(StudentClassModel studentClassModel);
 
-        Task<StudentClassVM> AddAsync(StudentClassModel studentClassModel);
-
-        Task<List<StudentClassVM>> AddListAsync(List<StudentClassModel> studentClassModels);
+        Task AddListAsync(List<StudentClassModel> studentClassModels);
 
         Task UpdateAsync(StudentClassVM studentClassVM);
 

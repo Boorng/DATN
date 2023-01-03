@@ -33,7 +33,7 @@ function FindClass({ handleSearch }) {
                     <GoSearch className={cx("find-icon")} />
                 </InputGroup.Text>
                 <Form.Control
-                    placeholder="Nhập tên lớp cần tìm kiếm"
+                    placeholder="Nhập năm học cần tìm kiếm"
                     value={search}
                     onChange={handleOnChangeSearch}
                     className={cx("input-search")}

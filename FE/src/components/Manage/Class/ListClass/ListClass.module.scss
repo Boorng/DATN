@@ -26,5 +26,32 @@
         .button {
             font-size: 1.4rem;
         }
+
+        .button-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #ffc107;
+            color: white;
+            font-size: 1.4rem;
+            border-radius: 5px;
+            width: 140px;
+        }
+    }
+}
+
+.modal {
+    .modal-title {
+        font-size: 1.8rem;
+        font-weight: 600;
+    }
+
+    .modal-content {
+        font-size: 1.6rem;
+    }
+
+    .button-confirm,
+    .button-back {
+        font-size: 1.6rem;
     }
 }

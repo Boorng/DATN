@@ -18,6 +18,7 @@ import {
     getTeacherAPI,
     updateStatusTeacherAPI,
 } from "../../../../services/teacherService";
+
 const cx = classNames.bind(styles);
 
 function ListTeacher() {
@@ -209,7 +210,6 @@ function ListTeacher() {
 
                                     {tea.status === 1 && (
                                         <>
-                                            {" "}
                                             <Button
                                                 onClick={() =>
                                                     handleConfirmUpdate(tea.id)
@@ -262,7 +262,8 @@ function ListTeacher() {
                     </Modal.Title>
                 </Modal.Header>
                 <Modal.Body className={cx("modal-content")}>
-                    Bạn có chắc chắn muốn cho giáo viên nghỉ việc không?
+                    Bạn có chắc chắn muốn cập nhật trạng thái giáo viên thành
+                    nghỉ việc không?
                 </Modal.Body>
                 <Modal.Footer>
                     <Button
