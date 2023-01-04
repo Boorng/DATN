@@ -1,10 +1,7 @@
 ﻿using AutoMapper;
 using BackendDATN.Data;
-using BackendDATN.Data.Response;
 using BackendDATN.Data.VM.StudentClass;
-using BackendDATN.Entity.VM.Student;
 using BackendDATN.Entity.VM.StudentClass;
-using BackendDATN.Helper;
 using BackendDATN.IServices;
 using Microsoft.EntityFrameworkCore;
 
@@ -39,7 +36,7 @@ namespace BackendDATN.Services
         public async Task AddListAsync(List<StudentClassModel> studentClassModels)
         {
             List<StudentClass> datas = new List<StudentClass>();
-            for(int i = 0; i < studentClassModels.Count; i++)
+            for (int i = 0; i < studentClassModels.Count; i++)
             {
                 var data = new StudentClass
                 {
@@ -53,15 +50,15 @@ namespace BackendDATN.Services
             await _context.AddRangeAsync(datas);
             await _context.SaveChangesAsync();
         }
- 
+
 
         public async Task DeleteAsync(int id)
         {
             var data = await _context.StudentClasses.FindAsync(id);
-            
-            if(data != null)
+
+            if (data != null)
             {
-                _context.Remove(id);
+                _context.Remove(data);
                 await _context.SaveChangesAsync();
             }
         }
@@ -76,31 +73,44 @@ namespace BackendDATN.Services
 
             var data = dataSc.Where(sc => sc.ClassId == classId)
                 .Join(dataS, sc => sc.StudentId, s => s.Id, (sc, s) => new StudentClassRepModel
-                    {
-                        Id = sc.Id,
-                        ClassId = sc.ClassId,
-                        StudentId = sc.StudentId,
-                        StudentName = s.FullName,
-                        StudentPhone = s.Phone
-                    });
+                {
+                    Id = sc.Id,
+                    ClassId = sc.ClassId,
+                    StudentId = sc.StudentId,
+                    FullName = s.FullName,
+                    Age = s.Age,
+                    Gender = s.Gender,
+                    Phone = s.Phone,
+                    Ethnic = s.Ethnic,
+                    Address = s.Address,
+                    Avatar = s.Avatar,
+                    BirthDay = s.Birthday.ToString("dd/MM/yyyy"),
+                    FatherName = s.FatherName,
+                    FatherCareer = s.FatherCareer,
+                    FatherPhone = s.FatherPhone,
+                    MotherName = s.MotherName,
+                    MotherCareer = s.MotherCareer,
+                    MotherPhone = s.MotherPhone,
+                    Status = s.Status,
+                    Email = _context.Accounts.Find(s.AccountId)!.Email,
+                });
 
-            if(!string.IsNullOrEmpty(search))
+            if (!string.IsNullOrEmpty(search))
             {
-                data = data.Where(sc => sc.StudentName.Contains(search));
+                data = data.Where(sc => sc.FullName.ToLower().Contains(search.ToLower()));
             }
 
             return data.ToList();
         }
 
-        public async Task UpdateAsync(StudentClassVM studentClassVM)
+        public async Task UpdateAsync(int id, int classId)
         {
-            var data = await _context.StudentClasses.FindAsync(studentClassVM.Id);
+            var data = await _context.StudentClasses.FindAsync(id);
 
-            if(data != null)
+            if (data != null)
             {
-                data.ClassId = studentClassVM.ClassId;
-                data.StudentId = studentClassVM.StudentId;
-                _context.SaveChanges();
+                data.ClassId = classId;
+                await _context.SaveChangesAsync();
             }
         }
     }

@@ -1,0 +1,50 @@
+.list-student-class {
+    margin-top: 20px;
+    width: 100%;
+
+    .button-export {
+        font-size: 1.6rem;
+        width: 100px;
+        height: 30px;
+        margin: 5px 0;
+    }
+
+    .table-head {
+        font-size: 1.5rem;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+
+    .table-document {
+        font-size: 1.4rem;
+    }
+
+    .list-button {
+        display: flex;
+        column-gap: 10px;
+
+        .button {
+            font-size: 1.4rem;
+        }
+    }
+}
+
+.modal {
+    .modal-title {
+        font-size: 2rem;
+        font-weight: 600;
+    }
+
+    .modal-content {
+        font-size: 1.6rem;
+
+        .form-select {
+            font-size: 1.6rem;
+        }
+    }
+
+    .button-confirm,
+    .button-back {
+        font-size: 1.6rem;
+    }
+}

@@ -3,10 +3,11 @@ import "react-toastify/dist/ReactToastify.css";
 
 import styles from "./Teacher.module.scss";
 import AddEditTeacher from "./AddEditTeacher";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ListTeacher from "./ListTeacher";
 import { read, utils } from "xlsx";
 import AddListTeacher from "./AddListTeacher";
+import { getTeacherAPI } from "../../../services/teacherService";
 
 const cx = classNames.bind(styles);
 
@@ -15,6 +16,16 @@ function Teacher() {
     const [fileName, setFileName] = useState("");
     const [showAddList, setShowAddList] = useState(false);
     const [listAdd, setListAdd] = useState([]);
+    const [listTeacher, setListTeacher] = useState([]);
+
+    const getTeacher = async (search) => {
+        const dataAPI = await getTeacherAPI(search);
+        setListTeacher(dataAPI);
+    };
+
+    useEffect(() => {
+        getTeacher();
+    }, []);
 
     const handleClickShowAddForm = () => {
         setIsShow(!isShow);
@@ -98,8 +109,9 @@ function Teacher() {
                     <AddListTeacher
                         show={showAddList}
                         setShow={setShowAddList}
-                        listTeacher={listAdd}
+                        listTeacherAdd={listAdd}
                         fileName={fileName}
+                        getTeacher={getTeacher}
                     />
                 </div>
                 {isShow && (
@@ -107,9 +119,13 @@ function Teacher() {
                         action="add"
                         show={isShow}
                         showAdd={handleClickShowAddForm}
+                        getTeacher={getTeacher}
                     />
                 )}
-                <ListTeacher />
+                <ListTeacher
+                    listTeacher={listTeacher}
+                    getTeacher={getTeacher}
+                />
             </div>
         </div>
     );

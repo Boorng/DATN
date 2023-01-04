@@ -10,12 +10,18 @@ export const getStudentClassAPI = (classId, search) => {
     });
 };
 
-export const postListStudentClassAPI = (classs) => {
-    return instance.post(`${END_POINT.Class}`, classs);
+export const postListStudentClassAPI = (classList) => {
+    return instance.post(`${END_POINT.StudentClass}/add-list`, classList);
 };
 
-export const updateStudentClassAPI = (classEdit) => {
-    return instance.put(`${END_POINT.Class}`, classEdit);
+export const updateStudentClassAPI = (idUpdate, classIdChange) => {
+    return instance.put(
+        `${END_POINT.StudentClass}/${idUpdate}/${classIdChange}`
+    );
+};
+
+export const deleteStudentClassAPI = (id) => {
+    return instance.delete(`${END_POINT.StudentClass}/${id}`);
 };
 
 /* ---- */

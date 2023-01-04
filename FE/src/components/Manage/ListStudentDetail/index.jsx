@@ -1,25 +1,31 @@
 import { useParams } from "react-router-dom";
 import * as classNames from "classnames/bind";
+import { useEffect, useState } from "react";
 
 import styles from "./ListStudentDetail.module.scss";
-import { useState } from "react";
 import AddListStudentDetail from "./AddListStudentDetail";
 import { read, utils } from "xlsx";
 import DetailListStudent from "./DetailListStudent";
+import { getStudentClassAPI } from "../../../services/studentClassService";
 
 const cx = classNames.bind(styles);
 
 function ListStudentDetail() {
-    const { gradeName, classId, className, academicYear } = useParams();
+    const { classId, className, academicYear } = useParams();
 
-    const [isShow, setIsShow] = useState(false);
     const [fileName, setFileName] = useState("");
     const [showAddList, setShowAddList] = useState(false);
     const [listAdd, setListAdd] = useState([]);
+    const [listStudentClass, setListStudentClass] = useState([]);
 
-    const handleClickShowAddForm = () => {
-        setIsShow(!isShow);
+    const getStudentClass = async (search) => {
+        const dataAPI = await getStudentClassAPI(classId, search);
+        setListStudentClass(dataAPI);
     };
+
+    useEffect(() => {
+        getStudentClass();
+    }, []);
 
     const handleAddByImport = ($event) => {
         const files = $event.target.files;
@@ -37,8 +43,21 @@ function ListStudentDetail() {
                         return {
                             classId: classId,
                             studentId: item["Id"],
-                            studentName: item["Họ và tên"],
-                            studentEmail: item["Email"],
+                            fullName: item["Họ và tên"],
+                            age: item["Tuổi"],
+                            gender: item["Giới tính"],
+                            ethnic: item["Dân tộc"],
+                            birthDay: item["Ngày tháng năm sinh"],
+                            email: item["Email"],
+                            address: item["Địa chỉ"],
+                            phone: item["Số điện thoại"],
+                            fatherName: item["Tên bố"],
+                            fatherPhone: item["Số điện thoại bố"],
+                            fatherCareer: item["Nghề nghiệp bố"],
+                            motherName: item["Tên mẹ"],
+                            motherPhone: item["Số điện thoại mẹ"],
+                            motherCareer: item["Nghề nghiệp mẹ"],
+                            status: 1,
                         };
                     });
                     setListAdd(listAddImport);
@@ -73,15 +92,19 @@ function ListStudentDetail() {
                     >
                         Thêm bằng file
                     </label>
-                    {/* <AddListStudentDetail
+                    <AddListStudentDetail
                         show={showAddList}
                         setShow={setShowAddList}
-                        listTeacher={listAdd}
+                        listStudentClassAdd={listAdd}
                         fileName={fileName}
-                    /> */}
+                        getStudentClass={getStudentClass}
+                    />
                 </div>
 
-                <DetailListStudent classId={classId} />
+                <DetailListStudent
+                    listStudentClass={listStudentClass}
+                    getStudentClass={getStudentClass}
+                />
             </div>
         </div>
     );

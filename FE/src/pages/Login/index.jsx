@@ -2,14 +2,11 @@ import * as classNames from "classnames/bind";
 import { useEffect, useState } from "react";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
-import { FaUserAlt } from "react-icons/fa";
-import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 import styles from "./Login.module.scss";
-import { login } from "../../slices/loginSlice";
 
 const cx = classNames.bind(styles);
 
@@ -18,8 +15,6 @@ function Login() {
     const [Pass, setPass] = useState("");
     const [Select, setSelect] = useState("student");
     const [showForgot, setShowForgot] = useState(false);
-
-    const dispatch = useDispatch();
 
     const navigate = useNavigate();
 
@@ -129,8 +124,6 @@ function Login() {
             });
             const id = idCop[0].id;
             localStorage.setItem("authenticated", true);
-
-            dispatch(login({ idUser: id, type: userCopy.type }));
 
             if (userCopy.type === "student") {
                 navigate(`/student/information/${id}`);

@@ -129,6 +129,37 @@ namespace BackendDATN.Services
             return result.ToList();
         }
 
+        public async Task<List<TeacherVM>> GetAllNoLeaveAsync(string? search)
+        {
+            var data = await _context.Teachers.ToListAsync();
+
+            var res = data.AsQueryable();
+
+            var result = res.Select(t => new TeacherVM
+            {
+                Id = t.Id,
+                FullName = t.FullName,
+                Age = t.Age,
+                Gender = t.Gender,
+                Phone = t.Phone,
+                Ethnic = t.Ethnic,
+                Address = t.Address,
+                Avatar = t.Avatar,
+                BirthDay = t.Birthday.ToString("dd/MM/yyyy"),
+                Level = t.Level,
+                Status = t.Status,
+                Email = _context.Accounts.Find(t.AccountId)!.Email,
+                AccountId = t.AccountId,
+            }).Where(t => t.Status == 1);
+
+            if (!string.IsNullOrEmpty(search))
+            {
+                result = result.Where(st => st.FullName.Contains(search) || st.Id.Contains(search));
+            }
+
+            return result.ToList();
+        }
+
         public async Task UpdateAsync(TeacherVM teacherVM)
         {
             var data = await _context.Teachers.FindAsync(teacherVM.Id);

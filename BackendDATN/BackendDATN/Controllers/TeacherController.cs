@@ -29,6 +29,19 @@ namespace BackendDATN.Controllers
             }
         }
 
+        [HttpGet("no-leave")]
+        public async Task<IActionResult> GetAllNoLeave(string? search)
+        {
+            try
+            {
+                return Ok(await _teacherServ.GetAllNoLeaveAsync(search));
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
 
         [HttpPost]
         public async Task<IActionResult> Add(TeacherAdd teacherAdd)

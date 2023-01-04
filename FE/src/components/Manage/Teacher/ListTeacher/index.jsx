@@ -1,5 +1,4 @@
 import * as classNames from "classnames/bind";
-import { useDispatch, useSelector } from "react-redux";
 import Table from "react-bootstrap/Table";
 import { useEffect, useState } from "react";
 import { Button, Modal } from "react-bootstrap";
@@ -7,24 +6,14 @@ import { toast } from "react-toastify";
 import { utils, writeFile } from "xlsx";
 
 import styles from "./ListTeacher.module.scss";
-import {
-    resetTeacher,
-    updateStatusTeacher,
-} from "../../../../slices/teacherSlice";
 import FindTeacher from "../FindTeacher";
 import DetailTeacher from "../DetailTeacher";
 import AddEditTeacher from "../AddEditTeacher";
-import {
-    getTeacherAPI,
-    updateStatusTeacherAPI,
-} from "../../../../services/teacherService";
+import { updateStatusTeacherAPI } from "../../../../services/teacherService";
 
 const cx = classNames.bind(styles);
 
-function ListTeacher() {
-    const data = useSelector((state) => state.teacher.listTeacher);
-
-    const [listTeacher, setListTeacher] = useState([]);
+function ListTeacher({ listTeacher, getTeacher }) {
     const [listTeacherExport, setListTeacherExport] = useState([]);
     const [isShow, setIsShow] = useState(false);
     const [isDetail, setIsDetail] = useState(false);
@@ -32,20 +21,8 @@ function ListTeacher() {
     const [idDelete, setIdDelete] = useState("");
     const [teacherShow, setTeacherShow] = useState({});
 
-    const dispatch = useDispatch();
-
-    const getTeacher = async (search) => {
-        const dataAPI = await getTeacherAPI(search);
-        console.log(dataAPI);
-        dispatch(resetTeacher(dataAPI));
-    };
-
     useEffect(() => {
-        getTeacher();
-    }, []);
-
-    useEffect(() => {
-        const lstExport = data.map((item) => {
+        const lstExport = listTeacher.map((item) => {
             return {
                 id: item.id,
                 fullName: item.fullName,
@@ -69,9 +46,8 @@ function ListTeacher() {
                         : "Giáo sư",
             };
         });
-        setListTeacher(data);
         setListTeacherExport(lstExport);
-    }, [data]);
+    }, [listTeacher]);
 
     const handleExport = () => {
         const headings = [
@@ -104,8 +80,8 @@ function ListTeacher() {
         const status = await updateStatusTeacherAPI(idDelete);
         console.log(status);
         if (status.message === "Success") {
-            dispatch(updateStatusTeacher(idDelete));
             toast.success("Cập nhật tình trạng làm việc thành công");
+            await getTeacher();
         } else {
             toast.error("Cập nhật tình trạng làm việc thất bại");
         }
@@ -241,6 +217,7 @@ function ListTeacher() {
                     teacherShow={teacherShow}
                     show={isShow}
                     showAdd={handleClickEditInfo}
+                    getTeacher={getTeacher}
                 />
             )}
             {isDetail && (

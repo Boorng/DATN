@@ -3,10 +3,11 @@ import "react-toastify/dist/ReactToastify.css";
 
 import styles from "./Student.module.scss";
 import AddEditStudent from "./AddEditStudent";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ListStudent from "./ListStudent";
 import { read, utils } from "xlsx";
 import AddListStudent from "./AddListStudent";
+import { getStudentAPI } from "../../../services/studentService";
 
 const cx = classNames.bind(styles);
 
@@ -15,6 +16,16 @@ function Student() {
     const [fileName, setFileName] = useState("");
     const [showAddList, setShowAddList] = useState(false);
     const [listAdd, setListAdd] = useState([]);
+    const [listStudent, setListStudent] = useState([]);
+
+    const getStudent = async (search) => {
+        const dataAPI = await getStudentAPI(search);
+        setListStudent(dataAPI);
+    };
+
+    useEffect(() => {
+        getStudent();
+    }, []);
 
     const handleClickShowAddForm = () => {
         setIsShow(!isShow);
@@ -98,8 +109,9 @@ function Student() {
                     <AddListStudent
                         show={showAddList}
                         setShow={setShowAddList}
-                        listStudent={listAdd}
+                        listStudentAdd={listAdd}
                         fileName={fileName}
+                        getStudent={getStudent}
                     />
                 </div>
                 {isShow && (
@@ -107,9 +119,13 @@ function Student() {
                         action="add"
                         show={isShow}
                         showAdd={handleClickShowAddForm}
+                        getStudent={getStudent}
                     />
                 )}
-                <ListStudent />
+                <ListStudent
+                    listStudent={listStudent}
+                    getStudent={getStudent}
+                />
             </div>
         </div>
     );

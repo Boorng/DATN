@@ -4,14 +4,12 @@ import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
-import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import { memo, useEffect, useState } from "react";
 
 import styles from "./AddEditClass.module.scss";
-import { addClass, editClass } from "../../../../slices/classSlice";
 import { Modal, ModalFooter } from "react-bootstrap";
-import { getTeacherAPI } from "../../../../services/teacherService";
+import { getTeacherNoLeaveAPI } from "../../../../services/teacherService";
 import {
     postClassAPI,
     updateClassAPI,
@@ -19,9 +17,14 @@ import {
 
 const cx = classNames.bind(styles);
 
-function AddEditClass({ action, classShow, show, showAdd, gradeName }) {
-    const dispatch = useDispatch();
-
+function AddEditClass({
+    action,
+    classShow,
+    show,
+    showAdd,
+    gradeName,
+    getClass,
+}) {
     const [classes, setClasses] = useState({
         name: "",
         grade: gradeName,
@@ -33,7 +36,7 @@ function AddEditClass({ action, classShow, show, showAdd, gradeName }) {
     const [listTeacher, setListTeacher] = useState([]);
 
     const getTeacher = async () => {
-        const data = await getTeacherAPI();
+        const data = await getTeacherNoLeaveAPI();
         setListTeacher(data);
     };
 
@@ -54,8 +57,8 @@ function AddEditClass({ action, classShow, show, showAdd, gradeName }) {
             if (classShow) {
                 const response = await updateClassAPI(classes);
                 if (response.message === "Success") {
-                    dispatch(editClass(classes));
                     toast.info("Cập nhật thông tin lớp thành công");
+                    await getClass();
                     showAdd();
                 } else {
                     toast.info(
@@ -65,8 +68,8 @@ function AddEditClass({ action, classShow, show, showAdd, gradeName }) {
             } else {
                 const response = await postClassAPI(classes);
                 if (response.message === "Success") {
-                    dispatch(addClass(classes));
                     toast.success("Thêm lớp thành công");
+                    await getClass();
                     showAdd();
                 } else {
                     toast.error(

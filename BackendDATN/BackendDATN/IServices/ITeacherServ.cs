@@ -7,6 +7,8 @@ namespace BackendDATN.IServices
     {
         Task<List<TeacherVM>> GetAllAsync(string? search);
 
+        Task<List<TeacherVM>> GetAllNoLeaveAsync(string? search);
+
         Task AddAsync(TeacherAdd teacherAdd);
 
         Task AddListAsync(List<TeacherAdd> teacherAdds);

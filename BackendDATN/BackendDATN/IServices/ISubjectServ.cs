@@ -4,14 +4,12 @@ namespace BackendDATN.IServices
 {
     public interface ISubjectServ
     {
-        Task<List<SubjectVM>> GetAllByGrade(int grade);
+        Task<List<SubjectVM>> GetAllByGradeAsync(int grade);
 
-        SubjectVM? GetById(int id);
+        Task AddAsync(SubjectModel subjectModel);
 
-        SubjectVM Add(SubjectModel subjectModel);
+        Task UpdateAsync(SubjectVM subjectVM);
 
-        void Update(SubjectVM subjectVM);
-
-        void Delete(int id);
+        Task DeleteAsync(int id);
     }
 }

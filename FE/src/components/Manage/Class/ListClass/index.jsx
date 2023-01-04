@@ -1,43 +1,27 @@
 import * as classNames from "classnames/bind";
-import { useDispatch, useSelector } from "react-redux";
 import Table from "react-bootstrap/Table";
-import { Fragment, useCallback, useEffect, useState } from "react";
-import { Button, Modal, NavLink } from "react-bootstrap";
+import { useEffect, useState } from "react";
+import { Button, Modal } from "react-bootstrap";
 import { toast } from "react-toastify";
-import { read, utils, writeFile } from "xlsx";
+import { utils, writeFile } from "xlsx";
+import { Link } from "react-router-dom";
 
 import styles from "./ListClass.module.scss";
 import FindClass from "../FindClass";
 import AddEditClass from "../AddEditClass";
-import { deleteClass, resetClass } from "../../../../slices/classSlice";
-import { deleteClassAPI, getClassAPI } from "../../../../services/classService";
-import { Link, Route } from "react-router-dom";
+import { deleteClassAPI } from "../../../../services/classService";
 
 const cx = classNames.bind(styles);
 
-function ListClass({ gradeName }) {
-    const data = useSelector((state) => state.class.listClass);
-
-    const [listClass, setListClass] = useState([]);
+function ListClass({ gradeName, listClass, getClass }) {
     const [listClassExport, setListClassExport] = useState([]);
     const [isShow, setIsShow] = useState(false);
     const [isDelete, setIsDelete] = useState(false);
     const [idDelete, setIdDelete] = useState("");
     const [classShow, setClassShow] = useState({});
 
-    const dispatch = useDispatch();
-
-    const getClass = async (search) => {
-        const dataAPI = await getClassAPI(gradeName, search);
-        dispatch(resetClass(dataAPI));
-    };
-
     useEffect(() => {
-        getClass();
-    }, [gradeName]);
-
-    useEffect(() => {
-        const lstExport = data.map((item) => {
+        const lstExport = listClass.map((item) => {
             return {
                 id: item.id,
                 name: item.name,
@@ -46,9 +30,8 @@ function ListClass({ gradeName }) {
                 headerTeacherName: item.headerTeacherName,
             };
         });
-        setListClass(data);
         setListClassExport(lstExport);
-    }, [data]);
+    }, [listClass]);
 
     const handleExport = () => {
         const headings = [
@@ -73,8 +56,8 @@ function ListClass({ gradeName }) {
     const handleDeleteClass = async () => {
         const response = await deleteClassAPI(idDelete);
         if (response.message === "Success") {
-            dispatch(deleteClass(idDelete));
             toast.success("Xóa lớp thành công");
+            await getClass();
         } else {
             toast.error("Xóa lớp thất bại do lớp có chứa học sinh");
         }
@@ -179,6 +162,7 @@ function ListClass({ gradeName }) {
                     classShow={classShow}
                     show={isShow}
                     showAdd={handleClickEditInfo}
+                    getClass={getClass}
                 />
             )}
             <Modal

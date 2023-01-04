@@ -10,6 +10,10 @@ export const getTeacherAPI = (search) => {
     });
 };
 
+export const getTeacherNoLeaveAPI = () => {
+    return instance.get(`${END_POINT.Teacher}/no-leave`);
+};
+
 export const postTeacherAPI = (teacher) => {
     return instance.post(`${END_POINT.Teacher}`, teacher);
 };

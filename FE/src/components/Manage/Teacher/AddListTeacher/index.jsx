@@ -1,23 +1,24 @@
 import * as classNames from "classnames/bind";
-import { Fragment } from "react";
 import { Button, Modal, Table } from "react-bootstrap";
-import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import { postListTeacherAPI } from "../../../../services/teacherService";
-import { addListTeacher } from "../../../../slices/teacherSlice";
 
 import styles from "./AddListTeacher.module.scss";
 
 const cx = classNames.bind(styles);
 
-function AddListTeacher({ show, setShow, listTeacher, fileName }) {
-    const dispatch = useDispatch();
-
+function AddListTeacher({
+    show,
+    setShow,
+    listTeacherAdd,
+    fileName,
+    getTeacher,
+}) {
     const hanelAddList = async () => {
-        const status = await postListTeacherAPI(listTeacher);
+        const status = await postListTeacherAPI(listTeacherAdd);
         if (status.message === "Success") {
-            dispatch(addListTeacher(listTeacher));
             toast.success("Thêm giáo viên thành công");
+            await getTeacher();
             setShow(false);
         } else {
             toast.error("Thêm giáo viên thất bại");
@@ -58,7 +59,7 @@ function AddListTeacher({ show, setShow, listTeacher, fileName }) {
                             </tr>
                         </thead>
                         <tbody>
-                            {listTeacher.map((tc) => {
+                            {listTeacherAdd.map((tc) => {
                                 return (
                                     <tr key={tc.id}>
                                         <td className={cx("table-document")}>

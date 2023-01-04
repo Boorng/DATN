@@ -5,13 +5,11 @@ import Button from "react-bootstrap/Button";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import Image from "react-bootstrap/Image";
-import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import { memo, useEffect, useState } from "react";
 import { FaUserAlt } from "react-icons/fa";
 
 import styles from "./AddEditStudent.module.scss";
-import { addStudent, editStudent } from "../../../../slices/studentSlice";
 import {
     postStudentAPI,
     updateStudentAPI,
@@ -20,9 +18,7 @@ import { Modal } from "react-bootstrap";
 
 const cx = classNames.bind(styles);
 
-function AddEditStudent({ action, studentShow, show, showAdd }) {
-    const dispatch = useDispatch();
-
+function AddEditStudent({ action, studentShow, show, showAdd, getStudent }) {
     const [student, setStudent] = useState({
         id: "",
         fullName: "",
@@ -58,19 +54,22 @@ function AddEditStudent({ action, studentShow, show, showAdd }) {
             if (studentShow) {
                 const response = await updateStudentAPI(student);
                 if (response.message === "Success") {
-                    dispatch(editStudent(student));
                     toast.info("Cập nhật thông tin học sinh thành công");
+                    await getStudent();
+                    showAdd();
                 }
             } else {
                 const response = await postStudentAPI(student);
                 if (response.message === "Success") {
-                    dispatch(addStudent(student));
                     toast.success("Thêm học sinh thành công");
+                    await getStudent();
+                    showAdd();
                 } else {
-                    toast.error("Thêm học sinh thất bại");
+                    toast.error(
+                        "Thêm học sinh thất bại do nhập thông tin không đúng định dạng hoặc ID đã tồn tại"
+                    );
                 }
             }
-            showAdd();
         } else {
             toast.error("Thêm thất bại do chưa nhập đủ thông tin");
         }

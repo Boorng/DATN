@@ -1,5 +1,4 @@
-﻿using BackendDATN.Data.Response;
-using BackendDATN.Data.VM.StudentClass;
+﻿using BackendDATN.Data.VM.StudentClass;
 using BackendDATN.Entity.VM.StudentClass;
 
 namespace BackendDATN.IServices
@@ -12,7 +11,7 @@ namespace BackendDATN.IServices
 
         Task AddListAsync(List<StudentClassModel> studentClassModels);
 
-        Task UpdateAsync(StudentClassVM studentClassVM);
+        Task UpdateAsync(int id, int classId);
 
         Task DeleteAsync(int id);
     }

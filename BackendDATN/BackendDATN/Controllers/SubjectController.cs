@@ -1,4 +1,5 @@
-﻿using BackendDATN.Entity.VM.Subject;
+﻿using BackendDATN.Data.Response;
+using BackendDATN.Entity.VM.Subject;
 using BackendDATN.IServices;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -21,28 +22,7 @@ namespace BackendDATN.Controllers
         {
             try
             {
-                return Ok(await _subjectServ.GetAllByGrade(grade));
-            }
-            catch(Exception e)
-            {
-                return BadRequest(e.Message);
-            }
-        }
-
-        [HttpGet("{id}")]
-        public IActionResult GetById(int id)
-        {
-            try
-            {
-                var data = _subjectServ.GetById(id);
-                if(data != null)
-                {
-                    return Ok(data);
-                }
-                else
-                {
-                    return NotFound();
-                }
+                return Ok(await _subjectServ.GetAllByGradeAsync(grade));
             }
             catch(Exception e)
             {
@@ -51,64 +31,67 @@ namespace BackendDATN.Controllers
         }
 
         [HttpPost]
-        public IActionResult Add(SubjectModel subjectModel)
+        public async Task<IActionResult> Add(SubjectModel subjectModel)
         {
             try
             {
-                return Ok(_subjectServ.Add(subjectModel));
+                await _subjectServ.AddAsync(subjectModel);
+                return Ok(new MessageResponse
+                {
+                    Message = "Success"
+                });
             }
             catch(Exception e)
             {
-                return BadRequest(e.Message);
+                Console.WriteLine(e.Message);
+                return BadRequest(new MessageResponse
+                {
+                    Message = "Fail"
+                });
             }
         }
 
-        [HttpPut("{id}")]
-        public IActionResult Update(int id, SubjectModel subjectModel)
+        [HttpPut]
+        public async Task<IActionResult> Update(SubjectVM subjectVM)
         {
             try
             {
-                var data = _subjectServ.GetById(id);
-                if(data != null)
+                
+                await _subjectServ.UpdateAsync(subjectVM);
+                return Ok(new MessageResponse
                 {
-                    _subjectServ.Update(new SubjectVM
-                    {
-                        Id = id,
-                        Name = subjectModel.Name,
-                        Grade = subjectModel.Grade,
-                    });
-                    return Ok();
-                }
-                else
-                {
-                    return NotFound();
-                }
+                    Message = "Success"
+                });
+                
             }
             catch(Exception e)
             {
-                return BadRequest(e.Message);
+                Console.WriteLine(e.Message);
+                return BadRequest(new MessageResponse
+                {
+                    Message = "Fail"
+                });
             }
         }
 
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
             try
             {
-                var data = _subjectServ.GetById(id);
-                if(data != null)
+                await _subjectServ.DeleteAsync(id);
+                return Ok(new MessageResponse
                 {
-                    _subjectServ.Delete(id);
-                    return Ok();
-                }
-                else
-                {
-                    return NotFound();
-                }
+                    Message = "Success"
+                });
             }
             catch(Exception e)
             {
-                return BadRequest(e.Message);
+                Console.WriteLine(e.Message);
+                return BadRequest(new MessageResponse
+                {
+                    Message = "Fail"
+                });
             }
         }
     }

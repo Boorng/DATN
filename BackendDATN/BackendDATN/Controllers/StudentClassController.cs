@@ -1,9 +1,7 @@
 ﻿using BackendDATN.Data.Response;
 using BackendDATN.Entity.VM.StudentClass;
 using BackendDATN.IServices;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Query;
 
 namespace BackendDATN.Controllers
 {
@@ -19,13 +17,13 @@ namespace BackendDATN.Controllers
         }
 
         [HttpGet("{classId}")]
-        public async Task<IActionResult> GetAll(int classId)
+        public async Task<IActionResult> GetAll(int classId, string? search = null)
         {
             try
             {
-                return Ok(await _studentClassServ.GetAll(classId));
+                return Ok(await _studentClassServ.GetAll(classId, search));
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 return BadRequest(e.Message);
             }
@@ -42,7 +40,7 @@ namespace BackendDATN.Controllers
                     Message = "Success"
                 });
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Console.WriteLine(e.Message);
                 return BadRequest(new MessageResponse
@@ -63,7 +61,7 @@ namespace BackendDATN.Controllers
                     Message = "Success"
                 });
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Console.WriteLine(e.Message);
                 return BadRequest(new MessageResponse
@@ -73,18 +71,18 @@ namespace BackendDATN.Controllers
             }
         }
 
-        [HttpPut]
-        public async Task<IActionResult> Update(StudentClassVM studentClassVM)
+        [HttpPut("{id}/{classId}")]
+        public async Task<IActionResult> Update(int id, int classId)
         {
             try
             {
-                await _studentClassServ.UpdateAsync(studentClassVM);
+                await _studentClassServ.UpdateAsync(id, classId);
                 return Ok(new MessageResponse
                 {
                     Message = "Success"
                 });
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Console.WriteLine(e.Message);
                 return BadRequest(new MessageResponse
@@ -105,7 +103,7 @@ namespace BackendDATN.Controllers
                     Message = "Success"
                 });
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Console.WriteLine(e.Message);
                 return BadRequest(new MessageResponse

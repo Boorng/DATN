@@ -5,14 +5,12 @@ import Button from "react-bootstrap/Button";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import Image from "react-bootstrap/Image";
-import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import { memo, useEffect, useState } from "react";
 import { FaUserAlt } from "react-icons/fa";
 
 import styles from "./AddEditTeacher.module.scss";
 import { Modal } from "react-bootstrap";
-import { addTeacher, editTeacher } from "../../../../slices/teacherSlice";
 import {
     postTeacherAPI,
     updateTeacherAPI,
@@ -20,9 +18,7 @@ import {
 
 const cx = classNames.bind(styles);
 
-function AddEditTeacher({ action, teacherShow, show, showAdd }) {
-    const dispatch = useDispatch();
-
+function AddEditTeacher({ action, teacherShow, show, showAdd, getTeacher }) {
     const [teacher, setTeacher] = useState({
         id: "",
         fullName: "",
@@ -52,8 +48,8 @@ function AddEditTeacher({ action, teacherShow, show, showAdd }) {
             if (teacherShow) {
                 const response = await updateTeacherAPI(teacher);
                 if (response.message === "Success") {
-                    dispatch(editTeacher(teacher));
                     toast.info("Cập nhật thông tin giáo viên thành công");
+                    await getTeacher();
                     showAdd();
                 } else {
                     toast.error(
@@ -63,12 +59,12 @@ function AddEditTeacher({ action, teacherShow, show, showAdd }) {
             } else {
                 const response = await postTeacherAPI(teacher);
                 if (response.message === "Success") {
-                    dispatch(addTeacher(teacher));
                     toast.success("Thêm giáo viên thành công");
+                    await getTeacher();
                     showAdd();
                 } else {
                     toast.error(
-                        "Thêm thông tin thất bại do nhập thông tin không đúng ddinh dạng hoặc ID đã tồn tại"
+                        "Thêm thông tin thất bại do nhập thông tin không đúng định dạng hoặc ID đã tồn tại"
                     );
                 }
             }

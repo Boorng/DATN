@@ -1,30 +1,19 @@
 import * as classNames from "classnames/bind";
-import { useDispatch, useSelector } from "react-redux";
 import Table from "react-bootstrap/Table";
 import { useEffect, useState } from "react";
 import { Button, Modal } from "react-bootstrap";
 import { toast } from "react-toastify";
 import { utils, writeFile } from "xlsx";
 
-import {
-    resetStudent,
-    updateStatusStudent,
-} from "../../../../slices/studentSlice";
 import AddEditStudent from "../AddEditStudent";
 import styles from "./ListStudent.module.scss";
 import FindStudent from "../FindStudent";
 import DetailStudent from "../DetailStudent";
-import {
-    getStudentAPI,
-    updateStatusStudentAPI,
-} from "../../../../services/studentService";
+import { updateStatusStudentAPI } from "../../../../services/studentService";
 
 const cx = classNames.bind(styles);
 
-function ListStudent() {
-    const data = useSelector((state) => state.student.listStudent);
-
-    const [listStudent, setListStudent] = useState([]);
+function ListStudent({ listStudent, getStudent }) {
     const [listStudentExport, setListStudentExport] = useState([]);
     const [isShow, setIsShow] = useState(false);
     const [isDetail, setIsDetail] = useState(false);
@@ -32,20 +21,8 @@ function ListStudent() {
     const [idDelete, setIdDelete] = useState("");
     const [studentShow, setStudentShow] = useState({});
 
-    const dispatch = useDispatch();
-
-    const getStudent = async (search) => {
-        const dataAPI = await getStudentAPI(search);
-        console.log(dataAPI);
-        dispatch(resetStudent(dataAPI));
-    };
-
     useEffect(() => {
-        getStudent();
-    }, []);
-
-    useEffect(() => {
-        const lstExport = data.map((item) => {
+        const lstExport = listStudent.map((item) => {
             return {
                 id: item.id,
                 fullName: item.fullName,
@@ -57,17 +34,16 @@ function ListStudent() {
                 address: item.address,
                 phone: item.phone,
                 fatherName: item.fatherName,
-                fatherCareer: item.fatherCareer,
                 fatherPhone: item.fatherPhone,
+                fatherCareer: item.fatherCareer,
                 motherName: item.motherName,
-                motherCareer: item.motherCareer,
                 motherPhone: item.motherPhone,
+                motherCareer: item.motherCareer,
                 status: item.status === 1 ? "Đang học" : "Nghỉ học",
             };
         });
-        setListStudent(data);
         setListStudentExport(lstExport);
-    }, [data]);
+    }, [listStudent]);
 
     const handleExport = () => {
         const headings = [
@@ -105,8 +81,8 @@ function ListStudent() {
         const status = await updateStatusStudentAPI(idDelete);
         console.log(status);
         if (status.message === "Success") {
-            dispatch(updateStatusStudent(idDelete));
             toast.success("Cập nhật tình trạng học tập thành công");
+            await getStudent();
         } else {
             toast.error("Cập nhật tình trạng học tập thất bại");
         }
@@ -226,6 +202,7 @@ function ListStudent() {
                     studentShow={studentShow}
                     show={isShow}
                     showAdd={handleClickEditInfo}
+                    getStudent={getStudent}
                 />
             )}
             {isDetail && (

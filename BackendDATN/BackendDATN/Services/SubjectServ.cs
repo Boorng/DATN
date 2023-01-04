@@ -18,7 +18,7 @@ namespace BackendDATN.Services
             _mapper = mapper;
         }
 
-        public SubjectVM Add(SubjectModel subjectModel)
+        public async Task AddAsync(SubjectModel subjectModel)
         {
             var data = new Subject
             {
@@ -26,28 +26,21 @@ namespace BackendDATN.Services
                 Grade = subjectModel.Grade
             };
 
-            _context.Add(data);
-            _context.SaveChanges();
-
-            return new SubjectVM
-            {
-                Id = data.Id,
-                Name = data.Name,
-                Grade = data.Grade
-            };
+            await _context.AddAsync(data);
+            await _context.SaveChangesAsync();
         }
 
-        public void Delete(int id)
+        public async Task DeleteAsync(int id)
         {
-            var data = _context.Subjects.SingleOrDefault(sb => sb.Id == id);
+            var data = await _context.Subjects.FindAsync(id);
             if(data != null)
             {
                 _context.Remove(data);
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
             }
         }
 
-        public async Task<List<SubjectVM>> GetAllByGrade(int grade)
+        public async Task<List<SubjectVM>> GetAllByGradeAsync(int grade)
         {
             var subjects = await _context.Subjects.ToListAsync();
             var data = subjects.AsQueryable();
@@ -57,32 +50,14 @@ namespace BackendDATN.Services
             return _mapper.Map<List<SubjectVM>>(data);
         }
 
-        public SubjectVM? GetById(int id)
+        public async Task UpdateAsync(SubjectVM subjectVM)
         {
-            var data = _context.Subjects.SingleOrDefault(sb => sb.Id == id);
-            if (data != null)
-            {
-                return new SubjectVM
-                {
-                    Id = data.Id,
-                    Name = data.Name,
-                    Grade = data.Grade
-                };
-            }
-            else
-            {
-                return null;
-            }
-        }
-
-        public void Update(SubjectVM subjectVM)
-        {
-            var data = _context.Subjects.SingleOrDefault(sb => sb.Id == subjectVM.Id);
+            var data = await _context.Subjects.FindAsync(subjectVM.Id);
             if (data != null)
             {
                 data.Name = subjectVM.Name;
                 data.Grade = subjectVM.Grade;
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
             }
         }
     }

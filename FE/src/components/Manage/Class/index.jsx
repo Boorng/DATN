@@ -1,18 +1,29 @@
 import * as classNames from "classnames/bind";
 import "react-toastify/dist/ReactToastify.css";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 
 import styles from "./Class.module.scss";
 import AddEditClass from "./AddEditClass";
 import ListClass from "./ListClass";
-import { useParams } from "react-router-dom";
+import { getClassAPI } from "../../../services/classService";
 
 const cx = classNames.bind(styles);
 
 function Class() {
     const [isShow, setIsShow] = useState(false);
+    const [listClass, setListClass] = useState([]);
 
     const { gradeName } = useParams();
+
+    const getClass = async (search) => {
+        const dataAPI = await getClassAPI(gradeName, search);
+        setListClass(dataAPI);
+    };
+
+    useEffect(() => {
+        getClass();
+    }, [gradeName]);
 
     const handleClickShowAddForm = () => {
         setIsShow(!isShow);
@@ -40,9 +51,14 @@ function Class() {
                         show={isShow}
                         showAdd={handleClickShowAddForm}
                         gradeName={gradeName}
+                        getClass={getClass}
                     />
                 )}
-                <ListClass gradeName={gradeName} />
+                <ListClass
+                    gradeName={gradeName}
+                    listClass={listClass}
+                    getClass={getClass}
+                />
             </div>
         </div>
     );

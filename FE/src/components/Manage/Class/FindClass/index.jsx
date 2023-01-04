@@ -5,18 +5,12 @@ import { GoSearch } from "react-icons/go";
 import { useEffect, useState, memo } from "react";
 
 import styles from "./FindClass.module.scss";
-import useDebounce from "../../../../hook/useDebounce";
+import { Button, Col, Row } from "react-bootstrap";
 
 const cx = classNames.bind(styles);
 
 function FindClass({ handleSearch }) {
     const [search, setSearch] = useState("");
-
-    const debounce = useDebounce(search, 700);
-
-    useEffect(() => {
-        handleSearch(debounce);
-    }, [debounce]);
 
     const handleOnChangeSearch = (e) => {
         if (e.target.value.trim()) {
@@ -25,21 +19,37 @@ function FindClass({ handleSearch }) {
             setSearch("");
         }
     };
-    console.log("Render Search");
+
+    const handleOnClickSearch = async () => {
+        setSearch("");
+        await handleSearch(search);
+    };
+
     return (
-        <div className={cx("find-class")}>
-            <InputGroup className="mb-3">
-                <InputGroup.Text>
-                    <GoSearch className={cx("find-icon")} />
-                </InputGroup.Text>
-                <Form.Control
-                    placeholder="Nhập năm học cần tìm kiếm"
-                    value={search}
-                    onChange={handleOnChangeSearch}
-                    className={cx("input-search")}
-                />
-            </InputGroup>
-        </div>
+        <Row>
+            <Col>
+                <InputGroup className="mb-3">
+                    <InputGroup.Text>
+                        <GoSearch className={cx("find-icon")} />
+                    </InputGroup.Text>
+                    <Form.Control
+                        placeholder="Nhập năm học cần tìm kiếm"
+                        value={search}
+                        onChange={handleOnChangeSearch}
+                        className={cx("input-search")}
+                    />
+                </InputGroup>
+            </Col>
+            <Col>
+                <Button
+                    variant="success"
+                    className={cx("find-class-button")}
+                    onClick={handleOnClickSearch}
+                >
+                    Tìm kiếm
+                </Button>
+            </Col>
+        </Row>
     );
 }
 
