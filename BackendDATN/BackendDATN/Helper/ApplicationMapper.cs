@@ -18,17 +18,39 @@ namespace BackendDATN.Helper
     {
         public ApplicationMapper()
         {
-            CreateMap<Account, AccountVM>().ReverseMap();
-            CreateMap<Assign, AssignVM>().ReverseMap();
-            CreateMap<Class, ClassVM>().ReverseMap();
-            CreateMap<Conduct, ConductVM>().ReverseMap();
-            CreateMap<Semester, SemesterVM>().ReverseMap();
-            CreateMap<StudentClass, StudentClassVM>().ReverseMap();
-            CreateMap<Student, StudentVM>().ReverseMap();
-            CreateMap<Subject, SubjectVM>().ReverseMap();
-            CreateMap<Teacher, TeacherVM>().ReverseMap();
-            CreateMap<Team, TeamVM>().ReverseMap();
-            CreateMap<Test, TestVM>().ReverseMap();
+            CreateMap<Account, AccountVM>()
+                .ForMember(dest => dest.Id, act => act.MapFrom(src => src.IdAccount))
+                .ReverseMap();
+            CreateMap<Assign, AssignVM>()
+                .ForMember(dest => dest.Id, act => act.MapFrom(src => src.IdAssign))
+                .ReverseMap();
+            CreateMap<Class, ClassVM>()
+                .ForMember(dest => dest.Id, act => act.MapFrom(src => src.IdClass))
+                .ReverseMap();
+            CreateMap<Conduct, ConductVM>()
+                .ForMember(dest => dest.Id, act => act.MapFrom(src => src.IdConduct))
+                .ReverseMap();
+            CreateMap<Semester, SemesterVM>()
+                .ForMember(dest => dest.Id, act => act.MapFrom(src => src.IdSemester))
+                .ReverseMap();
+            CreateMap<StudentClass, StudentClassVM>()
+                .ForMember(dest => dest.Id, act => act.MapFrom(src => src.IdStudentClass))
+                .ReverseMap();
+            CreateMap<Student, StudentVM>()
+                .ForMember(dest => dest.Id, act => act.MapFrom(src => src.IdStudent))
+                .ReverseMap();
+            CreateMap<Subject, SubjectVM>()
+                .ForMember(dest => dest.Id, act => act.MapFrom(src => src.IdSubject))
+                .ReverseMap();
+            CreateMap<Teacher, TeacherVM>()
+                .ForMember(dest => dest.Id, act => act.MapFrom(src => src.IdTeacher))
+                .ReverseMap();
+            CreateMap<Team, TeamVM>()
+                .ForMember(dest => dest.Id, act => act.MapFrom(src => src.IdTeam))
+                .ReverseMap();
+            CreateMap<Test, TestVM>()
+                .ForMember(dest => dest.Id, act => act.MapFrom(src => src.IdTest))
+                .ReverseMap();
         }
     }
 }

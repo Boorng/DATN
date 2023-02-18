@@ -17,12 +17,25 @@ namespace BackendDATN.Controllers
             _subjectServ = subjectServ;
         }
 
-        [HttpGet("grade/{grade}")] 
+        [HttpGet("grade/{grade}")]
         public async Task<IActionResult> GetAllByGrade(int grade)
         {
             try
             {
                 return Ok(await _subjectServ.GetAllByGradeAsync(grade));
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        [HttpGet("check-data/{subjectId}")]
+        public async Task<IActionResult> CheckData(int subjectId)
+        {
+            try
+            {
+                return Ok(await _subjectServ.CheckData(subjectId));
             }
             catch(Exception e)
             {
@@ -41,7 +54,7 @@ namespace BackendDATN.Controllers
                     Message = "Success"
                 });
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Console.WriteLine(e.Message);
                 return BadRequest(new MessageResponse
@@ -56,15 +69,15 @@ namespace BackendDATN.Controllers
         {
             try
             {
-                
+
                 await _subjectServ.UpdateAsync(subjectVM);
                 return Ok(new MessageResponse
                 {
                     Message = "Success"
                 });
-                
+
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Console.WriteLine(e.Message);
                 return BadRequest(new MessageResponse
@@ -85,7 +98,7 @@ namespace BackendDATN.Controllers
                     Message = "Success"
                 });
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Console.WriteLine(e.Message);
                 return BadRequest(new MessageResponse

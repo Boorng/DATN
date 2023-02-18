@@ -1,4 +1,5 @@
-﻿using BackendDATN.Entity.VM.Subject;
+﻿using BackendDATN.Data.Response;
+using BackendDATN.Entity.VM.Subject;
 
 namespace BackendDATN.IServices
 {
@@ -11,5 +12,7 @@ namespace BackendDATN.IServices
         Task UpdateAsync(SubjectVM subjectVM);
 
         Task DeleteAsync(int id);
+
+        Task<CheckDataSubjectResponse> CheckData(int subjectId);
     }
 }

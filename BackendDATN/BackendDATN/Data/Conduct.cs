@@ -5,8 +5,8 @@ namespace BackendDATN.Data
 {
     public partial class Conduct
     {
-        public Guid Id { get; set; }
-        public int Mark { get; set; }
+        public Guid IdConduct { get; set; }
+        public string Evaluate { get; set; } = null!;
         public string Comment { get; set; } = null!;
         public int SemesterId { get; set; }
         public string StudentId { get; set; } = null!;

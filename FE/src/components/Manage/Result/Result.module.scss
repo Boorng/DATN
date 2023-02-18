@@ -1,0 +1,120 @@
+.manage-result {
+    position: relative;
+    width: 100%;
+
+    .manage-result-header {
+        height: 200px;
+        padding-top: 20px;
+        padding-left: 50px;
+        padding-right: 50px;
+        margin-bottom: 30px;
+        display: flex;
+        justify-content: space-between;
+        background: rgb(34, 193, 195);
+        background: linear-gradient(
+            135deg,
+            rgba(34, 193, 195, 1) 0%,
+            rgba(253, 187, 45, 1) 100%
+        );
+
+        .manage-result-title {
+            font-size: 3rem;
+            color: white;
+            font-weight: 700;
+        }
+
+        .manage-user {
+            display: flex;
+            column-gap: 10px;
+            color: white;
+
+            .avatar-image {
+                width: 27px;
+                height: 27px;
+                border-radius: 50%;
+                border: 1px solid white;
+                cursor: pointer;
+            }
+
+            .user-name {
+                padding-top: 1px;
+                font-size: 1.6rem;
+                cursor: pointer;
+            }
+        }
+    }
+
+    .manage-result-content {
+        position: absolute;
+        background-color: white;
+        top: 70px;
+        left: 70px;
+        width: 1100px;
+        max-height: 580px;
+        padding: 10px 30px;
+        border-radius: 10px;
+
+        .list-result {
+            margin-top: 20px;
+            width: 100%;
+
+            .button-statistic {
+                font-size: 1.5rem;
+                margin: 5px 0;
+            }
+
+            .table-head {
+                font-size: 1.5rem;
+                font-weight: 600;
+                text-transform: uppercase;
+            }
+
+            .table-document {
+                font-size: 1.4rem;
+            }
+
+            .list-button {
+                display: flex;
+                column-gap: 10px;
+
+                .button-link {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    background-color: #ffc107;
+                    color: white;
+                    font-size: 1.4rem;
+                    border-radius: 5px;
+                    width: 140px;
+                    height: 30px;
+                }
+            }
+        }
+    }
+}
+
+.modal {
+    min-width: 500px;
+
+    .form-title {
+        font-size: 2.8rem;
+        text-transform: uppercase;
+        font-weight: 600;
+    }
+
+    .form-control {
+        font-size: 1.4rem;
+    }
+
+    .button-success {
+        width: 90px;
+        height: 35px;
+        font-size: 1.6rem;
+    }
+
+    .button-back {
+        height: 35px;
+        width: 100px;
+        font-size: 1.6rem;
+    }
+}

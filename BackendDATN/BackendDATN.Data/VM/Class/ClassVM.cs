@@ -1,13 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace BackendDATN.Entity.VM.Class
+﻿namespace BackendDATN.Entity.VM.Class
 {
-    public class ClassVM : ClassModel
+    public class ClassVM
     {
-        public int Id { get; set; }
+        public string Id { get; set; }
+
+        public string Name { get; set; }
+
+        public string AcademicYear { get; set; }
+
+        public int Grade { get; set; }
+
+        public string HeaderTeacherId { get; set; }
     }
 }

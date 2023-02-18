@@ -1,0 +1,88 @@
+.manage-semester {
+    position: relative;
+    width: 100%;
+
+    .manage-semester-header {
+        height: 200px;
+        padding-top: 20px;
+        padding-left: 50px;
+        padding-right: 50px;
+        margin-bottom: 30px;
+        display: flex;
+        justify-content: space-between;
+        background: rgb(34, 193, 195);
+        background: linear-gradient(
+            135deg,
+            rgba(34, 193, 195, 1) 0%,
+            rgba(253, 187, 45, 1) 100%
+        );
+
+        .manage-semester-title {
+            font-size: 3rem;
+            color: white;
+            font-weight: 700;
+        }
+
+        .manage-user {
+            display: flex;
+            column-gap: 10px;
+            color: white;
+
+            .avatar-image {
+                width: 27px;
+                height: 27px;
+                border-radius: 50%;
+                border: 1px solid white;
+                cursor: pointer;
+            }
+
+            .user-name {
+                padding-top: 1px;
+                font-size: 1.6rem;
+                cursor: pointer;
+            }
+        }
+    }
+
+    .manage-semester-content {
+        position: absolute;
+        background-color: white;
+        top: 70px;
+        left: 70px;
+        width: 1100px;
+        min-height: 580px;
+        padding: 10px 30px;
+        border-radius: 10px;
+
+        .list-button {
+            display: flex;
+            column-gap: 40px;
+
+            .show-add {
+                border-radius: 6px;
+                background-color: #636363;
+                width: 140px;
+                height: 30px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                cursor: pointer;
+
+                &:hover {
+                    opacity: 0.6;
+                }
+
+                .button-show-add {
+                    border: none;
+                    border-radius: 6px;
+                    outline: none;
+                    background-color: #636363;
+                    height: 100%;
+                    width: 100%;
+                    font-size: 1.6rem;
+                    color: white;
+                }
+            }
+        }
+    }
+}

@@ -1,19 +1,20 @@
-﻿using BackendDATN.Entity.VM.Conduct;
+﻿using BackendDATN.Data.VM.Conduct;
+using BackendDATN.Entity.VM.Conduct;
 
 namespace BackendDATN.IServices
 {
     public interface IConductServ
     {
-        List<ConductVM> GetAll();
+        Task<List<ConductVM>> GetAllAsync(string? classId, int? grade, int semesterId);
 
-        List<ConductVM> GetByPage(int page = 1);
+        Task<ConductVM> GetByIdAsync(string studentId, int semesterId);
 
-        ConductVM? GetById(Guid id);
+        Task AddAsync(ConductModel conductModel);
 
-        ConductVM Add(ConductModel conductModel);
+        Task UpdateAsync(ConductVM conductVM);
 
-        void Update(ConductVM conductVM);
+        Task DeleteAsync(Guid id);
 
-        void Delete(Guid id);
+        Task DeleteById(string? studentId, int? semesterId);
     }
 }

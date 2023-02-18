@@ -1,0 +1,86 @@
+.nav-teacher {
+    position: fixed;
+    box-sizing: border-box;
+    background-color: white;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    width: 300px;
+    height: 765px;
+    overflow-y: scroll;
+
+    .nav-image {
+        margin: 30px auto 70px;
+        .image {
+            width: 150px;
+            height: 150px;
+        }
+    }
+
+    .nav-teacher-item {
+        padding: 5px 7px;
+        border-bottom: 1px solid rgba(204, 204, 204, 0.3);
+        line-height: 2;
+        font-size: 1.5rem;
+        font-weight: 500;
+
+        .nav-teacher-item-link {
+            &:hover {
+                background: #ebebeb !important;
+                color: #9e100e;
+                display: block;
+            }
+        }
+
+        .nav-teacher-item-accordion {
+            .nav-teacher-item-accordion-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                cursor: pointer;
+
+                &:hover {
+                    background: #ebebeb !important;
+                    color: #9e100e;
+                }
+            }
+
+            .nav-teacher-item-accordion-body {
+                display: flex;
+                flex-direction: column;
+                padding-left: 20px;
+
+                .nav-teacher-item-body-child {
+                    color: black;
+
+                    &:hover {
+                        background: #ebebeb !important;
+                        color: #9e100e;
+                    }
+                }
+            }
+        }
+
+        .nav-teacher-item-link {
+            color: black;
+        }
+
+        .nav-teacher-item-icon {
+            transform: rotate(180deg);
+        }
+    }
+
+    .nav-teacher-item-href {
+        padding: 5px 7px;
+        border-bottom: 1px solid rgba(204, 204, 204, 0.3);
+        line-height: 2;
+        font-size: 1.5rem;
+        font-weight: 500;
+        color: black;
+
+        &:hover {
+            background: #ebebeb !important;
+            color: #9e100e;
+        }
+    }
+}

@@ -1,13 +1,17 @@
 import instance from "../utils/instance";
 import END_POINT from "./constant";
 
-/* --Class-- */
+/* --StudentClass-- */
 export const getStudentClassAPI = (classId, search) => {
     return instance.get(`${END_POINT.StudentClass}/${classId}`, {
         params: {
             search,
         },
     });
+};
+
+export const getClassByStudentAPI = (studentId) => {
+    return instance.get(`${END_POINT.StudentClass}/student/${studentId}`);
 };
 
 export const postListStudentClassAPI = (classList) => {
@@ -22,6 +26,15 @@ export const updateStudentClassAPI = (idUpdate, classIdChange) => {
 
 export const deleteStudentClassAPI = (id) => {
     return instance.delete(`${END_POINT.StudentClass}/${id}`);
+};
+
+export const deleteListStudentClassAPI = (studentId, classId) => {
+    return instance.delete(`${END_POINT.StudentClass}/student-class`, {
+        params: {
+            studentId,
+            classId,
+        },
+    });
 };
 
 /* ---- */

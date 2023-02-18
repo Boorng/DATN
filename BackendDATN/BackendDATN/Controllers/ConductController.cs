@@ -1,4 +1,5 @@
-﻿using BackendDATN.Entity.VM.Conduct;
+﻿using BackendDATN.Data.Response;
+using BackendDATN.Entity.VM.Conduct;
 using BackendDATN.IServices;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -17,11 +18,11 @@ namespace BackendDATN.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetAll()
+        public async Task<IActionResult> GetAll(int semesterId, string? classId, int? grade)
         {
             try
             {
-                return Ok(_conductServ.GetAll());
+                return Ok(await _conductServ.GetAllAsync(classId, grade, semesterId));
             }
             catch (Exception e)
             {
@@ -29,88 +30,100 @@ namespace BackendDATN.Controllers
             }
         }
 
-        [HttpGet("{id}")]
-        public IActionResult GetById(Guid id)
+        [HttpGet("student/{studentId}/{semesterId}")]
+        public async Task<IActionResult> GetConductById(string studentId, int semesterId)
         {
             try
             {
-                var data = _conductServ.GetById(id);
-                if (data != null)
-                {
-                    return Ok(data);
-                }
-                else
-                {
-                    return NotFound();
-                }
+                return Ok(await _conductServ.GetByIdAsync(studentId, semesterId));
             }
-            catch (Exception e)
+            catch(Exception e)
             {
                 return BadRequest(e.Message);
             }
         }
 
         [HttpPost]
-        public IActionResult Add(ConductModel conductModel)
+        public async Task<IActionResult> Add(ConductModel conductModel)
         {
             try
             {
-                return Ok(_conductServ.Add(conductModel));
+                await _conductServ.AddAsync(conductModel);
+                return Ok(new MessageResponse
+                {
+                    Message = "Success"
+                }); ;
             }
             catch (Exception e)
             {
-                return BadRequest(e.Message);
+                Console.WriteLine(e.Message);
+                return BadRequest(new MessageResponse
+                {
+                    Message = "Fail"
+                });
             }
         }
 
-        [HttpPut("{id}")]
-        public IActionResult Update(Guid id, ConductModel conductModel)
+        [HttpPut]
+        public async Task<IActionResult> Update(ConductVM conductVM)
         {
             try
             {
-                var data = _conductServ.GetById(id);
-                if(data != null)
+                await _conductServ.UpdateAsync(conductVM);
+                return Ok(new MessageResponse
                 {
-                    _conductServ.Update(new ConductVM
-                    {
-                        Id = id,
-                        Mark = conductModel.Mark,
-                        Comment = conductModel.Comment,
-                        SemesterId = conductModel.SemesterId,
-                        StudentId = conductModel.StudentId
-                    });
-                    return Ok();
-                }
-                else
-                {
-                    return NotFound();
-                }
+                    Message = "Success"
+                }); ;  
             }
             catch(Exception e)
             {
-                return BadRequest(e.Message);
+                Console.WriteLine(e.Message);
+                return BadRequest(new MessageResponse
+                {
+                    Message = "Fail"
+                });
             }
         }
 
         [HttpDelete("{id}")]
-        public IActionResult Delete(Guid id)
+        public async Task<IActionResult> Delete(Guid id)
         {
             try
             {
-                var data = _conductServ.GetById(id);
-                if(data != null)
+                await _conductServ.DeleteAsync(id);
+                return Ok(new MessageResponse
                 {
-                    _conductServ.Delete(id);
-                    return Ok();
-                }
-                else
-                {
-                    return NotFound();
-                }
+                    Message = "Success"
+                });
             }
             catch(Exception e)
             {
-                return BadRequest(e.Message);
+                Console.WriteLine(e.Message);
+                return BadRequest(new MessageResponse
+                {
+                    Message = "Fail"
+                });
+            }
+        }
+
+        [HttpDelete("delete")]
+        public async Task<IActionResult> DeleteById(string? studentId, int? semesterId)
+        {
+            try
+            {
+                await _conductServ.DeleteById(studentId, semesterId);
+                return Ok(new MessageResponse
+                {
+                    Message = "Success"
+                });
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return BadRequest(new MessageResponse
+                {
+                    Message = "Fail"
+                });
             }
         }
     }

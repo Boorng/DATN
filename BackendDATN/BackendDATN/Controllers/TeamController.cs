@@ -1,5 +1,7 @@
-﻿using BackendDATN.Entity.VM.Group;
+﻿using BackendDATN.Data.Response;
+using BackendDATN.Entity.VM.Group;
 using BackendDATN.IServices;
+using BackendDATN.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.RegularExpressions;
@@ -10,40 +12,19 @@ namespace BackendDATN.Controllers
     [ApiController]
     public class TeamController : ControllerBase
     {
-        private readonly ITeamServ _groupServ;
+        private readonly ITeamServ _teamServ;
 
-        public TeamController(ITeamServ groupServ)
+        public TeamController(ITeamServ teamServ)
         {
-            _groupServ = groupServ;
+            _teamServ = teamServ;
         }
 
         [HttpGet]
-        public IActionResult GetAll()
+        public async Task<IActionResult> GetAll()
         {
             try
             {
-                return Ok(_groupServ.GetAll());
-            }
-            catch(Exception e)
-            {
-                return BadRequest(e.Message);
-            }
-        }
-
-        [HttpGet("{id}")]
-        public IActionResult GetById(int id)
-        {
-            try
-            {
-                var data = _groupServ.GetById(id);
-                if(data != null)
-                {
-                    return Ok(data);
-                }
-                else
-                {
-                    return NotFound();
-                }
+                return Ok(await _teamServ.GetAllAsync());
             }
             catch(Exception e)
             {
@@ -52,63 +33,65 @@ namespace BackendDATN.Controllers
         }
 
         [HttpPost]
-        public IActionResult Add(TeamModel groupModel)
+        public async Task<IActionResult> Add(TeamModel groupModel)
         {
             try
             {
-                return Ok(_groupServ.Add(groupModel));
+                await _teamServ.AddAsync(groupModel);
+                return Ok(new MessageResponse
+                {
+                    Message = "Success"
+                });
             }
             catch(Exception e)
             {
-                return BadRequest(e.Message);
+                Console.WriteLine(e.Message);
+                return BadRequest(new MessageResponse
+                {
+                    Message = "Fail"
+                });
             }
         }
 
-        [HttpPut("{id}")]
-        public IActionResult Update(int id, TeamModel groupModel)
+        [HttpPut]
+        public async Task<IActionResult> Update(TeamVM teamVM)
         {
             try
             {
-                var data = _groupServ.GetById(id);
-                if(data != null)
+                await _teamServ.UpdateAsync(teamVM);
+                return Ok(new MessageResponse
                 {
-                    _groupServ.Update(new TeamVM
-                    {
-                        Id = id,
-                        Name = groupModel.Name,
-                        Notification = groupModel.Notification,
-                    });
-                    return Ok();
-                }
-                else
-                {
-                    return NotFound();
-                }
+                    Message = "Success"
+                });
             }
             catch(Exception e)
             {
-                return BadRequest(e.Message);
+                Console.WriteLine(e.Message);
+                return BadRequest(new MessageResponse
+                {
+                    Message = "Fail"
+                });
             }
         }
 
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
             try
             {
-                var data = _groupServ.GetById(id);
-                if(data != null)
+                await _teamServ.DeleteAsync(id);
+                return Ok(new MessageResponse
                 {
-                    return Ok();
-                }
-                else
-                {
-                    return NotFound();
-                }
+                    Message = "Success"
+                });
             }
             catch(Exception e)
             {
-                return BadRequest(e.Message);
+                Console.WriteLine(e.Message);
+                return BadRequest(new MessageResponse
+                {
+                    Message = "Fail"
+                });
             }
         }
     }

@@ -1,10 +1,9 @@
 import * as classNames from "classnames/bind";
-import { Fragment, useState } from "react";
-import { Accordion, useAccordionButton } from "react-bootstrap";
+import { useState } from "react";
 import { FcCollapse } from "react-icons/fc";
 import { NavLink } from "react-router-dom";
-import Image from "../../assets/Image";
 
+import Image from "../../assets/Image";
 import styles from "./NavMenu.module.scss";
 
 const cx = classNames.bind(styles);
@@ -14,7 +13,7 @@ function NavMenu() {
         {
             id: 1,
             name: "/manage/information",
-            title: "Thông tin người dùng",
+            title: "Trang chủ",
         },
         {
             id: 2,
@@ -28,77 +27,92 @@ function NavMenu() {
         },
         {
             id: 4,
-            name: "/manage/class",
-            title: "Quản lý lớp",
-            content: [
-                { id: 41, name: "Khối 6", to: "/manage/class/grade/6" },
-                { id: 42, name: "Khối 7", to: "/manage/class/grade/7" },
-                { id: 43, name: "Khối 8", to: "/manage/class/grade/8" },
-                { id: 44, name: "Khối 9", to: "/manage/class/grade/9" },
-            ],
+            name: "/manage/team",
+            title: "Quản lý tổ chuyên môn",
         },
         {
             id: 5,
-            name: "/manage/result",
-            title: "Quản lý kết quả học tập",
+            name: "/manage/class",
+            title: "Quản lý lớp",
             content: [
-                { id: 51, name: "Khối 6", to: "/manage/result/grade/6" },
-                { id: 52, name: "Khối 7", to: "/manage/result/grade/7" },
-                { id: 53, name: "Khối 8", to: "/manage/result/grade/8" },
-                { id: 54, name: "Khối 9", to: "/manage/result/grade/9" },
+                { id: 51, name: "Khối 6", to: "/manage/class/grade/6" },
+                { id: 52, name: "Khối 7", to: "/manage/class/grade/7" },
+                { id: 53, name: "Khối 8", to: "/manage/class/grade/8" },
+                { id: 54, name: "Khối 9", to: "/manage/class/grade/9" },
             ],
         },
         {
             id: 6,
-            title: "Quản lý điểm rèn luyện",
+            name: "/manage/semester",
+            title: "Quản lý học kỳ",
+        },
+        {
+            id: 7,
+            name: "/manage/result",
+            title: "Quản lý kết quả học tập",
+            content: [
+                { id: 71, name: "Khối 6", to: "/manage/result/grade/6" },
+                { id: 72, name: "Khối 7", to: "/manage/result/grade/7" },
+                { id: 73, name: "Khối 8", to: "/manage/result/grade/8" },
+                { id: 74, name: "Khối 9", to: "/manage/result/grade/9" },
+            ],
+        },
+        {
+            id: 8,
+            title: "Quản lý báo cáo tổng kết",
             content: [
                 {
-                    id: 61,
+                    id: 81,
                     name: "Khối 6",
-                    to: "/manage/training-result/grade/6",
+                    to: "/manage/conduct/grade/6",
                 },
                 {
-                    id: 62,
+                    id: 82,
                     name: "Khối 7",
-                    to: "/manage/training-result/grade/7",
+                    to: "/manage/conduct/grade/7",
                 },
                 {
-                    id: 63,
+                    id: 83,
                     name: "Khối 8",
-                    to: "/manage/training-result/grade/8",
+                    to: "/manage/conduct/grade/8",
                 },
                 {
-                    id: 64,
+                    id: 84,
                     name: "Khối 9",
-                    to: "/manage/training-result/grade/9",
+                    to: "/manage/conduct/grade/9",
                 },
             ],
         },
         {
-            id: 7,
+            id: 9,
             title: "Quản lý đào tạo",
             content: [
                 {
-                    id: 71,
+                    id: 91,
                     name: "Khối 6",
                     to: "/manage/training-management/grade/6",
                 },
                 {
-                    id: 72,
+                    id: 92,
                     name: "Khối 7",
                     to: "/manage/training-management/grade/7",
                 },
                 {
-                    id: 73,
+                    id: 93,
                     name: "Khối 8",
                     to: "/manage/training-management/grade/8",
                 },
                 {
-                    id: 74,
+                    id: 94,
                     name: "Khối 9",
                     to: "/manage/training-management/grade/9",
                 },
             ],
+        },
+        {
+            id: 10,
+            name: "/manage/chat-app",
+            title: "Ứng dụng chat",
         },
     ];
 
@@ -119,6 +133,7 @@ function NavMenu() {
 
     const handleLogOut = () => {
         localStorage.setItem("authenticated", false);
+        localStorage.setItem("token", "");
     };
 
     return (

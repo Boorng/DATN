@@ -1,0 +1,58 @@
+.detail-layout {
+    position: relative;
+    width: 100%;
+
+    .detail-layout-header {
+        height: 200px;
+        padding-top: 20px;
+        padding-left: 50px;
+        padding-right: 50px;
+        margin-bottom: 30px;
+        display: flex;
+        justify-content: space-between;
+        background: rgb(34, 193, 195);
+        background: linear-gradient(
+            135deg,
+            rgba(34, 193, 195, 1) 0%,
+            rgba(253, 187, 45, 1) 100%
+        );
+
+        .detail-layout-title {
+            font-size: 2rem;
+            color: white;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .manage-user {
+            display: flex;
+            column-gap: 10px;
+            color: white;
+
+            .avatar-image {
+                width: 27px;
+                height: 27px;
+                border-radius: 50%;
+                border: 1px solid white;
+                cursor: pointer;
+            }
+
+            .user-name {
+                padding-top: 1px;
+                font-size: 1.6rem;
+                cursor: pointer;
+            }
+        }
+    }
+
+    .detail-layout-content {
+        position: absolute;
+        background-color: white;
+        top: 70px;
+        left: 70px;
+        width: 1100px;
+        min-height: 580px;
+        padding: 10px 30px;
+        border-radius: 10px;
+    }
+}

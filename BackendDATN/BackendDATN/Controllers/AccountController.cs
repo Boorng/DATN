@@ -1,6 +1,9 @@
-﻿using BackendDATN.Entity.VM.Account;
+﻿using BackendDATN.Data.Response;
+using BackendDATN.Data.VM.Account;
+using BackendDATN.Entity.VM.Account;
 using BackendDATN.IServices;
 using Microsoft.AspNetCore.Mvc;
+using System.Runtime.CompilerServices;
 
 namespace BackendDATN.Controllers
 {
@@ -54,44 +57,54 @@ namespace BackendDATN.Controllers
         {
             try
             {
-                var res = _accountServ.GetByIdAsync(id);
-                if(res != null)
+                await _accountServ.UpdateAsync(id, Status);
+                return Ok(new MessageResponse
                 {
-                    await _accountServ.UpdateAsync(id, Status);
-
-                    return Ok();
-                }
-                else
-                {
-                    return NotFound();
-                }
+                    Message = "Success"
+                });
+                
             }
             catch(Exception ex)
             {
-                return BadRequest(ex.Message);
+                Console.WriteLine(ex.Message);
+                return BadRequest(new MessageResponse
+                {
+                    Message = "Fail"
+                });
             }
         }
 
-        [HttpPut("changepassword/{id}")]
-        public async Task<IActionResult> ChangePassword([FromRoute] Guid id, [FromForm] string password)
+        [HttpGet("check-password/{id}")]
+        public async Task<IActionResult> CheckPassword(Guid id, string password)
         {
             try
             {
-                var res = await _accountServ.GetByIdAsync(id);
-                if(res != null)
-                {
-                    await _accountServ.ChangePasswordAsync(id, password);
+                return Ok(await _accountServ.CheckPassword(id, password));
+            }
+            catch(Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
 
-                    return Ok();
-                }
-                else
+        [HttpPost("change-password")]
+        public async Task<IActionResult> ChangePassword(AccountPW accountPW)
+        {
+            try
+            {
+                await _accountServ.ChangePasswordAsync(accountPW.Id, accountPW.Password);
+                return Ok(new MessageResponse
                 {
-                    return NotFound();
-                }
+                    Message = "Success"
+                });
             }
             catch(Exception ex)
             {
-                return BadRequest(ex.Message);
+                Console.WriteLine(ex.Message);
+                return BadRequest(new MessageResponse
+                {
+                    Message = "Fail"
+                });
             }
         }
 
@@ -100,20 +113,19 @@ namespace BackendDATN.Controllers
         {
             try
             {
-                var data = await _accountServ.GetByIdAsync(id);
-                if(data != null)
+                await _accountServ.DeleteAsync(id);
+                return Ok(new MessageResponse
                 {
-                    await _accountServ.DeleteAsync(id);
-                    return Ok();
-                }
-                else
-                {
-                    return NotFound();
-                }
+                    Message = "Success"
+                });
             }
             catch(Exception ex)
             {
-                return BadRequest(ex.Message);
+                Console.WriteLine(ex.Message);
+                return BadRequest(new MessageResponse
+                {
+                    Message = "Fail"
+                });
             }
         }
     }

@@ -5,13 +5,7 @@ namespace BackendDATN.Data
 {
     public partial class Account
     {
-        public Account()
-        {
-            Students = new HashSet<Student>();
-            Teachers = new HashSet<Teacher>();
-        }
-
-        public Guid Id { get; set; }
+        public Guid IdAccount { get; set; }
         public string Email { get; set; } = null!;
         public string Password { get; set; } = null!;
         public DateTime CreatedAt { get; set; }
@@ -19,7 +13,7 @@ namespace BackendDATN.Data
         public bool Status { get; set; }
         public int Role { get; set; }
 
-        public virtual ICollection<Student> Students { get; set; }
-        public virtual ICollection<Teacher> Teachers { get; set; }
+        public virtual Student Student { get; set; } = null!;
+        public virtual Teacher Teacher { get; set; } = null!;
     }
 }

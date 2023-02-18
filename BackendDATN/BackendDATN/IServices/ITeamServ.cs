@@ -4,16 +4,12 @@ namespace BackendDATN.IServices
 {
     public interface ITeamServ
     {
-        List<TeamVM> GetAll();
+        Task<List<TeamVM>> GetAllAsync();
 
-        List<TeamVM> GetByPage(int page = 1);
+        Task AddAsync(TeamModel groupModel);
 
-        TeamVM GetById(int id);
+        Task UpdateAsync(TeamVM groupVM);
 
-        TeamVM Add(TeamModel groupModel);
-
-        void Update(TeamVM groupVM);
-
-        void Delete(int id);
+        Task DeleteAsync(int id);
     }
 }

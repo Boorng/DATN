@@ -10,6 +10,6 @@ namespace BackendDATN.Entity.VM.Group
     {
         public string Name { get; set; }
 
-        public string Notification { get; set; }
+        public string? Notification { get; set; }
     }
 }

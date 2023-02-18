@@ -1,0 +1,76 @@
+.list-subject {
+    margin-top: 20px;
+    width: 100%;
+
+    .table-head-index,
+    .table-head-subject,
+    .table-head-grade {
+        font-size: 1.5rem;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+
+    .table-head-index {
+        width: 100px;
+    }
+
+    .table-head-subject {
+        width: 450px;
+    }
+
+    .table-head-grade {
+        width: 200px;
+    }
+
+    .table-body {
+        font-size: 1.4rem;
+    }
+
+    .list-button {
+        display: flex;
+        column-gap: 10px;
+
+        .button {
+            font-size: 1.4rem;
+        }
+
+        .button-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #ffc107;
+            color: white;
+            font-size: 1.4rem;
+            border-radius: 5px;
+            width: 140px;
+        }
+    }
+
+    .button-link {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #ffc107;
+        color: white;
+        font-size: 1.4rem;
+        border-radius: 5px;
+        width: 140px;
+        height: 30px;
+    }
+}
+
+.modal {
+    .modal-title {
+        font-size: 1.8rem;
+        font-weight: 600;
+    }
+
+    .modal-content {
+        font-size: 1.6rem;
+    }
+
+    .button-confirm,
+    .button-back {
+        font-size: 1.6rem;
+    }
+}

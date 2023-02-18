@@ -12,8 +12,8 @@ namespace BackendDATN.Entity.VM.Semester
 
         public string SchoolYear { get; set; }
 
-        public DateTime TimeStart { get; set; }
+        public string TimeStart { get; set; }
 
-        public DateTime TimeEnd { get; set; }
+        public string TimeEnd { get; set; }
     }
 }

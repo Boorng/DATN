@@ -13,11 +13,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "E:\\Workspace\\DATN\\ProjectDATN\\BackendDATN\\BackendDATN.Data\\BackendDATN.Data.csproj",
+      "projectUniqueName": "E:\\Workspace\\ProjectDATN\\BackendDATN\\BackendDATN.Data\\BackendDATN.Data.csproj",
       "projectName": "BackendDATN.Data",
-      "projectPath": "E:\\Workspace\\DATN\\ProjectDATN\\BackendDATN\\BackendDATN.Data\\BackendDATN.Data.csproj",
+      "projectPath": "E:\\Workspace\\ProjectDATN\\BackendDATN\\BackendDATN.Data\\BackendDATN.Data.csproj",
       "packagesPath": "C:\\Users\\Dell\\.nuget\\packages\\",
-      "outputPath": "E:\\Workspace\\DATN\\ProjectDATN\\BackendDATN\\BackendDATN.Data\\obj\\",
+      "outputPath": "E:\\Workspace\\ProjectDATN\\BackendDATN\\BackendDATN.Data\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Dell\\AppData\\Roaming\\NuGet\\NuGet.Config",

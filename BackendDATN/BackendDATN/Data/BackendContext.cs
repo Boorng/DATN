@@ -41,11 +41,14 @@ namespace BackendDATN.Data
         {
             modelBuilder.Entity<Account>(entity =>
             {
+                entity.HasKey(e => e.IdAccount)
+                    .HasName("PK__Account__DA18132C5FBD2741");
+
                 entity.ToTable("Account");
 
-                entity.Property(e => e.Id)
+                entity.Property(e => e.IdAccount)
                     .ValueGeneratedNever()
-                    .HasColumnName("id");
+                    .HasColumnName("idAccount");
 
                 entity.Property(e => e.CreatedAt).HasColumnName("created_at");
 
@@ -66,13 +69,18 @@ namespace BackendDATN.Data
 
             modelBuilder.Entity<Assign>(entity =>
             {
+                entity.HasKey(e => e.IdAssign)
+                    .HasName("PK__Assign__64CD3ADF52E0F1B8");
+
                 entity.ToTable("Assign");
 
-                entity.Property(e => e.Id)
+                entity.Property(e => e.IdAssign)
                     .ValueGeneratedNever()
-                    .HasColumnName("id");
+                    .HasColumnName("idAssign");
 
-                entity.Property(e => e.ClassId).HasColumnName("classId");
+                entity.Property(e => e.ClassId)
+                    .HasMaxLength(15)
+                    .HasColumnName("classId");
 
                 entity.Property(e => e.SemesterId).HasColumnName("semesterId");
 
@@ -109,9 +117,14 @@ namespace BackendDATN.Data
 
             modelBuilder.Entity<Class>(entity =>
             {
+                entity.HasKey(e => e.IdClass)
+                    .HasName("PK__Class__17317A5A0AAD7857");
+
                 entity.ToTable("Class");
 
-                entity.Property(e => e.Id).HasColumnName("id");
+                entity.Property(e => e.IdClass)
+                    .HasMaxLength(15)
+                    .HasColumnName("idClass");
 
                 entity.Property(e => e.AcademicYear).HasColumnName("academicYear");
 
@@ -134,15 +147,20 @@ namespace BackendDATN.Data
 
             modelBuilder.Entity<Conduct>(entity =>
             {
+                entity.HasKey(e => e.IdConduct)
+                    .HasName("PK__Conduct__26C0C15EDFF5A1E7");
+
                 entity.ToTable("Conduct");
 
-                entity.Property(e => e.Id)
+                entity.Property(e => e.IdConduct)
                     .ValueGeneratedNever()
-                    .HasColumnName("id");
+                    .HasColumnName("idConduct");
 
                 entity.Property(e => e.Comment).HasColumnName("comment");
 
-                entity.Property(e => e.Mark).HasColumnName("mark");
+                entity.Property(e => e.Evaluate)
+                    .HasMaxLength(15)
+                    .HasColumnName("evaluate");
 
                 entity.Property(e => e.SemesterId).HasColumnName("semesterId");
 
@@ -165,9 +183,12 @@ namespace BackendDATN.Data
 
             modelBuilder.Entity<Semester>(entity =>
             {
+                entity.HasKey(e => e.IdSemester)
+                    .HasName("PK__Semester__C6BE14972CDC6214");
+
                 entity.ToTable("Semester");
 
-                entity.Property(e => e.Id).HasColumnName("id");
+                entity.Property(e => e.IdSemester).HasColumnName("idSemester");
 
                 entity.Property(e => e.Name)
                     .HasMaxLength(5)
@@ -188,11 +209,17 @@ namespace BackendDATN.Data
 
             modelBuilder.Entity<Student>(entity =>
             {
+                entity.HasKey(e => e.IdStudent)
+                    .HasName("PK__Student__35B1F88A2EAF102A");
+
                 entity.ToTable("Student");
 
-                entity.Property(e => e.Id)
+                entity.HasIndex(e => e.AccountId, "UQ__Student__F267251F7D043C62")
+                    .IsUnique();
+
+                entity.Property(e => e.IdStudent)
                     .HasMaxLength(15)
-                    .HasColumnName("id");
+                    .HasColumnName("idStudent");
 
                 entity.Property(e => e.AccountId).HasColumnName("accountId");
 
@@ -246,22 +273,31 @@ namespace BackendDATN.Data
                     .HasMaxLength(20)
                     .HasColumnName("phone");
 
+                entity.Property(e => e.SchoolYear)
+                    .HasMaxLength(20)
+                    .HasColumnName("schoolYear");
+
                 entity.Property(e => e.Status).HasColumnName("status");
 
                 entity.HasOne(d => d.Account)
-                    .WithMany(p => p.Students)
-                    .HasForeignKey(d => d.AccountId)
+                    .WithOne(p => p.Student)
+                    .HasForeignKey<Student>(d => d.AccountId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Student_Account");
             });
 
             modelBuilder.Entity<StudentClass>(entity =>
             {
+                entity.HasKey(e => e.IdStudentClass)
+                    .HasName("PK__StudentC__492F9CD3D57CD709");
+
                 entity.ToTable("StudentClass");
 
-                entity.Property(e => e.Id).HasColumnName("id");
+                entity.Property(e => e.IdStudentClass).HasColumnName("idStudentClass");
 
-                entity.Property(e => e.ClassId).HasColumnName("classId");
+                entity.Property(e => e.ClassId)
+                    .HasMaxLength(15)
+                    .HasColumnName("classId");
 
                 entity.Property(e => e.StudentId)
                     .HasMaxLength(15)
@@ -282,9 +318,12 @@ namespace BackendDATN.Data
 
             modelBuilder.Entity<Subject>(entity =>
             {
+                entity.HasKey(e => e.IdSubject)
+                    .HasName("PK__Subject__A324CF9E243DE826");
+
                 entity.ToTable("Subject");
 
-                entity.Property(e => e.Id).HasColumnName("id");
+                entity.Property(e => e.IdSubject).HasColumnName("idSubject");
 
                 entity.Property(e => e.Grade).HasColumnName("grade");
 
@@ -295,11 +334,17 @@ namespace BackendDATN.Data
 
             modelBuilder.Entity<Teacher>(entity =>
             {
+                entity.HasKey(e => e.IdTeacher)
+                    .HasName("PK__Teacher__582173DE85DE4658");
+
                 entity.ToTable("Teacher");
 
-                entity.Property(e => e.Id)
+                entity.HasIndex(e => e.AccountId, "UQ__Teacher__F267251FD20FF4F2")
+                    .IsUnique();
+
+                entity.Property(e => e.IdTeacher)
                     .HasMaxLength(15)
-                    .HasColumnName("id");
+                    .HasColumnName("idTeacher");
 
                 entity.Property(e => e.AccountId).HasColumnName("accountId");
 
@@ -325,6 +370,8 @@ namespace BackendDATN.Data
                     .HasMaxLength(10)
                     .HasColumnName("gender");
 
+                entity.Property(e => e.IsSeenNotification).HasColumnName("isSeenNotification");
+
                 entity.Property(e => e.Leader).HasColumnName("leader");
 
                 entity.Property(e => e.Level).HasColumnName("level");
@@ -340,8 +387,8 @@ namespace BackendDATN.Data
                 entity.Property(e => e.ViceLeader).HasColumnName("viceLeader");
 
                 entity.HasOne(d => d.Account)
-                    .WithMany(p => p.Teachers)
-                    .HasForeignKey(d => d.AccountId)
+                    .WithOne(p => p.Teacher)
+                    .HasForeignKey<Teacher>(d => d.AccountId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Teacher_Account");
 
@@ -353,9 +400,12 @@ namespace BackendDATN.Data
 
             modelBuilder.Entity<Team>(entity =>
             {
+                entity.HasKey(e => e.IdTeam)
+                    .HasName("PK__Team__BCD885CFAB62AC74");
+
                 entity.ToTable("Team");
 
-                entity.Property(e => e.Id).HasColumnName("id");
+                entity.Property(e => e.IdTeam).HasColumnName("idTeam");
 
                 entity.Property(e => e.Name)
                     .HasMaxLength(100)
@@ -366,11 +416,14 @@ namespace BackendDATN.Data
 
             modelBuilder.Entity<Test>(entity =>
             {
+                entity.HasKey(e => e.IdTest)
+                    .HasName("PK__Test__BCD9141A1BFD1596");
+
                 entity.ToTable("Test");
 
-                entity.Property(e => e.Id)
+                entity.Property(e => e.IdTest)
                     .ValueGeneratedNever()
-                    .HasColumnName("id");
+                    .HasColumnName("idTest");
 
                 entity.Property(e => e.Comment).HasColumnName("comment");
 
@@ -378,38 +431,31 @@ namespace BackendDATN.Data
                     .HasColumnType("datetime")
                     .HasColumnName("created_at");
 
-                entity.Property(e => e.DivisionId).HasColumnName("divisionId");
-
                 entity.Property(e => e.Mark).HasColumnName("mark");
 
                 entity.Property(e => e.MarkWeight).HasColumnName("markWeight");
 
-                entity.Property(e => e.Name)
-                    .HasMaxLength(50)
-                    .IsUnicode(false)
-                    .HasColumnName("name");
-
                 entity.Property(e => e.SemesterId).HasColumnName("semesterId");
 
-                entity.Property(e => e.SubjectId).HasColumnName("subjectId");
+                entity.Property(e => e.StudentClassId).HasColumnName("studentClassId");
 
-                entity.Property(e => e.TestTime).HasColumnName("testTime");
+                entity.Property(e => e.SubjectId).HasColumnName("subjectId");
 
                 entity.Property(e => e.UpdatedAt)
                     .HasColumnType("datetime")
                     .HasColumnName("updated_at");
-
-                entity.HasOne(d => d.Division)
-                    .WithMany(p => p.Tests)
-                    .HasForeignKey(d => d.DivisionId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Test_StudentClass");
 
                 entity.HasOne(d => d.Semester)
                     .WithMany(p => p.Tests)
                     .HasForeignKey(d => d.SemesterId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Test_Semester");
+
+                entity.HasOne(d => d.StudentClass)
+                    .WithMany(p => p.Tests)
+                    .HasForeignKey(d => d.StudentClassId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Test_StudentClass");
 
                 entity.HasOne(d => d.Subject)
                     .WithMany(p => p.Tests)

@@ -12,7 +12,7 @@ namespace BackendDATN.Data
             Tests = new HashSet<Test>();
         }
 
-        public int Id { get; set; }
+        public int IdSemester { get; set; }
         public string Name { get; set; } = null!;
         public string SchoolYear { get; set; } = null!;
         public DateTime TimeStart { get; set; }

@@ -65,17 +65,21 @@
         .form-select {
             font-size: 1.4rem;
         }
-    }
 
-    .button-add-teacher {
-        width: 60px;
-        height: 35px;
-        font-size: 1.6rem;
-    }
+        .error-message {
+            color: red;
+        }
 
-    .button-back {
-        height: 35px;
-        width: 100px;
-        font-size: 1.6rem;
+        .button-add-teacher {
+            width: 60px;
+            height: 35px;
+            font-size: 1.6rem;
+        }
+
+        .button-back {
+            height: 35px;
+            width: 100px;
+            font-size: 1.6rem;
+        }
     }
 }

@@ -9,10 +9,11 @@
 
 html {
     font-size: 62.5%;
+    position: relative;
 }
 
 body {
-    font-family: var(--font-family);
+    // font-family: var(--font-family);
     font-size: 1.6rem;
     line-height: 1.5;
     text-rendering: optimizeSpeed;

@@ -1,0 +1,30 @@
+.table-head {
+    font-size: 1.5rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.table-document {
+    font-size: 1.4rem;
+}
+
+.list-button {
+    display: flex;
+    column-gap: 10px;
+
+    .button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.4rem;
+        border-radius: 5px;
+
+        height: 30px;
+    }
+
+    .button-detail {
+        background-color: #ffc107;
+        width: 140px;
+    }
+}

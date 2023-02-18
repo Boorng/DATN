@@ -8,12 +8,13 @@ import { toast } from "react-toastify";
 import { memo, useEffect, useState } from "react";
 
 import styles from "./AddEditClass.module.scss";
-import { Modal, ModalFooter } from "react-bootstrap";
+import { Modal } from "react-bootstrap";
 import { getTeacherNoLeaveAPI } from "../../../../services/teacherService";
 import {
     postClassAPI,
     updateClassAPI,
 } from "../../../../services/classService";
+import { useFormik } from "formik";
 
 const cx = classNames.bind(styles);
 
@@ -25,14 +26,6 @@ function AddEditClass({
     gradeName,
     getClass,
 }) {
-    const [classes, setClasses] = useState({
-        name: "",
-        grade: gradeName,
-        academicYear: "",
-        headerTeacherId: "",
-        countStudent: 0,
-    });
-
     const [listTeacher, setListTeacher] = useState([]);
 
     const getTeacher = async () => {
@@ -44,18 +37,37 @@ function AddEditClass({
         getTeacher();
     }, []);
 
-    useEffect(() => {
-        if (classShow) {
-            setClasses(classShow);
+    const validate = (values) => {
+        const errors = {};
+        if (!values.id) {
+            errors.id = "Bạn chưa nhập ID";
         }
-    }, [classShow]);
+        if (!values.name) {
+            errors.name = "Bạn chưa nhập tên";
+        }
+        if (!values.academicYear) {
+            errors.academicYear = "Bạn chưa nhập năm học";
+        }
+        if (!values.headerTeacherId) {
+            errors.headerTeacherId = "Bạn chưa chọn giáo viên chủ nhiệm";
+        }
 
-    const handleOnClickClass = async () => {
-        const arr = Object.values(classes);
-        const check = arr.filter((item) => item === "");
-        if (check.length === 0) {
+        return errors;
+    };
+
+    const formik = useFormik({
+        initialValues: {
+            id: classShow ? classShow.id : "",
+            name: classShow ? classShow.name : "",
+            grade: gradeName,
+            academicYear: classShow ? classShow.academicYear : "",
+            headerTeacherId: classShow ? classShow.headerTeacherId : "",
+        },
+        enableReinitialize: true,
+        validate,
+        onSubmit: async (values) => {
             if (classShow) {
-                const response = await updateClassAPI(classes);
+                const response = await updateClassAPI(values);
                 if (response.message === "Success") {
                     toast.info("Cập nhật thông tin lớp thành công");
                     await getClass();
@@ -66,7 +78,7 @@ function AddEditClass({
                     );
                 }
             } else {
-                const response = await postClassAPI(classes);
+                const response = await postClassAPI(values);
                 if (response.message === "Success") {
                     toast.success("Thêm lớp thành công");
                     await getClass();
@@ -77,163 +89,164 @@ function AddEditClass({
                     );
                 }
             }
-        } else {
-            toast.error("Thêm thất bại do chưa nhập đủ thông tin");
-        }
-    };
-
-    const handleOnChange = (e) => {
-        if (e.target.value.trim() !== "") {
-            if (e.target.name === "headerTeacherId") {
-                setClasses({
-                    ...classes,
-                    [e.target.name]: e.target.value,
-                    headerTeacherName: listTeacher.find(
-                        (tc) => tc.id === e.target.value
-                    ).fullName,
-                });
-            } else {
-                setClasses({
-                    ...classes,
-                    [e.target.name]: e.target.value,
-                });
-            }
-        } else {
-            setClasses({
-                ...classes,
-                [e.target.name]: "",
-            });
-            console.log(classes);
-        }
-    };
+        },
+    });
 
     return (
-        <div>
-            <Modal show={show} onHide={showAdd} dialogClassName={cx("modal")}>
-                <Modal.Header closeButton>
-                    <Modal.Title>
-                        {
-                            <h3 className={cx("form-title")}>
-                                {action === "add" ? "Thêm" : "Sửa"} thông tin
-                                lớp
-                            </h3>
-                        }
-                    </Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <Form className={cx("form")}>
+        <Modal show={show} onHide={showAdd} dialogClassName={cx("modal")}>
+            <Modal.Header closeButton>
+                <Modal.Title>
+                    <h3 className={cx("form-title")}>
+                        {action === "add" ? "Thêm" : "Sửa"} thông tin lớp
+                    </h3>
+                </Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                <Form className={cx("form")} onSubmit={formik.handleSubmit}>
+                    <Row className="mb-3">
                         <Row className="mb-3">
-                            <Row className="mb-3">
-                                <Col>
-                                    <Form.Group
-                                        className={cx("manage-student-item-7")}
+                            <Col>
+                                <Form.Group
+                                    className={cx("manage-student-item-7")}
+                                >
+                                    <Form.Label className={cx("form-label")}>
+                                        ID lớp
+                                    </Form.Label>
+                                    <Form.Control
+                                        className={cx("form-control")}
+                                        type="text"
+                                        placeholder="Nhập ID lớp"
+                                        required
+                                        onChange={formik.handleChange}
+                                        value={formik.values.id}
+                                        name="id"
+                                        disabled={classShow ? true : false}
+                                    />
+                                </Form.Group>
+                                {formik.errors.id ? (
+                                    <div className={cx("error-message")}>
+                                        {formik.errors.id}
+                                    </div>
+                                ) : null}
+                            </Col>
+
+                            <Col>
+                                <Form.Group
+                                    className={cx("manage-student-item-7")}
+                                >
+                                    <Form.Label className={cx("form-label")}>
+                                        Tên lớp
+                                    </Form.Label>
+                                    <Form.Control
+                                        className={cx("form-control")}
+                                        type="text"
+                                        placeholder="Nhập tên lớp"
+                                        required
+                                        onChange={formik.handleChange}
+                                        value={formik.values.name}
+                                        name="name"
+                                    />
+                                    {formik.errors.name ? (
+                                        <div className={cx("error-message")}>
+                                            {formik.errors.name}
+                                        </div>
+                                    ) : null}
+                                </Form.Group>
+                            </Col>
+
+                            <Col xs={4}>
+                                <Form.Group>
+                                    <Form.Label className={cx("form-label")}>
+                                        Khối
+                                    </Form.Label>
+                                    <Form.Select
+                                        className={cx("form-select")}
+                                        onChange={formik.handleChange}
+                                        name="grade"
+                                        value={formik.values.grade}
+                                        disabled
                                     >
-                                        <Form.Label
-                                            className={cx("form-label")}
-                                        >
-                                            Tên lớp
-                                        </Form.Label>
-                                        <Form.Control
-                                            className={cx("form-control")}
-                                            type="text"
-                                            placeholder="Nhập tên lớp"
-                                            required
-                                            onChange={handleOnChange}
-                                            value={classes.name}
-                                            name="name"
-                                        />
-                                    </Form.Group>
-                                </Col>
-
-                                <Col xs={4}>
-                                    <Form.Group>
-                                        <Form.Label
-                                            className={cx("form-label")}
-                                        >
-                                            Khối
-                                        </Form.Label>
-                                        <Form.Select
-                                            className={cx("form-select")}
-                                            onChange={handleOnChange}
-                                            name="grade"
-                                            value={classes.grade}
-                                            disabled
-                                        >
-                                            <option value="6">6</option>
-                                            <option value="7">7</option>
-                                            <option value="8">8</option>
-                                            <option value="9">9</option>
-                                        </Form.Select>
-                                    </Form.Group>
-                                </Col>
-                            </Row>
-
-                            <Row>
-                                <Col>
-                                    <Form.Group>
-                                        <Form.Label
-                                            className={cx("form-label")}
-                                        >
-                                            Giáo viên chủ nhiệm
-                                        </Form.Label>
-                                        <Form.Select
-                                            className={cx("form-select")}
-                                            onChange={handleOnChange}
-                                            name="headerTeacherId"
-                                            value={classes.headerTeacherId}
-                                        >
-                                            <option value="">
-                                                --- Chọn giáo viên chủ nhiệm ---
-                                            </option>
-                                            {listTeacher.map((item) => {
-                                                return (
-                                                    <option value={item.id}>
-                                                        {item.fullName}
-                                                    </option>
-                                                );
-                                            })}
-                                        </Form.Select>
-                                    </Form.Group>
-                                </Col>
-                                <Col>
-                                    <Form.Group className="mb-3">
-                                        <Form.Label
-                                            className={cx("form-label")}
-                                        >
-                                            Năm học
-                                        </Form.Label>
-                                        <Form.Control
-                                            className={cx("form-control")}
-                                            type="text"
-                                            placeholder="Nhập năm học"
-                                            required
-                                            onChange={handleOnChange}
-                                            name="academicYear"
-                                            value={classes.academicYear}
-                                        />
-                                    </Form.Group>
-                                </Col>
-                            </Row>
+                                        <option value="6">6</option>
+                                        <option value="7">7</option>
+                                        <option value="8">8</option>
+                                        <option value="9">9</option>
+                                    </Form.Select>
+                                </Form.Group>
+                            </Col>
                         </Row>
-                    </Form>
-                </Modal.Body>
-                <ModalFooter>
-                    <Button
-                        onClick={handleOnClickClass}
-                        className={cx("button-add-class")}
-                    >
-                        {action === "add" ? "Thêm" : "Sửa"}
-                    </Button>
-                    <Button
-                        variant="secondary"
-                        className={cx("button-back")}
-                        onClick={showAdd}
-                    >
-                        Quay lại
-                    </Button>
-                </ModalFooter>
-            </Modal>
-        </div>
+
+                        <Row>
+                            <Col>
+                                <Form.Group>
+                                    <Form.Label className={cx("form-label")}>
+                                        Giáo viên chủ nhiệm
+                                    </Form.Label>
+                                    <Form.Select
+                                        className={cx("form-select")}
+                                        onChange={formik.handleChange}
+                                        name="headerTeacherId"
+                                        value={formik.values.headerTeacherId}
+                                    >
+                                        <option value="">
+                                            --- Chọn giáo viên chủ nhiệm ---
+                                        </option>
+                                        {listTeacher.map((item) => {
+                                            return (
+                                                <option value={item.id}>
+                                                    {item.id} - {item.fullName}
+                                                </option>
+                                            );
+                                        })}
+                                    </Form.Select>
+                                    {formik.errors.headerTeacherId ? (
+                                        <div className={cx("error-message")}>
+                                            {formik.errors.headerTeacherId}
+                                        </div>
+                                    ) : null}
+                                </Form.Group>
+                            </Col>
+                            <Col>
+                                <Form.Group className="mb-3">
+                                    <Form.Label className={cx("form-label")}>
+                                        Năm học
+                                    </Form.Label>
+                                    <Form.Control
+                                        className={cx("form-control")}
+                                        type="text"
+                                        placeholder="Nhập năm học"
+                                        required
+                                        onChange={formik.handleChange}
+                                        name="academicYear"
+                                        value={formik.values.academicYear}
+                                    />
+                                    {formik.errors.academicYear ? (
+                                        <div className={cx("error-message")}>
+                                            {formik.errors.academicYear}
+                                        </div>
+                                    ) : null}
+                                </Form.Group>
+                            </Col>
+                        </Row>
+                    </Row>
+                    <Modal.Footer>
+                        <Button
+                            type="submit"
+                            className={cx("button-add-class")}
+                        >
+                            {action === "add" ? "Thêm" : "Sửa"}
+                        </Button>
+                        <Button
+                            type="button"
+                            variant="secondary"
+                            className={cx("button-back")}
+                            onClick={showAdd}
+                        >
+                            Quay lại
+                        </Button>
+                    </Modal.Footer>
+                </Form>
+            </Modal.Body>
+        </Modal>
     );
 }
 

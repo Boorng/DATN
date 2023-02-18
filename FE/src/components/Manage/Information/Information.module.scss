@@ -1,36 +1,115 @@
-.information {
-    width: 70%;
+.manage-information {
+    position: relative;
+    width: 100%;
 
-    .information-title {
-        display: flex;
-        justify-content: center;
+    .manage-information-header {
+        height: 700px;
+        padding-top: 20px;
+        padding-left: 50px;
+        padding-right: 50px;
+        margin-bottom: 30px;
 
-        font-weight: bold;
-        text-align: center;
-        color: #8c1515;
-        margin-top: 5px !important;
-        text-transform: uppercase;
-    }
+        background: rgb(34, 193, 195);
+        background: linear-gradient(
+            135deg,
+            rgba(34, 193, 195, 1) 0%,
+            rgba(253, 187, 45, 1) 100%
+        );
 
-    .information-content {
-        margin-top: 30px;
-        margin-left: 50px;
-        display: flex;
-        column-gap: 50px;
+        .manage-information-header-user {
+            display: flex;
+            justify-content: space-between;
 
-        .information-content-image {
-            width: 200px;
-            background-color: #fff;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            padding: 4px;
+            .manage-information-title {
+                font-size: 3rem;
+                color: white;
+                font-weight: 700;
+            }
+
+            .manage-user {
+                display: flex;
+                column-gap: 10px;
+                color: white;
+
+                .avatar-image {
+                    width: 27px;
+                    height: 27px;
+                    border-radius: 50%;
+                    border: 1px solid white;
+                    cursor: pointer;
+                }
+
+                .user-name {
+                    padding-top: 1px;
+                    font-size: 1.6rem;
+                    cursor: pointer;
+                }
+            }
         }
 
-        .information-content-detail {
+        .manage-information-header-message {
+            padding-top: 70px;
+            font-size: 40px;
+            font-weight: 700;
+            color: white;
+        }
+
+        .manage-information-header-content {
+            padding-top: 150px;
             display: flex;
-            flex-direction: column;
-            row-gap: 10px;
-            font-size: 16px;
+            justify-content: space-around;
+
+            .manage-information-header-content-item {
+                width: 300px;
+                height: 120px;
+                background-color: white;
+                border-radius: 5px;
+                display: flex;
+                justify-content: space-between;
+                padding: 20px 20px;
+
+                .content {
+                    .content-title {
+                        font-size: 1.8rem;
+                        font-weight: 600;
+                        color: #b4bec9;
+                    }
+
+                    .content-detail {
+                        font-size: 1.8rem;
+                        font-weight: 600;
+                    }
+                }
+
+                .icon-teacher,
+                .icon-student,
+                .icon-class {
+                    border-radius: 50%;
+                    width: 40px;
+                    height: 40px;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+
+                    .icon-image {
+                        width: 20px;
+                        height: 20px;
+                        color: white;
+                    }
+                }
+
+                .icon-teacher {
+                    background-color: #f55143;
+                }
+
+                .icon-student {
+                    background-color: #fb9e40;
+                }
+
+                .icon-class {
+                    background-color: #2dce97;
+                }
+            }
         }
     }
 }

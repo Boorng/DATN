@@ -5,20 +5,18 @@ namespace BackendDATN.Data
 {
     public partial class Test
     {
-        public Guid Id { get; set; }
-        public string Name { get; set; } = null!;
+        public Guid IdTest { get; set; }
+        public string? Comment { get; set; }
         public int MarkWeight { get; set; }
-        public int TestTime { get; set; }
-        public string Comment { get; set; } = null!;
         public double Mark { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
         public int SubjectId { get; set; }
         public int SemesterId { get; set; }
-        public int DivisionId { get; set; }
+        public int StudentClassId { get; set; }
 
-        public virtual StudentClass Division { get; set; } = null!;
         public virtual Semester Semester { get; set; } = null!;
+        public virtual StudentClass StudentClass { get; set; } = null!;
         public virtual Subject Subject { get; set; } = null!;
     }
 }

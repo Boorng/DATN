@@ -9,7 +9,13 @@ import styles from "./ListTeacher.module.scss";
 import FindTeacher from "../FindTeacher";
 import DetailTeacher from "../DetailTeacher";
 import AddEditTeacher from "../AddEditTeacher";
-import { updateStatusTeacherAPI } from "../../../../services/teacherService";
+import {
+    checkDataTeacherAPI,
+    deleteTeacherAPI,
+} from "../../../../services/teacherService";
+import { deleteListAssignAPI } from "../../../../services/assignService";
+import { deleteAccountAPI } from "../../../../services/accountService";
+import ReactPaginate from "react-paginate";
 
 const cx = classNames.bind(styles);
 
@@ -17,9 +23,21 @@ function ListTeacher({ listTeacher, getTeacher }) {
     const [listTeacherExport, setListTeacherExport] = useState([]);
     const [isShow, setIsShow] = useState(false);
     const [isDetail, setIsDetail] = useState(false);
-    const [isDelete, setIsDelete] = useState(false);
-    const [idDelete, setIdDelete] = useState("");
+    const [isTeaDelete, setIsTeaDelete] = useState(false);
+    const [idTeaDelete, setIdTeaDelete] = useState("");
+    const [idAccDelete, setIdAccDelete] = useState("");
+    const [isAssignDelete, setIsAssignDelete] = useState(false);
+    const [listIdHeaderDelete, setListIdHeaderDelete] = useState([]);
+    const [isSure, setIsSure] = useState(false);
+    const [isHeader, setIsHeader] = useState(false);
     const [teacherShow, setTeacherShow] = useState({});
+
+    //#region Paging
+    const [itemOffset, setItemOffset] = useState(0);
+    const [currentItems, setCurrentItems] = useState([]);
+    const [pageCount, setPageCount] = useState(0);
+    const itemPerPage = 8;
+    //#endregion
 
     useEffect(() => {
         const lstExport = listTeacher.map((item) => {
@@ -46,8 +64,27 @@ function ListTeacher({ listTeacher, getTeacher }) {
                         : "Giáo sư",
             };
         });
+
+        const endOffset = itemOffset + itemPerPage;
+
+        if (listTeacher.length > 8) {
+            setCurrentItems(listTeacher.slice(itemOffset, endOffset));
+            setPageCount(Math.ceil(listTeacher.length / itemPerPage));
+        } else {
+            setItemOffset(0);
+            setPageCount(1);
+            setCurrentItems(listTeacher.slice(0, endOffset));
+        }
+
         setListTeacherExport(lstExport);
     }, [listTeacher]);
+
+    const handlePageClick = (event) => {
+        const newOffset = (event.selected * itemPerPage) % listTeacher.length;
+        const endOffset = newOffset + itemPerPage;
+        setItemOffset(newOffset);
+        setCurrentItems(endOffset.slice(newOffset, endOffset));
+    };
 
     const handleExport = () => {
         const headings = [
@@ -73,35 +110,72 @@ function ListTeacher({ listTeacher, getTeacher }) {
             skipHeader: true,
         });
         utils.book_append_sheet(wb, ws, "Report");
-        writeFile(wb, "TeacherReport.xlsx");
+        writeFile(wb, "Danh sách giáo viên.xlsx");
     };
 
-    const handleUpdateStatus = async () => {
-        const status = await updateStatusTeacherAPI(idDelete);
-        console.log(status);
-        if (status.message === "Success") {
-            toast.success("Cập nhật tình trạng làm việc thành công");
-            await getTeacher();
-        } else {
-            toast.error("Cập nhật tình trạng làm việc thất bại");
+    const handleConfirmDelete = (id) => {
+        setIdTeaDelete(id);
+        setIsTeaDelete(true);
+    };
+
+    const handleCheckData = async () => {
+        const res = await checkDataTeacherAPI(idTeaDelete);
+        console.log(res);
+        if (res.haveAccount) {
+            setIdAccDelete(res.accountId);
         }
-        setIdDelete("");
-        setIsDelete(false);
+
+        if (res.haveAssign) {
+            setIsAssignDelete(true);
+        }
+
+        if (res.classIds.length > 0) {
+            setListIdHeaderDelete(res.classIds);
+        }
+
+        setIsTeaDelete(false);
+        setIsSure(true);
     };
 
-    const handleConfirmUpdate = (id) => {
-        setIdDelete(id);
-        setIsDelete(true);
+    const handleDeleteAll = async () => {
+        if (listIdHeaderDelete.length > 0) {
+            setIsHeader(true);
+        } else {
+            let check = true;
+            if (isAssignDelete) {
+                const response = await deleteListAssignAPI(idTeaDelete);
+                if (response.message !== "Success") check = false;
+                setIsAssignDelete(false);
+            }
+
+            if (idAccDelete) {
+                const responseTea = await deleteTeacherAPI(idTeaDelete);
+                if (responseTea.message === "Success") {
+                    const responseAcc = await deleteAccountAPI(idAccDelete);
+                    if (responseAcc.message !== "Success") check = false;
+                }
+
+                setIdTeaDelete("");
+                setIdAccDelete("");
+            }
+            if (check) {
+                toast.success("Xóa giáo viên thành công");
+                await getTeacher();
+            } else {
+                toast.error("Xóa giáo viên thất bại");
+            }
+        }
+        setIsSure(false);
     };
 
-    const handleClickEditInfo = (stu) => {
-        if (!isShow) setTeacherShow(stu);
+    const handleClickEditInfo = (tc) => {
+        if (!isShow) setTeacherShow(tc);
         else setTeacherShow({});
         setIsShow(!isShow);
     };
 
-    const handleClickDetailInfo = (stu) => {
-        if (!isDetail) setTeacherShow(stu);
+    const handleClickDetailInfo = (tc) => {
+        if (!isDetail) setTeacherShow(tc);
         else setTeacherShow({});
         setIsDetail(!isDetail);
     };
@@ -127,7 +201,6 @@ function ListTeacher({ listTeacher, getTeacher }) {
                     <tr>
                         <th className={cx("table-head")}>ID</th>
                         <th className={cx("table-head")}>Tên giáo viên</th>
-                        <th className={cx("table-head")}>Tuổi</th>
                         <th className={cx("table-head")}>Email</th>
                         <th className={cx("table-head")}>Số điện thoại</th>
                         <th className={cx("table-head")}>Chức danh</th>
@@ -138,7 +211,7 @@ function ListTeacher({ listTeacher, getTeacher }) {
                     </tr>
                 </thead>
                 <tbody>
-                    {listTeacher.map((tea) => {
+                    {currentItems.map((tea) => {
                         return (
                             <tr key={tea.id}>
                                 <td className={cx("table-document")}>
@@ -147,9 +220,7 @@ function ListTeacher({ listTeacher, getTeacher }) {
                                 <td className={cx("table-document")}>
                                     {tea.fullName}
                                 </td>
-                                <td className={cx("table-document")}>
-                                    {tea.age}
-                                </td>
+
                                 <td className={cx("table-document")}>
                                     {tea.email}
                                 </td>
@@ -184,34 +255,52 @@ function ListTeacher({ listTeacher, getTeacher }) {
                                         Xem chi tiết
                                     </Button>
 
-                                    {tea.status === 1 && (
-                                        <>
-                                            <Button
-                                                onClick={() =>
-                                                    handleConfirmUpdate(tea.id)
-                                                }
-                                                variant="danger"
-                                                className={cx("button")}
-                                            >
-                                                Nghỉ việc
-                                            </Button>
-                                            <Button
-                                                variant="success"
-                                                onClick={() =>
-                                                    handleClickEditInfo(tea)
-                                                }
-                                                className={cx("button")}
-                                            >
-                                                Sửa
-                                            </Button>
-                                        </>
-                                    )}
+                                    <Button
+                                        variant="success"
+                                        onClick={() => handleClickEditInfo(tea)}
+                                        className={cx("button")}
+                                    >
+                                        Sửa
+                                    </Button>
+
+                                    <Button
+                                        onClick={() =>
+                                            handleConfirmDelete(tea.id)
+                                        }
+                                        variant="danger"
+                                        className={cx("button")}
+                                    >
+                                        Xóa
+                                    </Button>
                                 </td>
                             </tr>
                         );
                     })}
                 </tbody>
             </Table>
+
+            {listTeacher.length > 8 && (
+                <ReactPaginate
+                    breakLabel="..."
+                    nextLabel="next >"
+                    onPageChange={handlePageClick}
+                    pageRangeDisplayed={5}
+                    pageCount={pageCount}
+                    previousLabel="< previous"
+                    renderOnZeroPageCount={null}
+                    pageClassName="page-item"
+                    pageLinkClassName="page-link"
+                    previousClassName="page-item"
+                    previousLinkClassName="page-link"
+                    nextClassName="page-item"
+                    nextLinkClassName="page-link"
+                    breakClassName="page-item"
+                    breakLinkClassName="page-link"
+                    containerClassName={cx("pagination", "pagination-wrap")}
+                    activeClassName="active"
+                />
+            )}
+
             {isShow && (
                 <AddEditTeacher
                     teacherShow={teacherShow}
@@ -220,6 +309,7 @@ function ListTeacher({ listTeacher, getTeacher }) {
                     getTeacher={getTeacher}
                 />
             )}
+
             {isDetail && (
                 <DetailTeacher
                     teacherShow={teacherShow}
@@ -227,38 +317,105 @@ function ListTeacher({ listTeacher, getTeacher }) {
                     showDetail={handleClickDetailInfo}
                 />
             )}
-            <Modal
-                show={isDelete}
-                onHide={() => setIsDelete(false)}
-                dialogClassName={cx("modal")}
-                centered
-            >
-                <Modal.Header>
-                    <Modal.Title className={cx("modal-title")}>
-                        Cảnh báo
-                    </Modal.Title>
-                </Modal.Header>
-                <Modal.Body className={cx("modal-content")}>
-                    Bạn có chắc chắn muốn cập nhật trạng thái giáo viên thành
-                    nghỉ việc không?
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button
-                        variant="primary"
-                        className={cx("button-confirm")}
-                        onClick={handleUpdateStatus}
-                    >
-                        Xác nhận
-                    </Button>
-                    <Button
-                        variant="secondary"
-                        className={cx("button-back")}
-                        onClick={() => setIsDelete(false)}
-                    >
-                        Quay lại
-                    </Button>
-                </Modal.Footer>
-            </Modal>
+
+            {isTeaDelete && (
+                <Modal
+                    show={isTeaDelete}
+                    onHide={() => setIsTeaDelete(false)}
+                    dialogClassName={cx("modal")}
+                    centered
+                >
+                    <Modal.Header>
+                        <Modal.Title className={cx("modal-title")}>
+                            Cảnh báo
+                        </Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body className={cx("modal-content")}>
+                        Bạn có chắc chắn muốn xóa giáo viên không?
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button
+                            variant="primary"
+                            className={cx("button-confirm")}
+                            onClick={handleCheckData}
+                        >
+                            Xác nhận
+                        </Button>
+                        <Button
+                            variant="secondary"
+                            className={cx("button-back")}
+                            onClick={() => setIsTeaDelete(false)}
+                        >
+                            Quay lại
+                        </Button>
+                    </Modal.Footer>
+                </Modal>
+            )}
+
+            {isSure && (
+                <Modal
+                    show={isSure}
+                    onHide={() => setIsSure(false)}
+                    dialogClassName={cx("modal")}
+                    centered
+                >
+                    <Modal.Header>
+                        <Modal.Title className={cx("modal-title")}>
+                            Cảnh báo
+                        </Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body className={cx("modal-content")}>
+                        Bạn sẽ xóa tất cả những dữ liệu liên quan đến tài khoản,
+                        lớp dạy, lớp chủ nhiệm của giáo viên. Bạn chắc chắn
+                        không?
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button
+                            variant="primary"
+                            className={cx("button-confirm")}
+                            onClick={handleDeleteAll}
+                        >
+                            Xác nhận
+                        </Button>
+                        <Button
+                            variant="secondary"
+                            className={cx("button-back")}
+                            onClick={() => setIsSure(false)}
+                        >
+                            Quay lại
+                        </Button>
+                    </Modal.Footer>
+                </Modal>
+            )}
+
+            {isHeader && (
+                <Modal
+                    show={isHeader}
+                    onHide={() => setIsHeader(false)}
+                    dialogClassName={cx("modal")}
+                    centered
+                >
+                    <Modal.Header>
+                        <Modal.Title className={cx("modal-title")}>
+                            Cảnh báo
+                        </Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body className={cx("modal-content")}>
+                        Bạn cần thay thay đổi giáo viên chủ nhiệm của những lớp
+                        giáo viên này dạy trước ({listIdHeaderDelete.toString()}
+                        )
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button
+                            variant="secondary"
+                            className={cx("button-back")}
+                            onClick={() => setIsHeader(false)}
+                        >
+                            Quay lại
+                        </Button>
+                    </Modal.Footer>
+                </Modal>
+            )}
         </div>
     );
 }

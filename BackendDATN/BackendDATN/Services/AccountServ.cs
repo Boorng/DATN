@@ -15,8 +15,6 @@ namespace BackendDATN.Services
 
         private readonly IMapper _mapper;
 
-        public static int PAGE_SIZE { get; set; } = 10;
-
         public AccountServ(BackendContext context, IMapper mapper)
         {
             _context = context;
@@ -41,11 +39,23 @@ namespace BackendDATN.Services
             return _mapper.Map <AccountVM>(data);
         }
 
+        public async Task<bool> CheckPassword(Guid id, string password)
+        {
+            var data = await _context.Accounts.FindAsync(id);
+
+            if(data.Password == password)
+            {
+                return true;
+            }
+            return false;
+
+        }
+
         public async Task<AccountVM> AddAsync(AccountModel accountModel)
         {
             var account = new Account
             {
-                Id = Guid.NewGuid(),
+                IdAccount = Guid.NewGuid(),
                 Email = accountModel.Email,
                 Password = (new Password(12)).Next(),
                 CreatedAt = DateTime.Now,
@@ -62,7 +72,7 @@ namespace BackendDATN.Services
 
         public async Task UpdateAsync(Guid id, bool Status)
         {
-            var account = _context.Accounts.SingleOrDefault(a => a.Id == id);
+            var account = _context.Accounts.SingleOrDefault(a => a.IdAccount == id);
             if(account != null)
             {
                 account.UpdatedAt = DateTime.Now;
@@ -73,7 +83,7 @@ namespace BackendDATN.Services
 
         public async Task DeleteAsync(Guid id)
         {
-            var account = _context.Accounts.SingleOrDefault(a => a.Id == id);
+            var account = _context.Accounts.SingleOrDefault(a => a.IdAccount == id);
             if(account != null)
             {
                 _context.Remove(account);
@@ -83,7 +93,7 @@ namespace BackendDATN.Services
 
         public async Task ChangePasswordAsync(Guid id, string password)
         {
-            var account = _context.Accounts.SingleOrDefault(a => a.Id == id);
+            var account = await _context.Accounts.SingleOrDefaultAsync(a => a.IdAccount == id);
             if(account != null)
             {
                 account.Password = password;

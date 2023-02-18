@@ -6,9 +6,13 @@ import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import Image from "react-bootstrap/Image";
 import { toast } from "react-toastify";
-import { memo, useEffect, useState } from "react";
+import { memo } from "react";
 import { FaUserAlt } from "react-icons/fa";
+import { useFormik } from "formik";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { doc, setDoc } from "firebase/firestore";
 
+import { auth, db } from "../../../../firebase";
 import styles from "./AddEditStudent.module.scss";
 import {
     postStudentAPI,
@@ -19,75 +23,138 @@ import { Modal } from "react-bootstrap";
 const cx = classNames.bind(styles);
 
 function AddEditStudent({ action, studentShow, show, showAdd, getStudent }) {
-    const [student, setStudent] = useState({
-        id: "",
-        fullName: "",
-        age: 0,
-        gender: "Nam",
-        ethnic: "Kinh",
-        birthDay: "1999-01-01",
-        email: "",
-        address: "",
-        phone: "",
-        fatherName: "",
-        fatherPhone: "",
-        fatherCareer: "",
-        motherName: "",
-        motherPhone: "",
-        motherCareer: "",
-        status: 1,
-    });
-
-    useEffect(() => {
-        if (studentShow) {
-            const arr = studentShow.birthDay.split("/");
-            const birthDay = `${arr[2]}-${arr[1]}-${arr[0]}`;
-            setStudent({ ...studentShow, birthDay: birthDay });
+    const validate = (values) => {
+        const errors = {};
+        if (!values.email) {
+            errors.email = "Bạn chưa nhập email";
+        } else if (
+            !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.email)
+        ) {
+            errors.email = "Email không hợp lệ";
         }
-    }, []);
 
-    const handleOnClickStudent = async () => {
-        console.log(student);
-        const arr = Object.values(student);
-        const check = arr.filter((item) => item === 0 || item === "");
-        if (check.length === 0) {
+        if (!values.id) {
+            errors.id = "Bạn chưa nhập ID";
+        }
+        if (!values.fullName) {
+            errors.fullName = "Bạn chưa nhập tên";
+        }
+        if (!values.age) {
+            errors.age = "Bạn chưa nhập tuổi";
+        }
+        if (!values.ethnic) {
+            errors.ethnic = "Bạn chưa nhập dân tộc";
+        }
+        if (!values.address) {
+            errors.address = "Bạn chưa nhập địa chỉ";
+        }
+        if (!values.phone) {
+            errors.phone = "Bạn chưa nhập số điện thoại";
+        }
+        if (!values.schoolYear) {
+            errors.schoolYear = "Bạn chưa nhập khóa";
+        }
+        if (!values.fatherName) {
+            errors.fatherName = "Bạn chưa nhập tên bố";
+        }
+        if (!values.fatherPhone) {
+            errors.fatherPhone = "Bạn chưa nhập số điện thoại bố";
+        }
+        if (!values.fatherCareer) {
+            errors.fatherCareer = "Bạn chưa nhập nghề nghiệp bố";
+        }
+        if (!values.motherName) {
+            errors.motherName = "Bạn chưa nhập tên mẹ";
+        }
+        if (!values.motherPhone) {
+            errors.motherPhone = "Bạn chưa nhập số điện thoại mẹ";
+        }
+        if (!values.motherCareer) {
+            errors.motherCareer = "Bạn chưa nhập nghề nghiệp mẹ";
+        }
+
+        return errors;
+    };
+
+    const validateBirthday = (birthday) => {
+        const arr = birthday.split("/");
+        return `${arr[2]}-${arr[1]}-${arr[0]}`;
+    };
+
+    const formik = useFormik({
+        initialValues: {
+            id: studentShow ? studentShow.id : "",
+            fullName: studentShow ? studentShow.fullName : "",
+            age: studentShow ? studentShow.age : 0,
+            gender: studentShow ? studentShow.gender : "Nam",
+            ethnic: studentShow ? studentShow.ethnic : "",
+            birthDay: studentShow
+                ? validateBirthday(studentShow.birthDay)
+                : "1999-01-01",
+            email: studentShow ? studentShow.email : "",
+            address: studentShow ? studentShow.address : "",
+            phone: studentShow ? studentShow.phone : "",
+            fatherName: studentShow ? studentShow.fatherName : "",
+            fatherPhone: studentShow ? studentShow.fatherPhone : "",
+            fatherCareer: studentShow ? studentShow.fatherCareer : "",
+            motherName: studentShow ? studentShow.motherName : "",
+            motherPhone: studentShow ? studentShow.motherPhone : "",
+            motherCareer: studentShow ? studentShow.motherCareer : "",
+            status: studentShow ? studentShow.status : 1,
+            schoolYear: studentShow ? studentShow.schoolYear : "",
+        },
+        enableReinitialize: true,
+        validate,
+        onSubmit: async (values) => {
             if (studentShow) {
-                const response = await updateStudentAPI(student);
+                const response = await updateStudentAPI(values);
                 if (response.message === "Success") {
                     toast.info("Cập nhật thông tin học sinh thành công");
                     await getStudent();
                     showAdd();
                 }
             } else {
-                const response = await postStudentAPI(student);
+                const response = await postStudentAPI(values);
+
                 if (response.message === "Success") {
-                    toast.success("Thêm học sinh thành công");
-                    await getStudent();
-                    showAdd();
+                    const res = await createUserWithEmailAndPassword(
+                        auth,
+                        values.email,
+                        response.content
+                    );
+
+                    console.log(res);
+
+                    try {
+                        await updateProfile(res.user, {
+                            displayName: `${values.fullName} - ${values.id}`,
+                        });
+
+                        //create user on firestore
+                        await setDoc(doc(db, "users", res.user.uid), {
+                            uid: res.user.uid,
+                            displayName: `${values.fullName} - ${values.id}`,
+                            email: values.email,
+                        });
+
+                        //create empty user chats on firestore
+                        await setDoc(doc(db, "userChats", res.user.uid), {});
+
+                        toast.success("Thêm học sinh thành công");
+                        await getStudent();
+                        showAdd();
+                    } catch (err) {
+                        console.log(err);
+                        toast.error("Thêm học sinh thất bại do lỗi server");
+                    }
                 } else {
                     toast.error(
                         "Thêm học sinh thất bại do nhập thông tin không đúng định dạng hoặc ID đã tồn tại"
                     );
                 }
             }
-        } else {
-            toast.error("Thêm thất bại do chưa nhập đủ thông tin");
-        }
-    };
-
-    const handleOnChange = (e) => {
-        if (e.target.value.trim() !== "") {
-            setStudent({
-                ...student,
-                [e.target.name]: e.target.value,
-            });
-        } else {
-            setStudent({
-                ...student,
-                [e.target.name]: "",
-            });
-        }
-    };
+        },
+    });
 
     return (
         <div>
@@ -103,14 +170,12 @@ function AddEditStudent({ action, studentShow, show, showAdd, getStudent }) {
                     </Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <Form className={cx("form")}>
+                    <Form className={cx("form")} onSubmit={formik.handleSubmit}>
                         <Row className="mb-3">
                             <Col xs={3} className={cx("form-image")}>
-                                {student.Avatar ? (
+                                {studentShow && studentShow.avatar ? (
                                     <Image
-                                        src={URL.createObjectURL(
-                                            student.Avatar
-                                        )}
+                                        src={studentShow.avatar}
                                         alt="Avatar"
                                         className={cx("avatar-image")}
                                     />
@@ -132,13 +197,22 @@ function AddEditStudent({ action, studentShow, show, showAdd, getStudent }) {
                                                 type="text"
                                                 placeholder="Nhập ID học sinh"
                                                 required
-                                                onChange={handleOnChange}
-                                                value={student.id}
+                                                onChange={formik.handleChange}
+                                                value={formik.values.id}
                                                 name="id"
                                                 disabled={
                                                     studentShow ? true : false
                                                 }
                                             />
+                                            {formik.errors.id ? (
+                                                <div
+                                                    className={cx(
+                                                        "error-message"
+                                                    )}
+                                                >
+                                                    {formik.errors.id}
+                                                </div>
+                                            ) : null}
                                         </Form.Group>
                                     </Col>
 
@@ -154,10 +228,19 @@ function AddEditStudent({ action, studentShow, show, showAdd, getStudent }) {
                                                 type="text"
                                                 placeholder="Nhập tên học sinh"
                                                 required
-                                                onChange={handleOnChange}
-                                                value={student.fullName}
+                                                onChange={formik.handleChange}
+                                                value={formik.values.fullName}
                                                 name="fullName"
                                             />
+                                            {formik.errors.fullName ? (
+                                                <div
+                                                    className={cx(
+                                                        "error-message"
+                                                    )}
+                                                >
+                                                    {formik.errors.fullName}
+                                                </div>
+                                            ) : null}
                                         </Form.Group>
                                     </Col>
 
@@ -170,9 +253,9 @@ function AddEditStudent({ action, studentShow, show, showAdd, getStudent }) {
                                             </Form.Label>
                                             <Form.Select
                                                 className={cx("form-select")}
-                                                onChange={handleOnChange}
+                                                onChange={formik.handleChange}
                                                 name="gender"
-                                                value={student.gender}
+                                                value={formik.values.gender}
                                             >
                                                 <option value="Nam">Nam</option>
                                                 <option value="Nữ">Nữ</option>
@@ -192,10 +275,19 @@ function AddEditStudent({ action, studentShow, show, showAdd, getStudent }) {
                                                 type="number"
                                                 placeholder="Nhập tuổi"
                                                 required
-                                                onChange={handleOnChange}
-                                                value={student.age}
+                                                onChange={formik.handleChange}
+                                                value={formik.values.age}
                                                 name="age"
                                             />
+                                            {formik.errors.age ? (
+                                                <div
+                                                    className={cx(
+                                                        "error-message"
+                                                    )}
+                                                >
+                                                    {formik.errors.age}
+                                                </div>
+                                            ) : null}
                                         </Form.Group>
                                     </Col>
                                 </Row>
@@ -208,16 +300,24 @@ function AddEditStudent({ action, studentShow, show, showAdd, getStudent }) {
                                             >
                                                 Dân tộc
                                             </Form.Label>
-                                            <Form.Select
+                                            <Form.Control
                                                 className={cx("form-select")}
-                                                onChange={handleOnChange}
+                                                type="text"
+                                                placeholder="Nhập dân tộc"
+                                                required
+                                                onChange={formik.handleChange}
                                                 name="ethnic"
-                                                value={student.ethnic}
-                                            >
-                                                <option value="Kinh">
-                                                    Kinh
-                                                </option>
-                                            </Form.Select>
+                                                value={formik.values.ethnic}
+                                            />
+                                            {formik.errors.ethnic ? (
+                                                <div
+                                                    className={cx(
+                                                        "error-message"
+                                                    )}
+                                                >
+                                                    {formik.errors.ethnic}
+                                                </div>
+                                            ) : null}
                                         </Form.Group>
                                     </Col>
 
@@ -231,10 +331,32 @@ function AddEditStudent({ action, studentShow, show, showAdd, getStudent }) {
                                             <Form.Control
                                                 className={cx("form-control")}
                                                 type="date"
-                                                onChange={handleOnChange}
+                                                onChange={formik.handleChange}
                                                 name="birthDay"
-                                                value={student.birthDay}
+                                                value={formik.values.birthDay}
                                             />
+                                        </Form.Group>
+                                    </Col>
+                                    <Col>
+                                        <Form.Group>
+                                            <Form.Label
+                                                className={cx("form-label")}
+                                            >
+                                                Tình trạng học tập
+                                            </Form.Label>
+                                            <Form.Select
+                                                className={cx("form-select")}
+                                                onChange={formik.handleChange}
+                                                name="status"
+                                                value={formik.values.status}
+                                            >
+                                                <option value={1}>
+                                                    Đang học
+                                                </option>
+                                                <option value={2}>
+                                                    Nghỉ học
+                                                </option>
+                                            </Form.Select>
                                         </Form.Group>
                                     </Col>
                                 </Row>
@@ -248,11 +370,16 @@ function AddEditStudent({ action, studentShow, show, showAdd, getStudent }) {
                                         type="email"
                                         placeholder="Nhập email"
                                         required
-                                        onChange={handleOnChange}
+                                        onChange={formik.handleChange}
                                         name="email"
                                         disabled={studentShow ? true : false}
-                                        value={student.email}
+                                        value={formik.values.email}
                                     />
+                                    {formik.errors.email ? (
+                                        <div className={cx("error-message")}>
+                                            {formik.errors.email}
+                                        </div>
+                                    ) : null}
                                 </Form.Group>
 
                                 <Form.Group className="mb-3">
@@ -264,26 +391,73 @@ function AddEditStudent({ action, studentShow, show, showAdd, getStudent }) {
                                         type="text"
                                         placeholder="Nhập địa chỉ"
                                         required
-                                        onChange={handleOnChange}
+                                        onChange={formik.handleChange}
                                         name="address"
-                                        value={student.address}
+                                        value={formik.values.address}
                                     />
+                                    {formik.errors.address ? (
+                                        <div className={cx("error-message")}>
+                                            {formik.errors.address}
+                                        </div>
+                                    ) : null}
                                 </Form.Group>
 
-                                <Form.Group className="mb-3">
-                                    <Form.Label className={cx("form-label")}>
-                                        Số điện thoại
-                                    </Form.Label>
-                                    <Form.Control
-                                        className={cx("form-control")}
-                                        type="text"
-                                        placeholder="Nhập số điện thoại"
-                                        required
-                                        onChange={handleOnChange}
-                                        name="phone"
-                                        value={student.phone}
-                                    />
-                                </Form.Group>
+                                <Row>
+                                    <Col>
+                                        <Form.Group className="mb-3">
+                                            <Form.Label
+                                                className={cx("form-label")}
+                                            >
+                                                Số điện thoại
+                                            </Form.Label>
+                                            <Form.Control
+                                                className={cx("form-control")}
+                                                type="text"
+                                                placeholder="Nhập số điện thoại"
+                                                required
+                                                onChange={formik.handleChange}
+                                                name="phone"
+                                                value={formik.values.phone}
+                                            />
+                                            {formik.errors.phone ? (
+                                                <div
+                                                    className={cx(
+                                                        "error-message"
+                                                    )}
+                                                >
+                                                    {formik.errors.phone}
+                                                </div>
+                                            ) : null}
+                                        </Form.Group>
+                                    </Col>
+                                    <Col xs={4}>
+                                        <Form.Group className="mb-3">
+                                            <Form.Label
+                                                className={cx("form-label")}
+                                            >
+                                                Khóa
+                                            </Form.Label>
+                                            <Form.Control
+                                                className={cx("form-control")}
+                                                type="text"
+                                                placeholder="Nhập niên khóa"
+                                                required
+                                                onChange={formik.handleChange}
+                                                name="schoolYear"
+                                                value={formik.values.schoolYear}
+                                            />
+                                            {formik.errors.schoolYear ? (
+                                                <div
+                                                    className={cx(
+                                                        "error-message"
+                                                    )}
+                                                >
+                                                    {formik.errors.schoolYear}
+                                                </div>
+                                            ) : null}
+                                        </Form.Group>
+                                    </Col>
+                                </Row>
 
                                 <Row className="mb-3">
                                     <Col xs={6}>
@@ -298,10 +472,19 @@ function AddEditStudent({ action, studentShow, show, showAdd, getStudent }) {
                                                 type="text"
                                                 placeholder="Nhập tên bố"
                                                 required
-                                                onChange={handleOnChange}
+                                                onChange={formik.handleChange}
                                                 name="fatherName"
-                                                value={student.fatherName}
+                                                value={formik.values.fatherName}
                                             />
+                                            {formik.errors.fatherName ? (
+                                                <div
+                                                    className={cx(
+                                                        "error-message"
+                                                    )}
+                                                >
+                                                    {formik.errors.fatherName}
+                                                </div>
+                                            ) : null}
                                         </Form.Group>
                                     </Col>
 
@@ -317,10 +500,21 @@ function AddEditStudent({ action, studentShow, show, showAdd, getStudent }) {
                                                 type="text"
                                                 placeholder="Nhập tuổi bố"
                                                 required
-                                                onChange={handleOnChange}
+                                                onChange={formik.handleChange}
                                                 name="fatherPhone"
-                                                value={student.fatherPhone}
+                                                value={
+                                                    formik.values.fatherPhone
+                                                }
                                             />
+                                            {formik.errors.fatherPhone ? (
+                                                <div
+                                                    className={cx(
+                                                        "error-message"
+                                                    )}
+                                                >
+                                                    {formik.errors.fatherPhone}
+                                                </div>
+                                            ) : null}
                                         </Form.Group>
                                     </Col>
 
@@ -336,10 +530,21 @@ function AddEditStudent({ action, studentShow, show, showAdd, getStudent }) {
                                                 type="text"
                                                 placeholder="Nhập nghề nghiệp bố"
                                                 required
-                                                onChange={handleOnChange}
+                                                onChange={formik.handleChange}
                                                 name="fatherCareer"
-                                                value={student.fatherCareer}
+                                                value={
+                                                    formik.values.fatherCareer
+                                                }
                                             />
+                                            {formik.errors.fatherCareer ? (
+                                                <div
+                                                    className={cx(
+                                                        "error-message"
+                                                    )}
+                                                >
+                                                    {formik.errors.fatherCareer}
+                                                </div>
+                                            ) : null}
                                         </Form.Group>
                                     </Col>
                                 </Row>
@@ -357,10 +562,19 @@ function AddEditStudent({ action, studentShow, show, showAdd, getStudent }) {
                                                 type="text"
                                                 placeholder="Nhập tên mẹ"
                                                 required
-                                                onChange={handleOnChange}
+                                                onChange={formik.handleChange}
                                                 name="motherName"
-                                                value={student.motherName}
+                                                value={formik.values.motherName}
                                             />
+                                            {formik.errors.motherName ? (
+                                                <div
+                                                    className={cx(
+                                                        "error-message"
+                                                    )}
+                                                >
+                                                    {formik.errors.motherName}
+                                                </div>
+                                            ) : null}
                                         </Form.Group>
                                     </Col>
 
@@ -376,10 +590,21 @@ function AddEditStudent({ action, studentShow, show, showAdd, getStudent }) {
                                                 type="text"
                                                 placeholder="Nhập tuổi mẹ"
                                                 required
-                                                onChange={handleOnChange}
+                                                onChange={formik.handleChange}
                                                 name="motherPhone"
-                                                value={student.motherPhone}
+                                                value={
+                                                    formik.values.motherPhone
+                                                }
                                             />
+                                            {formik.errors.motherPhone ? (
+                                                <div
+                                                    className={cx(
+                                                        "error-message"
+                                                    )}
+                                                >
+                                                    {formik.errors.motherPhone}
+                                                </div>
+                                            ) : null}
                                         </Form.Group>
                                     </Col>
 
@@ -395,33 +620,44 @@ function AddEditStudent({ action, studentShow, show, showAdd, getStudent }) {
                                                 type="text"
                                                 placeholder="Nhập nghề nghiệp mẹ"
                                                 required
-                                                onChange={handleOnChange}
+                                                onChange={formik.handleChange}
                                                 name="motherCareer"
-                                                value={student.motherCareer}
+                                                value={
+                                                    formik.values.motherCareer
+                                                }
                                             />
+                                            {formik.errors.motherCareer ? (
+                                                <div
+                                                    className={cx(
+                                                        "error-message"
+                                                    )}
+                                                >
+                                                    {formik.errors.motherCareer}
+                                                </div>
+                                            ) : null}
                                         </Form.Group>
                                     </Col>
                                 </Row>
                             </Col>
                         </Row>
+                        <Modal.Footer>
+                            <Button
+                                type="submit"
+                                variant="primary"
+                                className={cx("button-add-student")}
+                            >
+                                {action === "add" ? "Thêm" : "Sửa"}
+                            </Button>
+                            <Button
+                                variant="secondary"
+                                className={cx("button-back")}
+                                onClick={showAdd}
+                            >
+                                Quay lại
+                            </Button>
+                        </Modal.Footer>
                     </Form>
                 </Modal.Body>
-                <Modal.Footer>
-                    <Button
-                        variant="primary"
-                        onClick={handleOnClickStudent}
-                        className={cx("button-add-student")}
-                    >
-                        {action === "add" ? "Thêm" : "Sửa"}
-                    </Button>
-                    <Button
-                        variant="secondary"
-                        className={cx("button-back")}
-                        onClick={showAdd}
-                    >
-                        Quay lại
-                    </Button>
-                </Modal.Footer>
             </Modal>
         </div>
     );

@@ -19,6 +19,10 @@
         font-size: 1.4rem;
     }
 
+    .pagination-wrap {
+        --bs-pagination-font-size: 16px !important;
+    }
+
     .list-button {
         display: flex;
         column-gap: 10px;

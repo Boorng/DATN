@@ -24,9 +24,7 @@ function DetailTeacher({ teacherShow, show, showDetail }) {
                         <Col xs={5}>
                             {teacherShow.avatar ? (
                                 <Image
-                                    src={URL.createObjectURL(
-                                        teacherShow.avatar
-                                    )}
+                                    src={teacherShow.avatar}
                                     alt="avatar"
                                     className={cx("avatar-image")}
                                 />
@@ -47,7 +45,10 @@ function DetailTeacher({ teacherShow, show, showDetail }) {
                                 <tbody>
                                     <tr style={{ fontSize: "14px" }}>
                                         <td>ID giáo viên:</td>
-                                        <td>{teacherShow.id}</td>
+                                        <td>
+                                            {teacherShow.teacherId ||
+                                                teacherShow.id}
+                                        </td>
                                     </tr>
                                     <tr style={{ fontSize: "14px" }}>
                                         <td>Tên giáo viên:</td>

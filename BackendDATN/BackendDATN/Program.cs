@@ -1,8 +1,11 @@
-using BackendDATN.Data;
+﻿using BackendDATN.Data;
 using BackendDATN.Helper;
 using BackendDATN.IServices;
 using BackendDATN.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -40,10 +43,36 @@ builder.Services.AddScoped<ISubjectServ, SubjectServ>();
 builder.Services.AddScoped<ITeacherServ, TeacherServ>();
 
 builder.Services.AddScoped<ITestServ, TestServ>();
+
+builder.Services.AddScoped<ILoginServ, LoginServ>();
 #endregion
 
 builder.Services.AddAutoMapper(typeof(ApplicationMapper));
 
+builder.Services.AddAuthentication();
+
+// Authentication
+builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
+
+var secretKey = builder.Configuration["AppSettings:SecretKey"];
+var secretKeyBytes = Encoding.UTF8.GetBytes(secretKey);
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(opt =>
+    {
+        opt.TokenValidationParameters = new TokenValidationParameters
+        {
+            //tự cấp token
+            ValidateIssuer = false,
+            ValidateAudience = false,
+
+            //ký vào token
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(secretKeyBytes),
+
+            ClockSkew = TimeSpan.Zero
+        };
+    });
 
 var app = builder.Build();
 
@@ -62,6 +91,8 @@ app.UseCors(builder =>
 });
 
 app.UseStaticFiles();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 

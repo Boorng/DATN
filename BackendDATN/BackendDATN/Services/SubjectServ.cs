@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BackendDATN.Data;
+using BackendDATN.Data.Response;
 using BackendDATN.Entity.VM.Subject;
 using BackendDATN.IServices;
 using Microsoft.EntityFrameworkCore;
@@ -33,7 +34,7 @@ namespace BackendDATN.Services
         public async Task DeleteAsync(int id)
         {
             var data = await _context.Subjects.FindAsync(id);
-            if(data != null)
+            if (data != null)
             {
                 _context.Remove(data);
                 await _context.SaveChangesAsync();
@@ -45,7 +46,7 @@ namespace BackendDATN.Services
             var subjects = await _context.Subjects.ToListAsync();
             var data = subjects.AsQueryable();
 
-            data = data.Where(s => s.Grade == grade);
+            data = data.Where(s => s.Grade == grade).OrderBy(s => s.Name);
 
             return _mapper.Map<List<SubjectVM>>(data);
         }
@@ -59,6 +60,26 @@ namespace BackendDATN.Services
                 data.Grade = subjectVM.Grade;
                 await _context.SaveChangesAsync();
             }
+        }
+
+        public async Task<CheckDataSubjectResponse> CheckData(int subjectId)
+        {
+            var dataAss = await _context.Assigns.SingleOrDefaultAsync(ass => ass.SubjectId == subjectId);
+            var dataTest = await _context.Tests.SingleOrDefaultAsync(ass => ass.SubjectId == subjectId);
+
+            CheckDataSubjectResponse res = new CheckDataSubjectResponse();
+
+            if(dataAss != null)
+            {
+                res.haveAssign = true;
+            }
+
+            if(dataTest != null)
+            {
+                res.haveTest = true;
+            }
+
+            return res;
         }
     }
 }

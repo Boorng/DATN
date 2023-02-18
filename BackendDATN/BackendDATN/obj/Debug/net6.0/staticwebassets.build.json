@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "qAcjpCua3yZEky/t8Vh6SJbk0mFP7U4Iloa6jxFMmtw=",
+  "Hash": "/GFbPYqQHHA4LIWxU2K8hFvKfWwQ0sYlBbz3m8R1gRs=",
   "Source": "BackendDATN",
   "BasePath": "_content/BackendDATN",
   "Mode": "Default",
@@ -10,10 +10,28 @@
     {
       "Name": "BackendDATN\\wwwroot",
       "Source": "BackendDATN",
-      "ContentRoot": "E:\\Workspace\\DATN\\ProjectDATN\\BackendDATN\\BackendDATN\\wwwroot\\",
+      "ContentRoot": "E:\\Workspace\\ProjectDATN\\BackendDATN\\BackendDATN\\wwwroot\\",
       "BasePath": "_content/BackendDATN",
       "Pattern": "**"
     }
   ],
-  "Assets": []
+  "Assets": [
+    {
+      "Identity": "E:\\Workspace\\ProjectDATN\\BackendDATN\\BackendDATN\\wwwroot\\Uploads\\Teacher\\329577705_3038620283099952_1014075968430805662_n.jpg\\image.png",
+      "SourceId": "BackendDATN",
+      "SourceType": "Discovered",
+      "ContentRoot": "E:\\Workspace\\ProjectDATN\\BackendDATN\\BackendDATN\\wwwroot\\",
+      "BasePath": "_content/BackendDATN",
+      "RelativePath": "Uploads/Teacher/329577705_3038620283099952_1014075968430805662_n.jpg/image.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\Uploads\\Teacher\\329577705_3038620283099952_1014075968430805662_n.jpg\\image.png"
+    }
+  ]
 }

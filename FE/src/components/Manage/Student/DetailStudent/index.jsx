@@ -24,9 +24,7 @@ function DetailStudent({ studentShow, show, showDetail }) {
                         <Col xs={5}>
                             {studentShow.avatar ? (
                                 <Image
-                                    src={URL.createObjectURL(
-                                        studentShow.avatar
-                                    )}
+                                    src={studentShow.avatar}
                                     alt="avatar"
                                     className={cx("avatar-image")}
                                 />
@@ -47,7 +45,10 @@ function DetailStudent({ studentShow, show, showDetail }) {
                                 <tbody>
                                     <tr style={{ fontSize: "14px" }}>
                                         <td>ID học sinh:</td>
-                                        <td>{studentShow.id}</td>
+                                        <td>
+                                            {studentShow.studentId ||
+                                                studentShow.id}
+                                        </td>
                                     </tr>
                                     <tr style={{ fontSize: "14px" }}>
                                         <td>Tên học sinh:</td>
@@ -112,6 +113,14 @@ function DetailStudent({ studentShow, show, showDetail }) {
                                                 ? "Đang học"
                                                 : "Nghỉ học"}
                                         </td>
+                                    </tr>
+                                    <tr style={{ fontSize: "14px" }}>
+                                        <td>Khóa:</td>
+                                        <td>{studentShow.schoolYear}</td>
+                                    </tr>
+                                    <tr style={{ fontSize: "14px" }}>
+                                        <td>Mật khẩu:</td>
+                                        <td>{studentShow.password}</td>
                                     </tr>
                                 </tbody>
                             </Table>

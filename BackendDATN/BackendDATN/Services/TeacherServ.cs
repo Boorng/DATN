@@ -1,6 +1,9 @@
 ﻿using AutoMapper;
 using BackendDATN.Data;
+using BackendDATN.Data.Response;
+using BackendDATN.Data.VM.Teacher;
 using BackendDATN.Entity.VM.Account;
+using BackendDATN.Entity.VM.Group;
 using BackendDATN.Entity.VM.Teacher;
 using BackendDATN.IServices;
 using Microsoft.EntityFrameworkCore;
@@ -15,8 +18,6 @@ namespace BackendDATN.Services
 
         private readonly IAccountServ _accountServ;
 
-        public static int PAGE_SIZE { get; set; } = 10;
-
         public TeacherServ(BackendContext context, IMapper mapper, IAccountServ accountServ)
         {
             _context = context;
@@ -24,7 +25,7 @@ namespace BackendDATN.Services
             _accountServ = accountServ;
         }
 
-        public async Task AddAsync(TeacherAdd teacherAdd)
+        public async Task<string> AddAsync(TeacherAdd teacherAdd)
         {
             var account = await _accountServ.AddAsync(new AccountModel
             {
@@ -34,7 +35,7 @@ namespace BackendDATN.Services
 
             var data = new Teacher
             {
-                Id = teacherAdd.Id,
+                IdTeacher = teacherAdd.Id,
                 FullName = teacherAdd.FullName,
                 Age = teacherAdd.Age,
                 Gender = teacherAdd.Gender,
@@ -47,14 +48,18 @@ namespace BackendDATN.Services
                 Leader = false,
                 ViceLeader = false,
                 AccountId = account.Id,
+                IsSeenNotification = true
             };
 
             await _context.AddAsync(data);
             await _context.SaveChangesAsync();
+
+            return account.Password;
         }
-        public async Task AddListAsync(List<TeacherAdd> teacherAdds)
+        public async Task<List<TeacherAccount>> AddListAsync(List<TeacherAdd> teacherAdds)
         {
             List<Teacher> datas = new List<Teacher>();
+            List<TeacherAccount> res = new List<TeacherAccount>();
 
             for (int i = 0; i < teacherAdds.Count; i++)
             {
@@ -66,7 +71,7 @@ namespace BackendDATN.Services
 
                 var data = new Teacher
                 {
-                    Id = teacherAdds[i].Id,
+                    IdTeacher = teacherAdds[i].Id,
                     FullName = teacherAdds[i].FullName,
                     Age = teacherAdds[i].Age,
                     Gender = teacherAdds[i].Gender,
@@ -79,13 +84,23 @@ namespace BackendDATN.Services
                     Leader = false,
                     ViceLeader = false,
                     AccountId = account.Id,
+                    IsSeenNotification = true
                 };
 
                 datas.Add(data);
+                res.Add(new TeacherAccount
+                {
+                    Email = account.Email,
+                    Password = account.Password,
+                    Id = data.IdTeacher,
+                    FullName = data.FullName
+                });
             }
 
             await _context.AddRangeAsync(datas);
             await _context.SaveChangesAsync();
+
+            return res;
         }
 
         public async Task DeleteAsync(string id)
@@ -98,15 +113,20 @@ namespace BackendDATN.Services
             }
         }
 
-        public async Task<List<TeacherVM>> GetAllAsync(string? search)
+        public async Task<List<TeacherVM>> GetAllAsync(string? search, int? teamId)
         {
             var data = await _context.Teachers.ToListAsync();
 
             var res = data.AsQueryable();
 
+            if (teamId != null)
+            {
+                res = res.Where(x => x.TeamId == teamId);
+            }
+
             var result = res.Select(t => new TeacherVM
             {
-                Id = t.Id,
+                Id = t.IdTeacher,
                 FullName = t.FullName,
                 Age = t.Age,
                 Gender = t.Gender,
@@ -119,6 +139,9 @@ namespace BackendDATN.Services
                 Status = t.Status,
                 Email = _context.Accounts.Find(t.AccountId)!.Email,
                 AccountId = t.AccountId,
+                TeamId = t.TeamId,
+                ViceLeader = t.ViceLeader,
+                Leader = t.Leader,
             });
 
             if (!string.IsNullOrEmpty(search))
@@ -126,10 +149,78 @@ namespace BackendDATN.Services
                 result = result.Where(st => st.FullName.Contains(search) || st.Id.Contains(search));
             }
 
-            return result.ToList();
+            return result.OrderBy(s => s.Id).ToList();
         }
 
-        public async Task<List<TeacherVM>> GetAllNoLeaveAsync(string? search)
+        public async Task<TeacherVM?> GetByAccountId(Guid accountId)
+        {
+            var data = await _context.Teachers.SingleOrDefaultAsync(t => t.AccountId == accountId);
+            if(data != null)
+            {
+                var result = new TeacherVM
+                {
+                    Id = data.IdTeacher,
+                    FullName = data.FullName,
+                    Age = data.Age,
+                    Gender = data.Gender,
+                    Phone = data.Phone,
+                    Ethnic = data.Ethnic,
+                    Address = data.Address,
+                    Avatar = data.Avatar,
+                    BirthDay = data.Birthday.ToString("dd/MM/yyyy"),
+                    Level = data.Level,
+                    Status = data.Status,
+                    Email = _context.Accounts.Find(data.AccountId)!.Email,
+                    AccountId = data.AccountId,
+                    TeamId = data.TeamId,
+                    ViceLeader = data.ViceLeader,
+                    Leader = data.Leader,
+                    IsSeenNotification = data.IsSeenNotification
+                    
+                };
+
+                return result;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public async Task<CheckDataTeacherResponse> CheckData(string id)
+        {
+            var data = await _context.Teachers.FindAsync(id);
+
+            var dataAcc = _context.Accounts.AsQueryable();
+            var dataAss = _context.Assigns.AsQueryable();
+            var dataClass = _context.Classes.AsQueryable();
+
+            CheckDataTeacherResponse res = new CheckDataTeacherResponse();
+
+            var acc = dataAcc.FirstOrDefault(acc => acc.IdAccount == data.AccountId);
+            var ass = dataAss.FirstOrDefault(ass => ass.TeacherId == data.IdTeacher);
+            var cls = dataClass.Where(cls => cls.HeaderTeacherId == data.IdTeacher).Select(cls => cls.IdClass).ToList();
+
+            if (acc != null)
+            {
+                res.HaveAccount = true;
+                res.AccountId = acc.IdAccount;
+            }
+
+            if (ass != null)
+            {
+                res.HaveAssign = true;
+            }
+
+            if (cls.Count > 0)
+            {
+                res.ClassIds.AddRange(cls);
+            }
+
+            return res;
+        }
+
+        public async Task<List<TeacherVM>> GetAllNoLeaveAsync(string? search, int? teamId)
         {
             var data = await _context.Teachers.ToListAsync();
 
@@ -137,7 +228,7 @@ namespace BackendDATN.Services
 
             var result = res.Select(t => new TeacherVM
             {
-                Id = t.Id,
+                Id = t.IdTeacher,
                 FullName = t.FullName,
                 Age = t.Age,
                 Gender = t.Gender,
@@ -150,14 +241,35 @@ namespace BackendDATN.Services
                 Status = t.Status,
                 Email = _context.Accounts.Find(t.AccountId)!.Email,
                 AccountId = t.AccountId,
+                TeamId = t.TeamId,
+                Leader = t.Leader,
+                ViceLeader = t.ViceLeader,
             }).Where(t => t.Status == 1);
+
+            if(teamId != null)
+            {
+                result = result.Where(t => t.TeamId == teamId);
+            }
 
             if (!string.IsNullOrEmpty(search))
             {
-                result = result.Where(st => st.FullName.Contains(search) || st.Id.Contains(search));
+                result = result.Where(t => t.FullName.Contains(search) || t.Id.Contains(search));
             }
 
             return result.ToList();
+        }
+
+        public async Task<TeamVM?> GetTeam(int teamId)
+        {
+            var data = await _context.Teams.FindAsync(teamId);
+            if(data != null)
+            {
+                return _mapper.Map<TeamVM>(data);
+            }
+            else
+            {
+                return null;
+            }
         }
 
         public async Task UpdateAsync(TeacherVM teacherVM)
@@ -174,22 +286,121 @@ namespace BackendDATN.Services
                 data.Phone = teacherVM.Phone;
                 data.Birthday = DateTime.Parse(teacherVM.BirthDay);
                 data.Level = teacherVM.Level;
+                data.Status = teacherVM.Status;
+                data.TeamId = teacherVM.TeamId;
                 data.Leader = teacherVM.Leader;
                 data.ViceLeader = teacherVM.ViceLeader;
                 await _context.SaveChangesAsync();
             }
         }
 
-        public async Task UpdateStatus(string id, int status)
+        public async Task UpdateTeacherTeam(string teacherId)
         {
-            var data = await _context.Teachers.FindAsync(id);
+            var data = await _context.Teachers.FindAsync(teacherId);
+            data.TeamId = null;
+            data.Leader = false;
+            data.ViceLeader = false;
+            data.IsSeenNotification = true;
 
-            if (data != null)
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task UpdateSeenNotification(string teacherId)
+        {
+            var data = await _context.Teachers.FindAsync(teacherId);
+
+            data.IsSeenNotification = true;
+
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task UpdateTeam(int teamId, List<string>? teacherIds)
+        {
+            var dataTeam = await _context.Teams.FirstOrDefaultAsync(t => t.IdTeam == teamId);
+            if (teacherIds.Count > 0)
             {
-                data.Status = status;
-
-                await _context.SaveChangesAsync();
+                for (int i = 0; i < teacherIds.Count; i++)
+                {
+                    var data = await _context.Teachers.FindAsync(teacherIds[i]);
+                    data.TeamId = teamId;
+                    if(!string.IsNullOrEmpty(dataTeam!.Notification))
+                    {
+                        data.IsSeenNotification = false;
+                    }
+                }
             }
+            else
+            {
+                var lstTeacher = _context.Teachers.Where(t => t.TeamId == teamId).Select(t => t.IdTeacher).ToList();
+                for (int i = 0; i < lstTeacher.Count; i++)
+                {
+                    var data = await _context.Teachers.FindAsync(lstTeacher[i]);
+                    data.TeamId = null;
+                    data.Leader = false;
+                    data.ViceLeader = false;
+                    data.IsSeenNotification = true;
+                }
+            }
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task UpdateManageTeam(TeacherManage teacherManage)
+        {
+            var leader = await _context.Teachers.FindAsync(teacherManage.IdLeader);
+            var viceLeader1 = await _context.Teachers.FindAsync(teacherManage.IdViceLeaders[0]);
+            var viceLeader2 = await _context.Teachers.FindAsync(teacherManage.IdViceLeaders[1]);
+            var dataGet = _context.Teachers.AsQueryable();
+
+            if(leader != null)
+            {
+                leader.Leader = true;
+                leader.ViceLeader = false;
+                dataGet = dataGet.Where(t => t.IdTeacher != leader.IdTeacher);
+            }
+            if(viceLeader1 != null)
+            {
+                viceLeader1.Leader = false;
+                viceLeader1.ViceLeader = true;
+                dataGet = dataGet.Where(t => t.IdTeacher != viceLeader1.IdTeacher);
+            }
+            if(viceLeader2 != null)
+            {
+                viceLeader2.Leader = false;
+                viceLeader2.ViceLeader = true;
+                dataGet = dataGet.Where(t => t.IdTeacher != viceLeader2.IdTeacher);
+            }
+            
+
+            var datas = dataGet.Select(t => t.IdTeacher).ToList();
+            for (int i = 0; i < datas.Count; i++)
+            {
+                var data = await _context.Teachers.FindAsync(datas[i]);
+                data.Leader = false;
+                data.ViceLeader = false;
+            }
+
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<TeacherManage> GetAllManage(int teamId)
+        {
+            var data = await _context.Teachers.Where(t => (t.Leader == true || t.ViceLeader == true) && t.TeamId == teamId).ToListAsync();
+
+            TeacherManage teacherManage = new TeacherManage();
+
+            for(int i = 0; i < data.Count; i++)
+            {
+                if (data[i].Leader)
+                {
+                    teacherManage.IdLeader = data[i].IdTeacher;
+                }
+                else if (data[i].ViceLeader)
+                {
+                    teacherManage.IdViceLeaders.Add(data[i].IdTeacher);
+                }
+            } 
+
+            return teacherManage;
         }
 
         public async Task UploadImageAsync(string id, string avatar)

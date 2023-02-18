@@ -28,6 +28,8 @@
 
         public bool ViceLeader { get; set; }
 
+        public bool IsSeenNotification { get; set; }
+
         public int? TeamId { get; set; }
     }
 }

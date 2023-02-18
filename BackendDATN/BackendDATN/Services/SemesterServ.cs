@@ -1,6 +1,8 @@
 ﻿using BackendDATN.Data;
+using BackendDATN.Data.Response;
 using BackendDATN.Entity.VM.Semester;
 using BackendDATN.IServices;
+using Microsoft.EntityFrameworkCore;
 
 namespace BackendDATN.Services
 {
@@ -13,86 +15,91 @@ namespace BackendDATN.Services
             _context = context;
         }
 
-        public SemesterVM Add(SemesterModel semesterModel)
+        public async Task AddAsync(SemesterModel semesterModel)
         {
             var data = new Semester
             {
                 Name = semesterModel.Name,
                 SchoolYear = semesterModel.SchoolYear,
-                TimeStart = semesterModel.TimeStart,
-                TimeEnd = semesterModel.TimeEnd,
+                TimeStart = DateTime.Parse(semesterModel.TimeStart),
+                TimeEnd = DateTime.Parse(semesterModel.TimeEnd),
             };
 
-            _context.Add(data);
-            _context.SaveChanges();
-
-            return new SemesterVM
-            {
-                Id = data.Id,
-                Name = data.Name,
-                SchoolYear = data.SchoolYear,
-                TimeStart = data.TimeStart,
-                TimeEnd = data.TimeEnd,
-            };
+            await _context.AddAsync(data);
+            await _context.SaveChangesAsync();
         }
 
-        public void Delete(int id)
+        public async Task<CheckDataSemesterResponse> CheckData(int semesterId)
         {
-            var data = _context.Semesters.SingleOrDefault(se => se.Id == id);
+            var dataConduct = await _context.Conducts.SingleOrDefaultAsync(s => s.SemesterId == semesterId);
+            var dataAssign = await _context.Assigns.SingleOrDefaultAsync(s => s.SemesterId == semesterId);
+            var dataTest = await _context.Tests.SingleOrDefaultAsync(s => s.SemesterId == semesterId);
+
+            CheckDataSemesterResponse res = new CheckDataSemesterResponse();
+
+            if(dataConduct != null)
+            {
+                res.HaveConduct = true;
+            }
+
+            if(dataAssign != null)
+            {
+                res.HaveAssign = true;
+            }
+
+            if(dataTest != null)
+            {
+                res.HaveTest = true;
+            }
+
+            return res;
+        }
+
+        public async Task DeleteAsync(int id)
+        {
+            var data = await _context.Semesters.FindAsync(id);
             if(data != null)
             {
                 _context.Remove(data);
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
             }
         }
 
-        public List<SemesterVM> GetAll()
+        public async Task<List<SemesterVM>> GetAllAsync(string? academicYear)
         {
-            return _context.Semesters.Select(se => new SemesterVM
+            var res = _context.Semesters.AsQueryable();
+
+            if(!string.IsNullOrEmpty(academicYear))
             {
-                Id = se.Id,
+                res = res.Where(s => s.SchoolYear == academicYear);
+            }
+
+            return await res.Select(se => new SemesterVM
+            {
+                Id = se.IdSemester,
                 Name = se.Name,
                 SchoolYear = se.SchoolYear,
-                TimeStart = se.TimeStart,
-                TimeEnd = se.TimeEnd,
-            }).ToList();
+                TimeStart = se.TimeStart.ToString("dd/MM/yyyy"),
+                TimeEnd = se.TimeEnd.ToString("dd/MM/yyyy"),
+            }).OrderByDescending(s => s.Name).ToListAsync();
         }
 
-        public SemesterVM? GetById(int id)
+        public async Task<string> GetAcademicYear(int semesterId)
         {
-            var data = _context.Semesters.SingleOrDefault(se => se.Id == id);
-            if(data != null)
-            {
-                return new SemesterVM
-                {
-                    Id = data.Id,
-                    Name = data.Name,
-                    SchoolYear = data.SchoolYear,
-                    TimeStart = data.TimeStart,
-                    TimeEnd = data.TimeEnd
-                };
-            }
-            else
-            {
-                return null;
-            }
+            var data = await _context.Semesters.FindAsync(semesterId);
+            return data.SchoolYear;
         }
 
-        public List<SemesterVM> GetByPage(int page = 1)
+        public async Task UpdateAsync(SemesterVM semesterVM)
         {
-            throw new NotImplementedException();
-        }
-
-        public void Update(SemesterVM semesterVM)
-        {
-            var data = _context.Semesters.SingleOrDefault(se => se.Id == semesterVM.Id);
+            var data = await _context.Semesters.FindAsync(semesterVM.Id);
             if (data != null)
             {
                 data.Name = semesterVM.Name;
                 data.SchoolYear = semesterVM.SchoolYear;
-                data.TimeStart = semesterVM.TimeStart;
-                data.TimeEnd = semesterVM.TimeEnd;
-                _context.SaveChanges();
+                data.TimeStart = DateTime.Parse(semesterVM.TimeStart);
+                data.TimeEnd = DateTime.Parse(semesterVM.TimeEnd);
+                await _context.SaveChangesAsync();
             }
         }
     }

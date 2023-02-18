@@ -2,7 +2,7 @@ import * as classNames from "classnames/bind";
 import InputGroup from "react-bootstrap/InputGroup";
 import Form from "react-bootstrap/Form";
 import { GoSearch } from "react-icons/go";
-import { useEffect, useState, memo } from "react";
+import { useState, memo } from "react";
 
 import styles from "./FindClass.module.scss";
 import { Button, Col, Row } from "react-bootstrap";
@@ -21,7 +21,6 @@ function FindClass({ handleSearch }) {
     };
 
     const handleOnClickSearch = async () => {
-        setSearch("");
         await handleSearch(search);
     };
 

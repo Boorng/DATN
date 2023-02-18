@@ -9,15 +9,26 @@ import { Link } from "react-router-dom";
 import styles from "./ListClass.module.scss";
 import FindClass from "../FindClass";
 import AddEditClass from "../AddEditClass";
-import { deleteClassAPI } from "../../../../services/classService";
+import {
+    checkDataClassAPI,
+    deleteClassAPI,
+} from "../../../../services/classService";
+import { deleteListAssignAPI } from "../../../../services/assignService";
+import { deleteListTestAPI } from "../../../../services/testService";
+import { deleteListStudentClassAPI } from "../../../../services/studentClassService";
 
 const cx = classNames.bind(styles);
 
 function ListClass({ gradeName, listClass, getClass }) {
     const [listClassExport, setListClassExport] = useState([]);
     const [isShow, setIsShow] = useState(false);
-    const [isDelete, setIsDelete] = useState(false);
-    const [idDelete, setIdDelete] = useState("");
+    const [isClsDelete, setIsClsDelete] = useState(false);
+    const [idClsDelete, setIdClsDelete] = useState("");
+    const [isStudentClassDelete, setIsStudentClassDelete] = useState(false);
+    const [listIdStuClassDelete, setListIdStuClassDelete] = useState([]);
+    const [isAssignDelete, setIsAssignDelete] = useState(false);
+    const [isTestDelete, setIsTestDelete] = useState(false);
+    const [isSure, setIsSure] = useState(false);
     const [classShow, setClassShow] = useState({});
 
     useEffect(() => {
@@ -49,21 +60,62 @@ function ListClass({ gradeName, listClass, getClass }) {
     };
 
     const handleConfirmDelete = (id) => {
-        setIdDelete(id);
-        setIsDelete(true);
+        setIdClsDelete(id);
+        setIsClsDelete(true);
     };
 
-    const handleDeleteClass = async () => {
-        const response = await deleteClassAPI(idDelete);
-        if (response.message === "Success") {
-            toast.success("Xóa lớp thành công");
-            await getClass();
-        } else {
-            toast.error("Xóa lớp thất bại do lớp có chứa học sinh");
+    const handleCheckData = async () => {
+        const res = await checkDataClassAPI(idClsDelete);
+        if (res.haveAssign) {
+            setIsAssignDelete(true);
         }
 
-        setIdDelete("");
-        setIsDelete(false);
+        if (res.haveStudentClass) {
+            if (res.haveTest) {
+                setListIdStuClassDelete(res.studentClassIds);
+                setIsTestDelete(true);
+            }
+            setIsStudentClassDelete(true);
+        }
+        setIsSure(true);
+        setIsClsDelete(false);
+    };
+
+    const handleDeleteAll = async () => {
+        let check = true;
+        if (isAssignDelete) {
+            const res = await deleteListAssignAPI("", idClsDelete);
+            if (res.message == "Fail") check = false;
+        }
+
+        if (isStudentClassDelete) {
+            if (isTestDelete) {
+                listIdStuClassDelete.forEach(async (item) => {
+                    const response = await deleteListTestAPI(item);
+                    if (response.message === "Fail") check = false;
+                });
+
+                setListIdStuClassDelete([]);
+            }
+            const response = await deleteListStudentClassAPI("", idClsDelete);
+            if (response.message === "Fail") check = false;
+            setIsStudentClassDelete(false);
+        }
+
+        const response = await deleteClassAPI(idClsDelete);
+        if (response.message === "Fail") {
+            check = false;
+        }
+        setIdClsDelete("");
+
+        if (check) {
+            toast.success("Xóa lớp thành công");
+        } else {
+            toast.error("Xóa lớp thất bại");
+        }
+
+        setIsSure(false);
+        await getClass();
     };
 
     const handleClickEditInfo = (cls) => {
@@ -92,7 +144,7 @@ function ListClass({ gradeName, listClass, getClass }) {
             <Table striped hover>
                 <thead>
                     <tr>
-                        <th className={cx("table-head")}>STT</th>
+                        <th className={cx("table-head")}>ID</th>
                         <th className={cx("table-head")}>Tên lớp</th>
                         <th className={cx("table-head")}>Khối</th>
                         <th className={cx("table-head")}>Năm học</th>
@@ -104,11 +156,11 @@ function ListClass({ gradeName, listClass, getClass }) {
                     </tr>
                 </thead>
                 <tbody>
-                    {listClass.map((cls, index) => {
+                    {listClass.map((cls) => {
                         return (
                             <tr key={cls.id}>
                                 <td className={cx("table-document")}>
-                                    {index + 1}
+                                    {cls.id}
                                 </td>
                                 <td className={cx("table-document")}>
                                     {cls.name}
@@ -157,6 +209,7 @@ function ListClass({ gradeName, listClass, getClass }) {
                     })}
                 </tbody>
             </Table>
+
             {isShow && (
                 <AddEditClass
                     classShow={classShow}
@@ -165,37 +218,76 @@ function ListClass({ gradeName, listClass, getClass }) {
                     getClass={getClass}
                 />
             )}
-            <Modal
-                show={isDelete}
-                onHide={() => setIsDelete(false)}
-                dialogClassName={cx("modal")}
-                centered
-            >
-                <Modal.Header>
-                    <Modal.Title className={cx("modal-title")}>
-                        Cảnh báo
-                    </Modal.Title>
-                </Modal.Header>
-                <Modal.Body className={cx("modal-content")}>
-                    Bạn có chắc chắn muốn xóa lớp không?
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button
-                        variant="primary"
-                        className={cx("button-confirm")}
-                        onClick={handleDeleteClass}
-                    >
-                        Xác nhận
-                    </Button>
-                    <Button
-                        variant="secondary"
-                        className={cx("button-back")}
-                        onClick={() => setIsDelete(false)}
-                    >
-                        Quay lại
-                    </Button>
-                </Modal.Footer>
-            </Modal>
+
+            {isClsDelete && (
+                <Modal
+                    show={isClsDelete}
+                    onHide={() => setIsClsDelete(false)}
+                    dialogClassName={cx("modal")}
+                    centered
+                >
+                    <Modal.Header>
+                        <Modal.Title className={cx("modal-title")}>
+                            Cảnh báo
+                        </Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body className={cx("modal-content")}>
+                        Bạn có chắc chắn muốn xóa lớp không?
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button
+                            variant="primary"
+                            className={cx("button-confirm")}
+                            onClick={handleCheckData}
+                        >
+                            Xác nhận
+                        </Button>
+                        <Button
+                            variant="secondary"
+                            className={cx("button-back")}
+                            onClick={() => setIsClsDelete(false)}
+                        >
+                            Quay lại
+                        </Button>
+                    </Modal.Footer>
+                </Modal>
+            )}
+
+            {isSure && (
+                <Modal
+                    show={isSure}
+                    onHide={() => setIsSure(false)}
+                    dialogClassName={cx("modal")}
+                    centered
+                >
+                    <Modal.Header>
+                        <Modal.Title className={cx("modal-title")}>
+                            Cảnh báo
+                        </Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body className={cx("modal-content")}>
+                        Bạn sẽ xóa tất cả những dữ liệu liên quan đến học sinh,
+                        giáo viên, bài kiểm tra của học sinh trong lớp. Bạn chắc
+                        chắn không?
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button
+                            variant="primary"
+                            className={cx("button-confirm")}
+                            onClick={handleDeleteAll}
+                        >
+                            Xác nhận
+                        </Button>
+                        <Button
+                            variant="secondary"
+                            className={cx("button-back")}
+                            onClick={() => setIsSure(false)}
+                        >
+                            Quay lại
+                        </Button>
+                    </Modal.Footer>
+                </Modal>
+            )}
         </div>
     );
 }

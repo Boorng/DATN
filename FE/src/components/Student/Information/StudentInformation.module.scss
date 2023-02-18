@@ -1,0 +1,112 @@
+.student-info {
+    width: 100%;
+
+    .student-info-header {
+        height: 120px;
+        padding-top: 20px;
+        padding-left: 50px;
+        padding-right: 50px;
+        padding-bottom: 30px;
+        display: flex;
+        justify-content: space-between;
+        background: rgb(34, 193, 195);
+        background: linear-gradient(
+            135deg,
+            rgba(34, 193, 195, 1) 0%,
+            rgba(253, 187, 45, 1) 100%
+        );
+
+        .student-info-title {
+            font-size: 3rem;
+            color: white;
+            font-weight: 700;
+        }
+
+        .student-user {
+            display: flex;
+            column-gap: 10px;
+            color: white;
+
+            .avatar-image {
+                width: 27px;
+                height: 27px;
+                border-radius: 50%;
+                border: 1px solid white;
+                cursor: pointer;
+            }
+
+            .user-name {
+                padding-top: 1px;
+                font-size: 1.6rem;
+                cursor: pointer;
+            }
+        }
+    }
+
+    .student-info-content {
+        min-height: 542px;
+        background-color: #f8f9fe;
+        padding-left: 24px;
+        padding-top: 20px;
+
+        .custom-line {
+            border: 1px solid red;
+            margin-bottom: 20px;
+        }
+
+        .student-info-content-wrap {
+            .student-info-content-title {
+                font-size: 2rem;
+                font-weight: 600;
+                text-transform: uppercase;
+                color: #8c1515;
+                margin-bottom: 20px;
+            }
+
+            .student-info-detail {
+                .student-info-image {
+                    display: flex;
+                    flex-direction: column;
+                    row-gap: 15px;
+
+                    .avatar-image-detail {
+                        height: 250px;
+                        width: 200px;
+                        border-radius: 5px;
+                        border: 2px #e9ecef solid;
+                        object-fit: cover;
+                    }
+
+                    .button-upload-image {
+                        background-color: #45c1ac;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        margin-left: 20px;
+                        font-size: 1.5rem;
+                        width: 160px;
+                        height: 30px;
+                        color: white;
+                        border-radius: 5px;
+                        cursor: pointer;
+                    }
+                }
+            }
+
+            .student-info-column {
+                display: flex;
+                flex-direction: column;
+                row-gap: 10px;
+
+                .student-info-detail-content {
+                    display: flex;
+                    column-gap: 10px;
+
+                    .student-info-detail-content-title {
+                        font-weight: 600;
+                    }
+                }
+            }
+        }
+    }
+}

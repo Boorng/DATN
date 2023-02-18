@@ -11,7 +11,7 @@ namespace BackendDATN.Data
             Classes = new HashSet<Class>();
         }
 
-        public string Id { get; set; } = null!;
+        public string IdTeacher { get; set; } = null!;
         public string FullName { get; set; } = null!;
         public int Age { get; set; }
         public string Gender { get; set; } = null!;
@@ -24,6 +24,7 @@ namespace BackendDATN.Data
         public int Status { get; set; }
         public bool Leader { get; set; }
         public bool ViceLeader { get; set; }
+        public bool IsSeenNotification { get; set; }
         public int? TeamId { get; set; }
         public Guid AccountId { get; set; }
 

@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using BackendDATN.Data;
+using BackendDATN.Data.VM.Assign;
 using BackendDATN.Data.VM.StudentClass;
+using BackendDATN.Entity.VM.Class;
 using BackendDATN.Entity.VM.StudentClass;
 using BackendDATN.IServices;
 using Microsoft.EntityFrameworkCore;
@@ -58,12 +60,29 @@ namespace BackendDATN.Services
 
             if (data != null)
             {
-                _context.Remove(data);
+                _context.Remove(id);
                 await _context.SaveChangesAsync();
             }
         }
 
-        public async Task<List<StudentClassRepModel>> GetAll(int classId, string? search = null)
+        public async Task DeleteByIdAsync(string? studentId, string? classId)
+        {
+            if(!string.IsNullOrEmpty(studentId))
+            {
+                var data = _context.StudentClasses.Where(sc => sc.StudentId == studentId);
+                _context.RemoveRange(data);
+            }
+            else
+            {
+                var data = _context.StudentClasses.Where(sc => sc.ClassId == classId);
+                _context.RemoveRange(data);
+            }
+            
+            await _context.SaveChangesAsync();
+            
+        }
+
+        public async Task<List<StudentClassRepModel>> GetAll(string classId, string? search = null)
         {
             var studentClasses = await _context.StudentClasses.ToListAsync();
             var students = await _context.Students.ToListAsync();
@@ -72,9 +91,9 @@ namespace BackendDATN.Services
             var dataS = students.AsQueryable();
 
             var data = dataSc.Where(sc => sc.ClassId == classId)
-                .Join(dataS, sc => sc.StudentId, s => s.Id, (sc, s) => new StudentClassRepModel
+                .Join(dataS, sc => sc.StudentId, s => s.IdStudent, (sc, s) => new StudentClassRepModel
                 {
-                    Id = sc.Id,
+                    Id = sc.IdStudentClass,
                     ClassId = sc.ClassId,
                     StudentId = sc.StudentId,
                     FullName = s.FullName,
@@ -93,17 +112,40 @@ namespace BackendDATN.Services
                     MotherPhone = s.MotherPhone,
                     Status = s.Status,
                     Email = _context.Accounts.Find(s.AccountId)!.Email,
+                    SchoolYear = s.SchoolYear
+
                 });
 
             if (!string.IsNullOrEmpty(search))
             {
-                data = data.Where(sc => sc.FullName.ToLower().Contains(search.ToLower()));
+                data = data.Where(sc => sc.FullName.ToLower().Contains(search.ToLower()) || sc.StudentId.ToLower().Contains(search.ToLower()));
             }
 
             return data.ToList();
         }
 
-        public async Task UpdateAsync(int id, int classId)
+        public async Task<List<AssignClassResponse>> GetByStudentId(string studentId)
+        {
+            var dataSc = _context.StudentClasses.Where(sc => sc.StudentId == studentId);
+            var dataCls = _context.Classes.AsQueryable();
+
+            var data = dataSc.Join(dataCls,
+                                    sc => sc.ClassId,
+                                    c => c.IdClass,
+                                    (sc, c) => new AssignClassResponse
+                                    {
+                                        Id = sc.ClassId,
+                                        Name = c.Name,
+                                        AcademicYear = c.AcademicYear,
+                                        Grade = c.Grade,
+                                        DivisionId = sc.IdStudentClass,
+                                        HeaderTeacherId = c.HeaderTeacherId,
+                                    });
+
+            return await data.OrderBy(sc => sc.Name).ToListAsync();
+        }
+
+        public async Task UpdateAsync(int id, string classId)
         {
             var data = await _context.StudentClasses.FindAsync(id);
 

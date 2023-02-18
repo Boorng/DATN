@@ -8,6 +8,10 @@ import ListStudent from "./ListStudent";
 import { read, utils } from "xlsx";
 import AddListStudent from "./AddListStudent";
 import { getStudentAPI } from "../../../services/studentService";
+import { Button, Form } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
+import { handleCheck } from "../../../utils/common";
+import { FaUserAlt } from "react-icons/fa";
 
 const cx = classNames.bind(styles);
 
@@ -17,18 +21,38 @@ function Student() {
     const [showAddList, setShowAddList] = useState(false);
     const [listAdd, setListAdd] = useState([]);
     const [listStudent, setListStudent] = useState([]);
+    const [schoolYear, setSchoolYear] = useState("");
 
     const getStudent = async (search) => {
-        const dataAPI = await getStudentAPI(search);
+        const dataAPI = await getStudentAPI(schoolYear, search);
         setListStudent(dataAPI);
     };
 
+    const navigate = useNavigate();
+
     useEffect(() => {
-        getStudent();
+        const check = handleCheck();
+        if (!check) {
+            navigate("/");
+        } else {
+            if (check.Role === "3") getStudent();
+            else {
+                navigate("/");
+                alert("Bạn không có quyền vào trang này");
+            }
+        }
     }, []);
 
     const handleClickShowAddForm = () => {
         setIsShow(!isShow);
+    };
+
+    const handleFindSchoolYear = async () => {
+        await getStudent();
+    };
+
+    const handleSchoolYearChange = (e) => {
+        setSchoolYear(e.target.value);
     };
 
     const handleAddByImport = ($event) => {
@@ -62,6 +86,7 @@ function Student() {
                             motherPhone: item["Số điện thoại mẹ"],
                             motherCareer: item["Nghề nghiệp mẹ"],
                             status: 1,
+                            schoolYear: item["Khóa"],
                         };
                     });
                     setListAdd(listAddImport);
@@ -75,7 +100,13 @@ function Student() {
 
     return (
         <div className={cx("manage-student")}>
-            <h2 className={cx("manage-student-title")}>QUẢN LÝ HỌC SINH</h2>
+            <div className={cx("manage-student-header")}>
+                <h2 className={cx("manage-student-title")}>QUẢN LÝ HỌC SINH</h2>
+                <div className={cx("manage-user")}>
+                    <FaUserAlt className={cx("avatar-image")} />
+                    <span className={cx("user-name")}> Xin chào Admin</span>
+                </div>
+            </div>
             <div className={cx("manage-student-content")}>
                 <div className={cx("list-button")}>
                     <div className={cx("list-button-add")}>
@@ -105,7 +136,24 @@ function Student() {
                             Thêm bằng file
                         </label>
                     </div>
+                    <div className={cx("button-find")}>
+                        <Form.Control
+                            placeholder="Nhập niên khóa cần tìm"
+                            className={cx("button-find-input")}
+                            onChange={handleSchoolYearChange}
+                            value={schoolYear}
+                        />
+                        <Button
+                            className={cx("button-find-label")}
+                            variant="success"
+                            onClick={handleFindSchoolYear}
+                        >
+                            Tìm kiếm
+                        </Button>
+                    </div>
+                </div>
 
+                {showAddList && (
                     <AddListStudent
                         show={showAddList}
                         setShow={setShowAddList}
@@ -113,7 +161,8 @@ function Student() {
                         fileName={fileName}
                         getStudent={getStudent}
                     />
-                </div>
+                )}
+
                 {isShow && (
                     <AddEditStudent
                         action="add"
@@ -122,6 +171,7 @@ function Student() {
                         getStudent={getStudent}
                     />
                 )}
+
                 <ListStudent
                     listStudent={listStudent}
                     getStudent={getStudent}

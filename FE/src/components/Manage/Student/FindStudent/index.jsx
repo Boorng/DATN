@@ -21,7 +21,6 @@ function FindStudent({ handleSearch }) {
     };
 
     const handleOnClickSearch = async () => {
-        setSearch("");
         await handleSearch(search);
     };
 

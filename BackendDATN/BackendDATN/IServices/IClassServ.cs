@@ -6,12 +6,20 @@ namespace BackendDATN.IServices
 {
     public interface IClassServ
     {
-        Task<List<ClassRepModel>> GetAll(string? search, int grade);
+        Task<bool> CheckYear(string academicYear);
 
-        Task AddAsync(ClassModel classModel);
+        Task<List<ClassRepModel>> GetAll(string? search, int? grade);
+
+        Task<List<ClassVM>?> GetByHeaderTeacherId(string headerTeacherId, string? academicYear);
+
+        Task<string> GetTeacherByClassId(string classId);
+
+        Task AddAsync(ClassVM classVM);
 
         Task UpdateAsync(ClassVM classVM);
 
-        Task DeleteAsync(int id);
+        Task DeleteAsync(string id);
+
+        Task<CheckDataClassResponse> CheckData(string classId);
     }
 }

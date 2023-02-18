@@ -10,9 +10,9 @@ namespace BackendDATN.Data
             Teachers = new HashSet<Teacher>();
         }
 
-        public int Id { get; set; }
+        public int IdTeam { get; set; }
         public string Name { get; set; } = null!;
-        public string Notification { get; set; } = null!;
+        public string? Notification { get; set; }
 
         public virtual ICollection<Teacher> Teachers { get; set; }
     }

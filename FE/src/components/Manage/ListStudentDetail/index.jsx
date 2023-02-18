@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import * as classNames from "classnames/bind";
 import { useEffect, useState } from "react";
 
@@ -7,6 +7,8 @@ import AddListStudentDetail from "./AddListStudentDetail";
 import { read, utils } from "xlsx";
 import DetailListStudent from "./DetailListStudent";
 import { getStudentClassAPI } from "../../../services/studentClassService";
+import { handleCheck } from "../../../utils/common";
+import { FaUserAlt } from "react-icons/fa";
 
 const cx = classNames.bind(styles);
 
@@ -23,9 +25,21 @@ function ListStudentDetail() {
         setListStudentClass(dataAPI);
     };
 
+    const navigate = useNavigate();
+
     useEffect(() => {
-        getStudentClass();
-    }, []);
+        const check = handleCheck();
+        if (!check) {
+            navigate("/");
+        } else {
+            if (check.Role === "3") {
+                getStudentClass();
+            } else {
+                navigate("/");
+                alert("Bạn không có quyền vào trang này");
+            }
+        }
+    }, [classId]);
 
     const handleAddByImport = ($event) => {
         const files = $event.target.files;
@@ -71,9 +85,15 @@ function ListStudentDetail() {
 
     return (
         <div className={cx("manage-list-student")}>
-            <h2 className={cx("manage-list-student-title")}>
-                DANH SÁCH HỌC SINH LỚP {className} NĂM HỌC {academicYear}
-            </h2>
+            <div className={cx("manage-list-student-header")}>
+                <h2 className={cx("manage-list-student-title")}>
+                    DANH SÁCH HỌC SINH LỚP {className} NĂM HỌC {academicYear}
+                </h2>
+                <div className={cx("manage-user")}>
+                    <FaUserAlt className={cx("avatar-image")} />
+                    <span className={cx("user-name")}> Xin chào Admin</span>
+                </div>
+            </div>
             <div className={cx("manage-list-student-content")}>
                 <div className={cx("list-button")}>
                     <input
@@ -92,18 +112,23 @@ function ListStudentDetail() {
                     >
                         Thêm bằng file
                     </label>
-                    <AddListStudentDetail
-                        show={showAddList}
-                        setShow={setShowAddList}
-                        listStudentClassAdd={listAdd}
-                        fileName={fileName}
-                        getStudentClass={getStudentClass}
-                    />
+
+                    {showAddList && (
+                        <AddListStudentDetail
+                            show={showAddList}
+                            setShow={setShowAddList}
+                            listStudentClassAdd={listAdd}
+                            fileName={fileName}
+                            getStudentClass={getStudentClass}
+                        />
+                    )}
                 </div>
 
                 <DetailListStudent
                     listStudentClass={listStudentClass}
                     getStudentClass={getStudentClass}
+                    className={className}
+                    academicYear={academicYear}
                 />
             </div>
         </div>

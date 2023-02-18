@@ -11,7 +11,7 @@ namespace BackendDATN.Data
             StudentClasses = new HashSet<StudentClass>();
         }
 
-        public string Id { get; set; } = null!;
+        public string IdStudent { get; set; } = null!;
         public string FullName { get; set; } = null!;
         public int Age { get; set; }
         public string Gender { get; set; } = null!;
@@ -27,6 +27,7 @@ namespace BackendDATN.Data
         public string MotherCareer { get; set; } = null!;
         public string MotherPhone { get; set; } = null!;
         public int Status { get; set; }
+        public string SchoolYear { get; set; } = null!;
         public Guid AccountId { get; set; }
 
         public virtual Account Account { get; set; } = null!;

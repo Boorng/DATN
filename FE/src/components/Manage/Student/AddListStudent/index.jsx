@@ -1,6 +1,9 @@
 import * as classNames from "classnames/bind";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { doc, setDoc } from "firebase/firestore";
 import { Button, Modal, Table } from "react-bootstrap";
 import { toast } from "react-toastify";
+import { auth, db } from "../../../../firebase";
 import { postListStudentAPI } from "../../../../services/studentService";
 
 import styles from "./AddListStudent.module.scss";
@@ -17,9 +20,35 @@ function AddListStudent({
     const hanelAddList = async () => {
         const status = await postListStudentAPI(listStudentAdd);
         if (status.message === "Success") {
-            toast.success("Thêm học sinh thành công");
-            await getStudent();
-            setShow(false);
+            try {
+                status.dataContent.forEach(async (item) => {
+                    const res = await createUserWithEmailAndPassword(
+                        auth,
+                        item.email,
+                        item.password
+                    );
+
+                    await updateProfile(res.user, {
+                        displayName: `${item.fullName} - ${item.id}`,
+                    });
+
+                    //create user on firestore
+                    await setDoc(doc(db, "users", res.user.uid), {
+                        uid: res.user.uid,
+                        displayName: `${item.fullName} - ${item.id}`,
+                        email: item.email,
+                    });
+
+                    //create empty user chats on firestore
+                    await setDoc(doc(db, "userChats", res.user.uid), {});
+                });
+                toast.success("Thêm học sinh thành công");
+                await getStudent();
+                setShow(false);
+            } catch (err) {
+                console.log(err);
+                toast.error("Thêm học sinh thất bại do lỗi server");
+            }
         } else {
             toast.error("Thêm học sinh thất bại");
         }
@@ -61,6 +90,7 @@ function AddListStudent({
                                 Số điện thoại mẹ
                             </th>
                             <th className={cx("table-head")}>Nghề nghiệp mẹ</th>
+                            <th className={cx("table-head")}>Niên khóa</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -111,6 +141,9 @@ function AddListStudent({
                                     </td>
                                     <td className={cx("table-document")}>
                                         {stu.motherCareer}
+                                    </td>
+                                    <td className={cx("table-document")}>
+                                        {stu.schoolYear}
                                     </td>
                                 </tr>
                             );

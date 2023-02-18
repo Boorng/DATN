@@ -17,13 +17,26 @@ namespace BackendDATN.Controllers
         }
 
         [HttpGet("{classId}")]
-        public async Task<IActionResult> GetAll(int classId, string? search = null)
+        public async Task<IActionResult> GetAll(string classId, string? search = null)
         {
             try
             {
                 return Ok(await _studentClassServ.GetAll(classId, search));
             }
             catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        [HttpGet("student/{studentId}")]
+        public async Task<IActionResult> GetByStudentId(string studentId)
+        {
+            try
+            {
+                return Ok(await _studentClassServ.GetByStudentId(studentId));
+            }
+            catch(Exception e)
             {
                 return BadRequest(e.Message);
             }
@@ -72,7 +85,7 @@ namespace BackendDATN.Controllers
         }
 
         [HttpPut("{id}/{classId}")]
-        public async Task<IActionResult> Update(int id, int classId)
+        public async Task<IActionResult> Update(int id, string classId)
         {
             try
             {
@@ -104,6 +117,27 @@ namespace BackendDATN.Controllers
                 });
             }
             catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return BadRequest(new MessageResponse
+                {
+                    Message = "Fail"
+                });
+            }
+        }
+
+        [HttpDelete("student-class")]
+        public async Task<IActionResult> DeleteById(string? studentId, string? classId)
+        {
+            try
+            {
+                await _studentClassServ.DeleteByIdAsync(studentId, classId);
+                return Ok( new MessageResponse
+                {
+                    Message = "Success"
+                });
+            }
+            catch(Exception e)
             {
                 Console.WriteLine(e.Message);
                 return BadRequest(new MessageResponse

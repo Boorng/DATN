@@ -10,6 +10,7 @@ const END_POINT = {
     Teacher: "Teacher",
     Team: "Team",
     Test: "Test",
+    Login: "Login",
 };
 
 export default END_POINT;

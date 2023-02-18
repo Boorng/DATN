@@ -1,4 +1,5 @@
-﻿using BackendDATN.Entity.VM.Test;
+﻿using BackendDATN.Data.Response;
+using BackendDATN.Entity.VM.Test;
 using BackendDATN.IServices;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -17,11 +18,11 @@ namespace BackendDATN.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetAll()
+        public async Task<IActionResult> GetAll()
         {
             try
             {
-                return Ok(_testServ.GetAll());
+                return Ok(await _testServ.GetAllAsync());
             }
             catch(Exception e)
             {
@@ -29,20 +30,64 @@ namespace BackendDATN.Controllers
             }
         }
 
-        [HttpGet("{id}")]
-        public IActionResult GetById(Guid id)
+        [HttpGet("statistic/{academicYear}/{grade}")]
+        public async Task<IActionResult> GetStatisticResult(string academicYear, int grade, string? classId)
         {
             try
             {
-                var data = _testServ.GetById(id);
-                if(data != null)
-                {
-                    return Ok(data);
-                }
-                else
-                {
-                    return NotFound();
-                }
+                return Ok(await _testServ.GetStatisticMark(academicYear, classId, grade));
+            }
+            catch(Exception e)
+            {
+                return BadRequest(e.Message);
+            } 
+        }
+
+        [HttpGet("class/{classId}/{subjectId}/{semesterId}")]
+        public async Task<IActionResult> GetResultStudentClass(string classId, int subjectId, int semesterId)
+        {
+            try
+            {
+                return Ok(await _testServ.GetListTestStudentInClass(classId, subjectId, semesterId));
+            }
+            catch(Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        [HttpGet("student-result/{divisionId}/{grade}/{semesterId}")]
+        public async Task<IActionResult> GetStudentResult(int divisionId, int grade, int semesterId)
+        {
+            try
+            {
+                return Ok(await _testServ.GetStudentResultAsync(divisionId, grade, semesterId));
+            }
+            catch(Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        [HttpGet("summary/{divisionId}/{grade}/{academicYear}")]
+        public async Task<IActionResult> GetSummaryResult(int divisionId, int grade, string academicYear)
+        {
+            try
+            {
+                return Ok(await _testServ.GetSummaryResultAsync(divisionId, grade, academicYear));
+            }
+            catch(Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        [HttpGet("check-add-mark")]
+        public async Task<IActionResult> CheckAddMark(string classId, int semesterId, int subjectId)
+        {
+            try
+            {
+                return Ok(await _testServ.CheckAddMark(classId, semesterId, subjectId));
             }
             catch(Exception e)
             {
@@ -51,72 +96,107 @@ namespace BackendDATN.Controllers
         }
 
         [HttpPost]
-        public IActionResult Add(TestModel testModel)
+        public async Task<IActionResult> Add(TestModel testModel)
         {
             try
             {
-                return Ok(_testServ.Add(testModel));
+                await _testServ.AddAsync(testModel);
+                return Ok(new MessageResponse
+                {
+                    Message = "Success"
+                });
             }
             catch(Exception e)
             {
-                return BadRequest(e.Message);
+                Console.WriteLine(e.Message);
+                return BadRequest(new MessageResponse
+                {
+                    Message = "Fail"
+                });
             }
         }
 
-        [HttpPut("{id}")]
-        public IActionResult Update(Guid id, TestModel testModel)
+        [HttpPost("add-list")]
+        public async Task<IActionResult> AddList(List<TestModel> testModels)
         {
             try
             {
-                var data = _testServ.GetById(id);
-                if(data != null)
+                await _testServ.AddListAsync(testModels);
+                return Ok(new MessageResponse
                 {
-                    _testServ.Update(new TestVM
-                    {
-                        Id = id,
-                        Name = testModel.Name,
-                        MarkWeight = testModel.MarkWeight,
-                        TestTime = testModel.TestTime,
-                        Comment = testModel.Comment,
-                        Mark = testModel.Mark,
-                        Created_At = testModel.Created_At,
-                        Updated_At = testModel.Updated_At,
-                        SubjectId = testModel.SubjectId,
-                        SemesterId = testModel.SemesterId,
-                        DivisionId = testModel.DivisionId,
-                    });
-                    return Ok();
-                }
-                else
-                {
-                    return NotFound();
-                }
+                    Message = "Success"
+                });
             }
             catch(Exception e)
             {
-                return BadRequest(e.Message);
+                Console.WriteLine(e.Message);
+                return BadRequest(new MessageResponse
+                {
+                    Message = "Fail"
+                });
+            }
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> Update(TestVM testVM)
+        {
+            try
+            {
+                await _testServ.UpdateAsync(testVM);
+                return Ok(new MessageResponse
+                {
+                    Message = "Success"
+                });
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return BadRequest(new MessageResponse
+                {
+                    Message = "Fail"
+                });
             }
         }
 
         [HttpDelete("{id}")]
-        public IActionResult Delete(Guid id)
+        public async Task<IActionResult> Delete(Guid id)
         {
             try
             {
-                var data = _testServ.GetById(id);
-                if(data != null)
+                await _testServ.DeleteAsync(id);
+                return Ok(new MessageResponse
                 {
-                    _testServ.Delete(id);
-                    return Ok();
-                }
-                else
-                {
-                    return NotFound();
-                }
+                    Message = "Success"
+                });
             }
             catch(Exception e)
             {
-                return BadRequest(e.Message);
+                Console.WriteLine(e.Message);
+                return BadRequest(new MessageResponse
+                {
+                    Message = "Fail"
+                });
+            }
+        }
+
+        [HttpDelete("delete")]
+        public async Task<IActionResult> DeleteByStudentId(int? divisionId, int? semesterId, int? subjectId)
+        {
+            try
+            {
+                await _testServ.DeleteById(divisionId, semesterId, subjectId);
+                return Ok(new MessageResponse
+                {
+                    Message = "Success"
+                });
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return BadRequest(new MessageResponse
+                {
+                    Message = "Fail"
+                });
             }
         }
     }

@@ -1,13 +1,15 @@
 import * as classNames from "classnames/bind";
-import "react-toastify/dist/ReactToastify.css";
+import { read, utils } from "xlsx";
+import { useEffect, useState } from "react";
 
 import styles from "./Teacher.module.scss";
 import AddEditTeacher from "./AddEditTeacher";
-import { useEffect, useState } from "react";
 import ListTeacher from "./ListTeacher";
-import { read, utils } from "xlsx";
 import AddListTeacher from "./AddListTeacher";
 import { getTeacherAPI } from "../../../services/teacherService";
+import { useNavigate } from "react-router-dom";
+import { handleCheck } from "../../../utils/common";
+import { FaUserAlt } from "react-icons/fa";
 
 const cx = classNames.bind(styles);
 
@@ -23,8 +25,19 @@ function Teacher() {
         setListTeacher(dataAPI);
     };
 
+    const navigate = useNavigate();
+
     useEffect(() => {
-        getTeacher();
+        const check = handleCheck();
+        if (!check) {
+            navigate("/");
+        } else {
+            if (check.Role === "3") getTeacher();
+            else {
+                navigate("/");
+                alert("Bạn không có quyền vào trang này");
+            }
+        }
     }, []);
 
     const handleClickShowAddForm = () => {
@@ -78,7 +91,15 @@ function Teacher() {
 
     return (
         <div className={cx("manage-teacher")}>
-            <h2 className={cx("manage-teacher-title")}>QUẢN LÝ GIÁO VIÊN</h2>
+            <div className={cx("manage-teacher-header")}>
+                <h2 className={cx("manage-teacher-title")}>
+                    QUẢN LÝ GIÁO VIÊN
+                </h2>
+                <div className={cx("manage-user")}>
+                    <FaUserAlt className={cx("avatar-image")} />
+                    <span className={cx("user-name")}> Xin chào Admin</span>
+                </div>
+            </div>
             <div className={cx("manage-teacher-content")}>
                 <div className={cx("list-button")}>
                     <div className={cx("show-add")}>
@@ -106,6 +127,9 @@ function Teacher() {
                     >
                         Thêm bằng file
                     </label>
+                </div>
+
+                {showAddList && (
                     <AddListTeacher
                         show={showAddList}
                         setShow={setShowAddList}
@@ -113,7 +137,8 @@ function Teacher() {
                         fileName={fileName}
                         getTeacher={getTeacher}
                     />
-                </div>
+                )}
+
                 {isShow && (
                     <AddEditTeacher
                         action="add"
@@ -122,6 +147,7 @@ function Teacher() {
                         getTeacher={getTeacher}
                     />
                 )}
+
                 <ListTeacher
                     listTeacher={listTeacher}
                     getTeacher={getTeacher}

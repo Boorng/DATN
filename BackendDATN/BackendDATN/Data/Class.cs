@@ -11,7 +11,7 @@ namespace BackendDATN.Data
             StudentClasses = new HashSet<StudentClass>();
         }
 
-        public int Id { get; set; }
+        public string IdClass { get; set; } = null!;
         public string Name { get; set; } = null!;
         public string AcademicYear { get; set; } = null!;
         public int Grade { get; set; }

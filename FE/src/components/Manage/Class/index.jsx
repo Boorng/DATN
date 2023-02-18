@@ -1,12 +1,14 @@
 import * as classNames from "classnames/bind";
 import "react-toastify/dist/ReactToastify.css";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { FaUserAlt } from "react-icons/fa";
 
 import styles from "./Class.module.scss";
 import AddEditClass from "./AddEditClass";
 import ListClass from "./ListClass";
 import { getClassAPI } from "../../../services/classService";
+import { handleCheck } from "../../../utils/common";
 
 const cx = classNames.bind(styles);
 
@@ -16,13 +18,25 @@ function Class() {
 
     const { gradeName } = useParams();
 
+    const navigate = useNavigate();
+
     const getClass = async (search) => {
         const dataAPI = await getClassAPI(gradeName, search);
         setListClass(dataAPI);
     };
 
     useEffect(() => {
-        getClass();
+        const check = handleCheck();
+        if (!check) {
+            navigate("/");
+        } else {
+            if (check.Role === "3") {
+                getClass();
+            } else {
+                navigate("/");
+                alert("Bạn không có quyền vào trang này");
+            }
+        }
     }, [gradeName]);
 
     const handleClickShowAddForm = () => {
@@ -31,9 +45,15 @@ function Class() {
 
     return (
         <div className={cx("manage-class")}>
-            <h2 className={cx("manage-class-title")}>
-                QUẢN LÝ LỚP KHỐI {gradeName}
-            </h2>
+            <div className={cx("manage-class-header")}>
+                <h2 className={cx("manage-class-title")}>
+                    QUẢN LÝ LỚP KHỐI {gradeName}
+                </h2>
+                <div className={cx("manage-user")}>
+                    <FaUserAlt className={cx("avatar-image")} />
+                    <span className={cx("user-name")}> Xin chào Admin</span>
+                </div>
+            </div>
             <div className={cx("manage-class-content")}>
                 <div className={cx("list-button")}>
                     <div className={cx("show-add")}>

@@ -9,7 +9,15 @@ import AddEditStudent from "../AddEditStudent";
 import styles from "./ListStudent.module.scss";
 import FindStudent from "../FindStudent";
 import DetailStudent from "../DetailStudent";
-import { updateStatusStudentAPI } from "../../../../services/studentService";
+import {
+    checkDataStudentAPI,
+    deleteStudentAPI,
+} from "../../../../services/studentService";
+import { deleteAccountAPI } from "../../../../services/accountService";
+import { deleteListTestAPI } from "../../../../services/testService";
+import { deleteListConductAPI } from "../../../../services/conductService";
+import { deleteListStudentClassAPI } from "../../../../services/studentClassService";
+import ReactPaginate from "react-paginate";
 
 const cx = classNames.bind(styles);
 
@@ -17,9 +25,22 @@ function ListStudent({ listStudent, getStudent }) {
     const [listStudentExport, setListStudentExport] = useState([]);
     const [isShow, setIsShow] = useState(false);
     const [isDetail, setIsDetail] = useState(false);
-    const [isDelete, setIsDelete] = useState(false);
-    const [idDelete, setIdDelete] = useState("");
+    const [isStuDelete, setIsStuDelete] = useState(false);
+    const [idStuDelete, setIdStuDelete] = useState("");
+    const [idAccDelete, setIdAccDelete] = useState("");
+    const [isTestDelete, setIsTestDelete] = useState(false);
+    const [isConductDelete, setIsConductDelete] = useState(false);
+    const [isStudentClassDelete, setIsStudentClassDelete] = useState(false);
+    const [listIdStuClassDelete, setListIdStuClassDelete] = useState([]);
+    const [isSure, setIsSure] = useState(false);
     const [studentShow, setStudentShow] = useState({});
+
+    //#region Paging
+    const [itemOffset, setItemOffset] = useState(0);
+    const [currentItems, setCurrentItems] = useState([]);
+    const [pageCount, setPageCount] = useState(0);
+    const itemPerPage = 8;
+    //#endregion
 
     useEffect(() => {
         const lstExport = listStudent.map((item) => {
@@ -40,10 +61,30 @@ function ListStudent({ listStudent, getStudent }) {
                 motherPhone: item.motherPhone,
                 motherCareer: item.motherCareer,
                 status: item.status === 1 ? "Đang học" : "Nghỉ học",
+                schoolYear: item.schooYear,
             };
         });
+
+        const endOffset = itemOffset + itemPerPage;
+
+        if (listStudent.length > 8) {
+            setCurrentItems(listStudent.slice(itemOffset, endOffset));
+            setPageCount(Math.ceil(listStudent.length / itemPerPage));
+        } else {
+            setItemOffset(0);
+            setPageCount(1);
+            setCurrentItems(listStudent.slice(0, endOffset));
+        }
+
         setListStudentExport(lstExport);
     }, [listStudent]);
+
+    const handlePageClick = (event) => {
+        const newOffset = (event.selected * itemPerPage) % listStudent.length;
+        const endOffset = newOffset + itemPerPage;
+        setItemOffset(newOffset);
+        setCurrentItems(listStudent.slice(newOffset, endOffset));
+    };
 
     const handleExport = () => {
         const headings = [
@@ -64,6 +105,7 @@ function ListStudent({ listStudent, getStudent }) {
                 "Số điện thoại mẹ",
                 "Nghề nghiệp mẹ",
                 "Tình trạng học tập",
+                "Khóa",
             ],
         ];
         const wb = utils.book_new();
@@ -74,25 +116,12 @@ function ListStudent({ listStudent, getStudent }) {
             skipHeader: true,
         });
         utils.book_append_sheet(wb, ws, "Report");
-        writeFile(wb, "StudentReport.xlsx");
+        writeFile(wb, "Danh sách học sinh.xlsx");
     };
 
-    const handleUpdateStatus = async () => {
-        const status = await updateStatusStudentAPI(idDelete);
-        console.log(status);
-        if (status.message === "Success") {
-            toast.success("Cập nhật tình trạng học tập thành công");
-            await getStudent();
-        } else {
-            toast.error("Cập nhật tình trạng học tập thất bại");
-        }
-        setIdDelete("");
-        setIsDelete(false);
-    };
-
-    const handleConfirmUpdate = (id) => {
-        setIdDelete(id);
-        setIsDelete(true);
+    const handleConfirmDelete = (id) => {
+        setIdStuDelete(id);
+        setIsStuDelete(true);
     };
 
     const handleClickEditInfo = (stu) => {
@@ -109,6 +138,65 @@ function ListStudent({ listStudent, getStudent }) {
 
     const handleSearch = async (input) => {
         await getStudent(input);
+    };
+
+    const handleCheckData = async () => {
+        const res = await checkDataStudentAPI(idStuDelete);
+        if (res.haveAccount) {
+            setIdAccDelete(res.accountId);
+        }
+        if (res.haveConduct) {
+            setIsConductDelete(true);
+        }
+        if (res.haveStudentClass) {
+            if (res.haveTest) {
+                setListIdStuClassDelete(res.studentClassIds);
+                setIsTestDelete(true);
+            }
+            setIsStudentClassDelete(true);
+        }
+        setIsSure(true);
+        setIsStuDelete(false);
+    };
+
+    const handleDeleteAll = async () => {
+        let check = true;
+        if (isConductDelete) {
+            const response = await deleteListConductAPI(idStuDelete);
+            if (response.message === "Fail") check = false;
+            setIsConductDelete(false);
+        }
+        if (isStudentClassDelete) {
+            if (isTestDelete) {
+                listIdStuClassDelete.forEach(async (item) => {
+                    const response = await deleteListTestAPI(item);
+                    if (response.message === "Fail") check = false;
+                });
+
+                setListIdStuClassDelete([]);
+            }
+            const response = await deleteListStudentClassAPI(idStuDelete);
+            if (response.message === "Fail") check = false;
+            setIsStudentClassDelete(false);
+        }
+        if (idAccDelete) {
+            const responseStu = await deleteStudentAPI(idStuDelete);
+            if (responseStu.message === "Success") {
+                const responseAcc = await deleteAccountAPI(idAccDelete);
+                if (responseAcc.message === "Fail") check = false;
+            }
+
+            setIdStuDelete("");
+            setIdAccDelete("");
+        }
+
+        if (check) {
+            toast.success("Xóa học sinh thành công");
+        } else {
+            toast.error("Xóa học sinh thất bại");
+        }
+        setIsSure(false);
+        await getStudent();
     };
 
     return (
@@ -128,15 +216,15 @@ function ListStudent({ listStudent, getStudent }) {
                     <tr>
                         <th className={cx("table-head")}>ID</th>
                         <th className={cx("table-head")}>Tên học sinh</th>
-                        <th className={cx("table-head")}>Tuổi</th>
                         <th className={cx("table-head")}>Email</th>
                         <th className={cx("table-head")}>Số điện thoại</th>
                         <th className={cx("table-head")}>Tình trạng học tập</th>
+                        <th className={cx("table-head")}>Khóa</th>
                         <th className={cx("table-head")}></th>
                     </tr>
                 </thead>
                 <tbody>
-                    {listStudent.map((stu) => {
+                    {currentItems.map((stu) => {
                         return (
                             <tr key={stu.id}>
                                 <td className={cx("table-document")}>
@@ -146,9 +234,6 @@ function ListStudent({ listStudent, getStudent }) {
                                     {stu.fullName}
                                 </td>
                                 <td className={cx("table-document")}>
-                                    {stu.age}
-                                </td>
-                                <td className={cx("table-document")}>
                                     {stu.email}
                                 </td>
                                 <td className={cx("table-document")}>
@@ -156,6 +241,9 @@ function ListStudent({ listStudent, getStudent }) {
                                 </td>
                                 <td className={cx("table-document")}>
                                     {stu.status === 1 ? "Đang học" : "Nghỉ học"}
+                                </td>
+                                <td className={cx("table-document")}>
+                                    {stu.schoolYear}
                                 </td>
 
                                 <td className={cx("list-button")}>
@@ -169,34 +257,51 @@ function ListStudent({ listStudent, getStudent }) {
                                         Xem chi tiết
                                     </Button>
 
-                                    {stu.status === 1 && (
-                                        <>
-                                            <Button
-                                                variant="success"
-                                                onClick={() =>
-                                                    handleClickEditInfo(stu)
-                                                }
-                                                className={cx("button")}
-                                            >
-                                                Sửa
-                                            </Button>
-                                            <Button
-                                                onClick={() =>
-                                                    handleConfirmUpdate(stu.id)
-                                                }
-                                                variant="danger"
-                                                className={cx("button")}
-                                            >
-                                                Nghỉ học
-                                            </Button>
-                                        </>
-                                    )}
+                                    <Button
+                                        variant="success"
+                                        onClick={() => handleClickEditInfo(stu)}
+                                        className={cx("button")}
+                                    >
+                                        Sửa
+                                    </Button>
+                                    <Button
+                                        onClick={() =>
+                                            handleConfirmDelete(stu.id)
+                                        }
+                                        variant="danger"
+                                        className={cx("button")}
+                                    >
+                                        Xóa
+                                    </Button>
                                 </td>
                             </tr>
                         );
                     })}
                 </tbody>
             </Table>
+
+            {listStudent.length > 8 && (
+                <ReactPaginate
+                    breakLabel="..."
+                    nextLabel="next >"
+                    onPageChange={handlePageClick}
+                    pageRangeDisplayed={5}
+                    pageCount={pageCount}
+                    previousLabel="< previous"
+                    renderOnZeroPageCount={null}
+                    pageClassName="page-item"
+                    pageLinkClassName="page-link"
+                    previousClassName="page-item"
+                    previousLinkClassName="page-link"
+                    nextClassName="page-item"
+                    nextLinkClassName="page-link"
+                    breakClassName="page-item"
+                    breakLinkClassName="page-link"
+                    containerClassName={cx("pagination", "pagination-wrap")}
+                    activeClassName="active"
+                />
+            )}
+
             {isShow && (
                 <AddEditStudent
                     studentShow={studentShow}
@@ -205,6 +310,7 @@ function ListStudent({ listStudent, getStudent }) {
                     getStudent={getStudent}
                 />
             )}
+
             {isDetail && (
                 <DetailStudent
                     studentShow={studentShow}
@@ -212,37 +318,76 @@ function ListStudent({ listStudent, getStudent }) {
                     showDetail={handleClickDetailInfo}
                 />
             )}
-            <Modal
-                show={isDelete}
-                onHide={() => setIsDelete(false)}
-                dialogClassName={cx("modal")}
-                centered
-            >
-                <Modal.Header>
-                    <Modal.Title className={cx("modal-title")}>
-                        Cảnh báo
-                    </Modal.Title>
-                </Modal.Header>
-                <Modal.Body className={cx("modal-content")}>
-                    Bạn có chắc chắn muốn cho học sinh nghỉ học không?
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button
-                        variant="primary"
-                        className={cx("button-confirm")}
-                        onClick={handleUpdateStatus}
-                    >
-                        Xác nhận
-                    </Button>
-                    <Button
-                        variant="secondary"
-                        className={cx("button-back")}
-                        onClick={() => setIsDelete(false)}
-                    >
-                        Quay lại
-                    </Button>
-                </Modal.Footer>
-            </Modal>
+
+            {isStuDelete && (
+                <Modal
+                    show={isStuDelete}
+                    onHide={() => setIsStuDelete(false)}
+                    dialogClassName={cx("modal")}
+                    centered
+                >
+                    <Modal.Header>
+                        <Modal.Title className={cx("modal-title")}>
+                            Cảnh báo
+                        </Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body className={cx("modal-content")}>
+                        Bạn có chắc chắn muốn xóa học sinh không?
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button
+                            variant="primary"
+                            className={cx("button-confirm")}
+                            onClick={handleCheckData}
+                        >
+                            Xác nhận
+                        </Button>
+                        <Button
+                            variant="secondary"
+                            className={cx("button-back")}
+                            onClick={() => setIsStuDelete(false)}
+                        >
+                            Quay lại
+                        </Button>
+                    </Modal.Footer>
+                </Modal>
+            )}
+
+            {isSure && (
+                <Modal
+                    show={isSure}
+                    onHide={() => setIsSure(false)}
+                    dialogClassName={cx("modal")}
+                    centered
+                >
+                    <Modal.Header>
+                        <Modal.Title className={cx("modal-title")}>
+                            Cảnh báo
+                        </Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body className={cx("modal-content")}>
+                        Bạn sẽ xóa tất cả những dữ liệu liên quan đến tài khoản,
+                        lớp học, bài kiểm tra, bài đánh giá của học sinh. Bạn
+                        chắc chắn không?
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button
+                            variant="primary"
+                            className={cx("button-confirm")}
+                            onClick={handleDeleteAll}
+                        >
+                            Xác nhận
+                        </Button>
+                        <Button
+                            variant="secondary"
+                            className={cx("button-back")}
+                            onClick={() => setIsSure(false)}
+                        >
+                            Quay lại
+                        </Button>
+                    </Modal.Footer>
+                </Modal>
+            )}
         </div>
     );
 }

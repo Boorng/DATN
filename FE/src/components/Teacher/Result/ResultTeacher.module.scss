@@ -1,0 +1,58 @@
+.manage-list-student {
+    width: 100%;
+
+    .manage-list-student-header {
+        height: 120px;
+        padding-top: 20px;
+        padding-left: 50px;
+        padding-right: 50px;
+        padding-bottom: 30px;
+        display: flex;
+        justify-content: space-between;
+        background: rgb(34, 193, 195);
+        background: linear-gradient(
+            135deg,
+            rgba(34, 193, 195, 1) 0%,
+            rgba(253, 187, 45, 1) 100%
+        );
+
+        .manage-list-student-title {
+            font-size: 3rem;
+            color: white;
+            font-weight: 700;
+        }
+
+        .teacher-user {
+            display: flex;
+            column-gap: 10px;
+            color: white;
+
+            .avatar-image {
+                width: 27px;
+                height: 27px;
+                border-radius: 50%;
+                border: 1px solid white;
+                cursor: pointer;
+            }
+
+            .user-name {
+                padding-top: 1px;
+                font-size: 1.6rem;
+                cursor: pointer;
+            }
+        }
+    }
+
+    .manage-list-student-content {
+        min-height: 542px;
+        background-color: #f8f9fe;
+        padding-left: 24px;
+        padding-top: 20px;
+
+        .manage-list-student-container {
+            background-color: white;
+            border-radius: 5px;
+            padding: 15px;
+        }
+    }
+}

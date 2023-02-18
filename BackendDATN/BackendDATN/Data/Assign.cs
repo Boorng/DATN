@@ -5,10 +5,10 @@ namespace BackendDATN.Data
 {
     public partial class Assign
     {
-        public Guid Id { get; set; }
+        public Guid IdAssign { get; set; }
         public int SemesterId { get; set; }
         public int SubjectId { get; set; }
-        public int ClassId { get; set; }
+        public string ClassId { get; set; } = null!;
         public string TeacherId { get; set; } = null!;
 
         public virtual Class Class { get; set; } = null!;

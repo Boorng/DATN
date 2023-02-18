@@ -1,0 +1,60 @@
+.manage-list-student {
+    width: 100%;
+
+    .manage-list-student-content {
+        .table-head {
+            font-size: 1.5rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            text-align: center;
+        }
+
+        .subject {
+            width: 200px;
+        }
+
+        .table-document {
+            font-size: 1.4rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .table-element {
+            flex: 1;
+
+            &:hover {
+                cursor: pointer;
+                background-color: #b4bec9;
+                opacity: 0.8;
+            }
+        }
+
+        .column-divide {
+            display: flex;
+        }
+    }
+}
+
+.modal {
+    .form-title {
+        font-size: 2.2rem;
+        text-transform: uppercase;
+        font-weight: 600;
+    }
+
+    .form-control {
+        font-size: 1.6rem;
+    }
+
+    .button-update {
+        width: 120px;
+        height: 35px;
+        font-size: 1.6rem;
+    }
+
+    .button-back {
+        height: 35px;
+        width: 100px;
+        font-size: 1.6rem;
+    }
+}

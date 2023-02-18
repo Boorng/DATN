@@ -1,0 +1,59 @@
+.list-team {
+    margin-top: 30px;
+
+    .table-head-index,
+    .table-head-team {
+        font-size: 1.5rem;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+
+    .table-head-index {
+        width: 100px;
+    }
+
+    .table-head-team {
+        width: 450px;
+    }
+
+    .table-body {
+        font-size: 1.4rem;
+    }
+
+    .table-body-button {
+        display: flex;
+        column-gap: 10px;
+
+        .button-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #ffc107;
+            color: white;
+            font-size: 1.4rem;
+            border-radius: 5px;
+            width: 140px;
+            height: 30px;
+        }
+
+        .button {
+            font-size: 1.4rem;
+        }
+    }
+}
+
+.modal {
+    .modal-title {
+        font-size: 1.8rem;
+        font-weight: 600;
+    }
+
+    .modal-content {
+        font-size: 1.6rem;
+    }
+
+    .button-confirm,
+    .button-back {
+        font-size: 1.6rem;
+    }
+}

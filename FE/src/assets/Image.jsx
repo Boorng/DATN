@@ -10,6 +10,12 @@ import image_slider_3 from "./images/image-slider-3.jpg";
 
 import icon_collapse from "./images/collapse.png";
 
+import not_found from "./images/not-found.png";
+
+import img from "./images/img.png";
+
+import attach from "./images/attach.png";
+
 export default {
     icon_title_header,
     background_footer,
@@ -17,4 +23,7 @@ export default {
     image_slider_2,
     image_slider_3,
     icon_collapse,
+    not_found,
+    img,
+    attach,
 };

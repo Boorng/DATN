@@ -1,22 +1,19 @@
 import * as classNames from "classnames/bind";
 import { useEffect, useState } from "react";
-import { Button, FormSelect, Modal, Table } from "react-bootstrap";
-import { Form, useParams } from "react-router-dom";
+import { Button, Form, Modal, Table } from "react-bootstrap";
+import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { utils, writeFile } from "xlsx";
-import { getClassAPI, updateClassAPI } from "../../../../services/classService";
-import {
-    deleteStudentClassAPI,
-    updateStudentClassAPI,
-} from "../../../../services/studentClassService";
-import DetailStudent from "../../Student/DetailStudent";
 
+import { getClassAPI } from "../../../../services/classService";
+import { updateStudentClassAPI } from "../../../../services/studentClassService";
+import DetailStudent from "../../Student/DetailStudent";
 import FindListStudentDetail from "../FindListStudentDetail";
 import styles from "./DetailListStudent.module.scss";
 
 const cx = classNames.bind(styles);
 
-function DetailListStudent({ listStudentClass, getStudentClass }) {
+function DetailListStudent({ listStudentClass, getStudentClass, className }) {
     const { gradeName, academicYear, classId } = useParams();
 
     const [listStudentClassExport, setListStudentClassExport] = useState([]);
@@ -31,8 +28,6 @@ function DetailListStudent({ listStudentClass, getStudentClass }) {
         const dataAPI = await getClassAPI(gradeName, academicYear);
         setListClass(dataAPI);
     };
-
-    useEffect(() => {}, []);
 
     useEffect(() => {
         const lstExport = listStudentClass.map((item) => {
@@ -53,6 +48,7 @@ function DetailListStudent({ listStudentClass, getStudentClass }) {
                 motherPhone: item.motherPhone,
                 motherCareer: item.motherCareer,
                 status: item.status === 1 ? "Đang học" : "Nghỉ học",
+                schoolYear: item.schoolYear,
             };
         });
         setListStudentClassExport(lstExport);
@@ -87,7 +83,10 @@ function DetailListStudent({ listStudentClass, getStudentClass }) {
             skipHeader: true,
         });
         utils.book_append_sheet(wb, ws, "Report");
-        writeFile(wb, "StudentClassReport.xlsx");
+        writeFile(
+            wb,
+            `Danh sách học sinh lớp ${className} năm học ${academicYear}.xlsx`
+        );
     };
 
     const handleConfirmUpdate = async (id) => {
@@ -100,7 +99,7 @@ function DetailListStudent({ listStudentClass, getStudentClass }) {
         SetClassSelect(e.target.value);
     };
 
-    const handleUpdateStudentClass = async (e) => {
+    const handleUpdateStudentClass = async () => {
         const response = await updateStudentClassAPI(idUpdate, classSelect);
         if (response.message === "Success") {
             toast.success("Chuyển lớp thành công");
@@ -205,45 +204,49 @@ function DetailListStudent({ listStudentClass, getStudentClass }) {
                 />
             )}
 
-            <Modal
-                show={isUpdate}
-                onHide={() => setIsUpdate(false)}
-                dialogClassName={cx("modal")}
-                centered
-            >
-                <Modal.Header>
-                    <Modal.Title className={cx("modal-title")}>
-                        Chọn lớp muốn chuyển
-                    </Modal.Title>
-                </Modal.Header>
-                <Modal.Body className={cx("modal-content")}>
-                    <FormSelect
-                        value={classSelect}
-                        onChange={handleOnChange}
-                        className={cx("form-select")}
-                    >
-                        {listClass.map((item) => {
-                            return <option value={item.id}>{item.name}</option>;
-                        })}
-                    </FormSelect>
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button
-                        variant="primary"
-                        className={cx("button-confirm")}
-                        onClick={handleUpdateStudentClass}
-                    >
-                        Xác nhận
-                    </Button>
-                    <Button
-                        variant="secondary"
-                        className={cx("button-back")}
-                        onClick={() => setIsUpdate(false)}
-                    >
-                        Quay lại
-                    </Button>
-                </Modal.Footer>
-            </Modal>
+            {isUpdate && (
+                <Modal
+                    show={isUpdate}
+                    onHide={() => setIsUpdate(false)}
+                    dialogClassName={cx("modal")}
+                    centered
+                >
+                    <Modal.Header>
+                        <Modal.Title className={cx("modal-title")}>
+                            Chọn lớp muốn chuyển
+                        </Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body className={cx("modal-content")}>
+                        <Form.Select
+                            value={classSelect}
+                            onChange={handleOnChange}
+                            className={cx("form-select")}
+                        >
+                            {listClass.map((item) => {
+                                return (
+                                    <option value={item.id}>{item.name}</option>
+                                );
+                            })}
+                        </Form.Select>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button
+                            variant="primary"
+                            className={cx("button-confirm")}
+                            onClick={handleUpdateStudentClass}
+                        >
+                            Xác nhận
+                        </Button>
+                        <Button
+                            variant="secondary"
+                            className={cx("button-back")}
+                            onClick={() => setIsUpdate(false)}
+                        >
+                            Quay lại
+                        </Button>
+                    </Modal.Footer>
+                </Modal>
+            )}
         </div>
     );
 }

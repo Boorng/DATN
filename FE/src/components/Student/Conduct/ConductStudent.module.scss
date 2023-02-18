@@ -1,0 +1,66 @@
+.detail-conduct-teacher {
+    margin: 15px;
+    padding: 20px;
+    border: 1px solid #ccc;
+
+    .detail-conduct-teacher-header {
+        padding-top: 20px;
+
+        .detail-conduct-teacher-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-align: center;
+            padding-bottom: 30px;
+        }
+
+        .detail-conduct-teacher-title-wrap {
+            padding-left: 40px;
+
+            .detail-conduct-teacher-title-content {
+                font-size: 1.6rem;
+                font-weight: 600;
+            }
+        }
+    }
+
+    .detail-conduct-teacher-content {
+        padding-left: 40px;
+        margin-top: 30px;
+        .detail-conduct-teacher-table {
+            border-collapse: collapse;
+            width: 840px;
+
+            .detail-conduct-teacher-table-header,
+            .table-document {
+                border: 2px solid black;
+                text-align: center;
+                font-size: 1.6rem;
+            }
+
+            .detail-conduct-teacher-table-header-subject {
+                width: 400px;
+            }
+
+            .summary {
+                font-weight: 600;
+            }
+
+            .comment {
+                width: 400px;
+            }
+        }
+
+        .conduct {
+            margin-top: 40px;
+        }
+    }
+
+    .detail-conduct-teacher-footer {
+        margin-top: 30px;
+        padding-left: 40px;
+
+        .button-export {
+            font-size: 1.5rem;
+        }
+    }
+}

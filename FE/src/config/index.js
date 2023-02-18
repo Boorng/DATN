@@ -1,7 +1,15 @@
-import routes from "./routes";
+import {
+    publicRoutes,
+    manageRoutes,
+    teacherRoutes,
+    studentRoutes,
+} from "./routes";
 
 const config = {
-    routes,
+    publicRoutes,
+    manageRoutes,
+    teacherRoutes,
+    studentRoutes,
 };
 
 export default config;

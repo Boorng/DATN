@@ -10,8 +10,8 @@ namespace BackendDATN.Data
             Tests = new HashSet<Test>();
         }
 
-        public int Id { get; set; }
-        public int ClassId { get; set; }
+        public int IdStudentClass { get; set; }
+        public string ClassId { get; set; } = null!;
         public string StudentId { get; set; } = null!;
 
         public virtual Class Class { get; set; } = null!;

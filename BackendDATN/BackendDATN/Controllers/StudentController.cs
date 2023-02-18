@@ -20,13 +20,52 @@ namespace BackendDATN.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll([FromQuery] string? search)
+        public async Task<IActionResult> GetAll(string? schoolYear, [FromQuery] string? search)
         {
             try
             {
-                return Ok(await _studentServ.GetAllAsync(search));
+                return Ok(await _studentServ.GetAllAsync(schoolYear, search));
             }
             catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        [HttpGet("list-schoolYear")]
+        public async Task<IActionResult> GetAllSchoolYear()
+        {
+            try
+            {
+                return Ok(await _studentServ.GetAllSchoolYear());
+            }
+            catch(Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        [HttpGet("account/{accountId}")]
+        public async Task<IActionResult> GetByAccountId(Guid accountId)
+        {
+            try
+            {
+                return Ok(await _studentServ.GetByAccountId(accountId));
+            }
+            catch(Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetById(string id)
+        {
+            try
+            {
+                return Ok(await _studentServ.GetById(id));
+            }
+            catch(Exception e)
             {
                 return BadRequest(e.Message);
             }
@@ -37,11 +76,12 @@ namespace BackendDATN.Controllers
         {
             try
             {
-                await _studentServ.AddAsync(studentAdd);
+                
                 return Ok(new MessageResponse
                 {
-                    Message = "Success"
-                });
+                    Message = "Success",
+                    Content = await _studentServ.AddAsync(studentAdd)
+            });
             }
             catch (Exception e)
             {
@@ -58,14 +98,16 @@ namespace BackendDATN.Controllers
         {
             try
             {
-                await _studentServ.AddListAsync(studentAdds);
-                return Ok(new MessageResponse
-                {
-                    Message = "Success"
-                });
+                var data = await _studentServ.AddListAsync(studentAdds);
+                MessageResponse message = new MessageResponse();
+                message.Message = "Success";
+                message.DataContent.AddRange(data);
+
+                return Ok(message);
             }
             catch (Exception e)
             {
+                Console.WriteLine(e.Message);
                 return BadRequest(new MessageResponse
                 {
                     Message = "Fail"
@@ -76,7 +118,6 @@ namespace BackendDATN.Controllers
         [HttpPost("upload-image/{id}")]
         public async Task<IActionResult> UploadImage(string id)
         {
-            bool Results = false;
             try
             {
                 var _uploadedfiles = Request.Form.Files;
@@ -99,17 +140,24 @@ namespace BackendDATN.Controllers
                     using (FileStream stream = System.IO.File.Create(imagepath))
                     {
                         await source.CopyToAsync(stream);
-                        Results = true;
                     }
 
                     await _studentServ.UploadImageAsync(id, GetSourcePath(Filename));
                 }
+
+                return Ok(new MessageResponse
+                {
+                    Message = "Success"
+                });
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
+                return BadRequest(new MessageResponse
+                {
+                    Message = "Fail"
+                });
             }
-            return Ok(Results);
         }
 
         [HttpPut]
@@ -125,26 +173,7 @@ namespace BackendDATN.Controllers
             }
             catch (Exception e)
             {
-                return BadRequest(new MessageResponse
-                {
-                    Message = "Fail"
-                });
-            }
-        }
-
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateStatus(string id, int status)
-        {
-            try
-            {
-                await _studentServ.UpdateStatus(id, status);
-                return Ok(new MessageResponse
-                {
-                    Message = "Success"
-                });
-            }
-            catch (Exception e)
-            {
+                Console.WriteLine(e.Message);
                 return BadRequest(new MessageResponse
                 {
                     Message = "Fail"
@@ -183,7 +212,7 @@ namespace BackendDATN.Controllers
         private string GetSourcePath(string productcode)
         {
             string ImageUrl = string.Empty;
-            string HostUrl = "https://localhost:7267/";
+            string HostUrl = "https://localhost:7152";
             string Filepath = GetFilePath(productcode);
             string Imagepath = Filepath + "\\image.png";
             if (System.IO.File.Exists(Imagepath))
@@ -193,6 +222,19 @@ namespace BackendDATN.Controllers
 
             return ImageUrl;
 
+        }
+
+        [HttpGet("check-data/{id}")]
+        public async Task<IActionResult> CheckData(string id)
+        {
+            try
+            {
+                return Ok(await _studentServ.CheckData(id));
+            }
+            catch(Exception e)
+            {
+                return BadRequest(e.Message);
+            }
         }
     }
 }

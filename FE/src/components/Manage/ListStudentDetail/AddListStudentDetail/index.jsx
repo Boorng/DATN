@@ -1,4 +1,5 @@
 import * as classNames from "classnames/bind";
+import { useEffect, useState } from "react";
 import { Button, Modal, Table } from "react-bootstrap";
 import { toast } from "react-toastify";
 import { postListStudentClassAPI } from "../../../../services/studentClassService";
@@ -14,8 +15,21 @@ function AddListStudentDetail({
     fileName,
     getStudentClass,
 }) {
+    const [listIdAdd, setListIdAdd] = useState([]);
+
+    useEffect(() => {
+        setListIdAdd(
+            listStudentClassAdd.map((item) => {
+                return {
+                    classId: item.classId,
+                    studentId: item.studentId,
+                };
+            })
+        );
+    }, []);
+
     const hanelAddList = async () => {
-        const status = await postListStudentClassAPI(listStudentClassAdd);
+        const status = await postListStudentClassAPI(listIdAdd);
         if (status.message === "Success") {
             toast.success("Thêm học sinh vào lớp thành công");
             await getStudentClass();

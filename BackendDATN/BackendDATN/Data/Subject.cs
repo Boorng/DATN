@@ -11,7 +11,7 @@ namespace BackendDATN.Data
             Tests = new HashSet<Test>();
         }
 
-        public int Id { get; set; }
+        public int IdSubject { get; set; }
         public string Name { get; set; } = null!;
         public int Grade { get; set; }
 

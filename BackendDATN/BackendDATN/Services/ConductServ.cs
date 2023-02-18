@@ -1,6 +1,8 @@
-﻿using BackendDATN.Data;
+﻿using AutoMapper;
+using BackendDATN.Data;
 using BackendDATN.Entity.VM.Conduct;
 using BackendDATN.IServices;
+using Microsoft.EntityFrameworkCore;
 
 namespace BackendDATN.Services
 {
@@ -8,70 +10,110 @@ namespace BackendDATN.Services
     {
         private BackendContext _context;
 
-        public static int PAGE_SIZE { get; set; } = 10;
+        public readonly IMapper _mapper;
 
-        public ConductServ(BackendContext context)
+        public ConductServ(BackendContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
-        public ConductVM Add(ConductModel conductModel)
+        public async Task AddAsync(ConductModel conductModel)
         {
             var data = new Conduct
             {
-                Mark = conductModel.Mark,
+                IdConduct = Guid.NewGuid(),
+                Evaluate = conductModel.Evaluate,
                 Comment = conductModel.Comment,
                 SemesterId = conductModel.SemesterId,
                 StudentId = conductModel.StudentId
             };
 
-            _context.Add(data);
-            _context.SaveChanges();
-
-            return new ConductVM
-            {
-                Id = data.Id,
-                Comment = data.Comment,
-                SemesterId = data.SemesterId,
-                StudentId = data.StudentId
-            };
+            await _context.AddAsync(data);
+            await _context.SaveChangesAsync();
         }
 
-        public void Delete(Guid id)
+        public async Task DeleteAsync(Guid id)
         {
-            var data = _context.Conducts.SingleOrDefault(co => co.Id == id);
+            var data = await _context.Conducts.FindAsync(id);
             if(data != null)
             {
                 _context.Remove(data);
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
             }
         }
 
-        public List<ConductVM> GetAll()
+        public async Task DeleteById(string? studentId, int? semesterId)
         {
-            return _context.Conducts.Select(co => new ConductVM
+            if(!string.IsNullOrEmpty(studentId))
             {
-                Id = co.Id,
-                Comment = co.Comment,
-                SemesterId = co.SemesterId,
-                StudentId = co.StudentId
-            }).ToList();
-
+                var data = _context.Conducts.Where(c => c.StudentId == studentId);
+                _context.RemoveRange(data);
+            }
+            else
+            {
+                var data = _context.Conducts.Where(c => c.SemesterId == semesterId);
+                _context.RemoveRange(data);
+            }
             
+            await _context.SaveChangesAsync();
         }
 
-        public ConductVM? GetById(Guid id)
+        public async Task<List<ConductVM>> GetAllAsync(string? classId, int? grade, int semesterId)
         {
-            var data = _context.Conducts.SingleOrDefault(co => co.Id == id);
+            var data = await _context.Conducts.Where(c => c.SemesterId == semesterId).ToListAsync();
+
+            var res = data.AsQueryable();
+
+            if(!string.IsNullOrEmpty(classId))
+            {
+                var sc = await _context.StudentClasses.Where(sc => sc.ClassId == classId).ToListAsync();
+
+                var dataSc = sc.AsQueryable();
+
+                res = res.Join(dataSc,
+                                c => c.StudentId,
+                                sc => sc.StudentId,
+                                (c, sc) => c);
+            }
+            else
+            {
+                var cls = await _context.Classes.Where(cls => cls.Grade == grade).ToListAsync();
+                var sc = await _context.StudentClasses.ToListAsync();
+
+                var dataCls = cls.AsQueryable();
+                var dataSc = sc.AsQueryable();
+
+                dataSc = dataSc.Join(dataCls,
+                                       sc => sc.ClassId,
+                                       c => c.IdClass,
+                                       (sc, c) => sc);
+
+                res = res.Join(dataSc,
+                                c => c.StudentId,
+                                sc => sc.StudentId,
+                                (c, sc) => c);
+            }
+
+            var result = res.Select(co => new ConductVM
+            {
+                Id = co.IdConduct,
+                Comment = co.Comment,
+                SemesterId = co.SemesterId,
+                StudentId = co.StudentId,
+                Evaluate = co.Evaluate
+            });
+
+            return result.ToList();
+        }
+
+        public async Task<ConductVM> GetByIdAsync(string studentId, int semesterId)
+        {
+            var data = await _context.Conducts.SingleOrDefaultAsync(c => c.StudentId == studentId && c.SemesterId == semesterId);
+
             if(data != null)
             {
-                return new ConductVM
-                {
-                    Id = data.Id,
-                    Comment = data.Comment,
-                    SemesterId = data.SemesterId,
-                    StudentId = data.StudentId
-                };
+                return _mapper.Map<ConductVM>(data);
             }
             else
             {
@@ -79,21 +121,16 @@ namespace BackendDATN.Services
             }
         }
 
-        public List<ConductVM> GetByPage(int page = 1)
+        public async Task UpdateAsync(ConductVM conductVM)
         {
-            throw new NotImplementedException();
-        }
-
-        public void Update(ConductVM conductVM)
-        {
-            var data = _context.Conducts.SingleOrDefault(co => co.Id == conductVM.Id);
+            var data = await _context.Conducts.FindAsync(conductVM.Id);
             if(data != null)
             {
-                data.Mark = conductVM.Mark;
+                data.Evaluate = conductVM.Evaluate;
                 data.Comment = conductVM.Comment;
                 data.SemesterId = conductVM.SemesterId;
                 data.StudentId = conductVM.StudentId;
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
             }
         }
     }

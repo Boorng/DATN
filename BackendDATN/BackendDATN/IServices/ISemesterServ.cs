@@ -1,19 +1,20 @@
-﻿using BackendDATN.Entity.VM.Semester;
+﻿using BackendDATN.Data.Response;
+using BackendDATN.Entity.VM.Semester;
 
 namespace BackendDATN.IServices
 {
     public interface ISemesterServ
     {
-        List<SemesterVM> GetAll();
+        Task<List<SemesterVM>> GetAllAsync(string? academicYear);
 
-        List<SemesterVM> GetByPage(int page = 1);
+        Task AddAsync(SemesterModel semesterModel);
 
-        SemesterVM? GetById(int id);
+        Task UpdateAsync(SemesterVM semesterVM);
 
-        SemesterVM Add(SemesterModel semesterModel);
+        Task DeleteAsync(int id);
 
-        void Update(SemesterVM semesterVM);
+        Task<CheckDataSemesterResponse> CheckData(int semesterId);
 
-        void Delete(int id);
+        Task<string> GetAcademicYear(int semesterId);
     }
 }

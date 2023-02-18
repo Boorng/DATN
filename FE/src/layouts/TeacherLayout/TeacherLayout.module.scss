@@ -1,0 +1,12 @@
+.teacher-layout {
+    width: 100%;
+    min-height: 765px;
+
+    .content {
+        background-color: #f2f1eb;
+        position: absolute;
+        left: 300px;
+        width: calc(80% + 5px);
+        min-height: 765px;
+    }
+}

@@ -37,5 +37,7 @@ namespace BackendDATN.Data.VM.StudentClass
         public string Email { get; set; }
 
         public int Status { get; set; }
+
+        public string SchoolYear { get; set; }
     }
 }

@@ -1,4 +1,5 @@
-﻿using BackendDATN.Entity.VM.Semester;
+﻿using BackendDATN.Data.Response;
+using BackendDATN.Entity.VM.Semester;
 using BackendDATN.IServices;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -18,11 +19,11 @@ namespace BackendDATN.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetAll()
+        public async Task<IActionResult> GetAll(string? academicYear)
         {
             try
             {
-                return Ok(_semesterServ.GetAll());
+                return Ok(await _semesterServ.GetAllAsync(academicYear));
             }
             catch(Exception e)
             {
@@ -30,20 +31,25 @@ namespace BackendDATN.Controllers
             }
         }
 
-        [HttpGet("{id}")]
-        public IActionResult GetById(int id)
+        [HttpGet("academicYear/{semesterId}")]
+        public async Task<IActionResult> GetAcademicYear(int semesterId)
         {
             try
             {
-                var data = _semesterServ.GetById(id);
-                if(data != null)
-                {
-                    return Ok(data);
-                }
-                else
-                {
-                    return NotFound();
-                }
+                return Ok(await _semesterServ.GetAcademicYear(semesterId));
+            }
+            catch(Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        } 
+
+        [HttpGet("check-data/{semesterId}")]
+        public async Task<IActionResult> CheckData(int semesterId)
+        {
+            try
+            {
+                return Ok(await _semesterServ.CheckData(semesterId));
             }
             catch(Exception e)
             {
@@ -52,66 +58,65 @@ namespace BackendDATN.Controllers
         }
 
         [HttpPost]
-        public IActionResult Add(SemesterModel semesterModel)
+        public async Task<IActionResult> Add(SemesterModel semesterModel)
         {
             try
             {
-                return Ok(_semesterServ.Add(semesterModel));
+                await _semesterServ.AddAsync(semesterModel);
+                return Ok(new MessageResponse
+                {
+                    Message = "Success"
+                });
             }
             catch(Exception e)
             {
-                return BadRequest(e.Message);
+                Console.WriteLine(e.Message);
+                return BadRequest(new MessageResponse
+                {
+                    Message = "Fail"
+                });
             }
         }
 
-        [HttpPut("{id}")]
-        public IActionResult Update(int id, SemesterModel semesterModel)
+        [HttpPut]
+        public async Task<IActionResult> Update(SemesterVM semesterVM)
         {
             try
             {
-                var data = _semesterServ.GetById(id);
-                if (data != null)
+                await _semesterServ.UpdateAsync(semesterVM);
+                return Ok(new MessageResponse
                 {
-                    _semesterServ.Update(new SemesterVM
-                    {
-                        Id = id,
-                        Name = semesterModel.Name,
-                        SchoolYear = semesterModel.SchoolYear,
-                        TimeStart = semesterModel.TimeStart,
-                        TimeEnd = semesterModel.TimeEnd,
-                    });
-                    return Ok();
-                }
-                else
-                {
-                    return NotFound();
-                }
+                    Message = "Success"
+                });
             }
             catch(Exception e)
             {
-                return BadRequest(e.Message);
+                Console.WriteLine(e.Message);
+                return BadRequest(new MessageResponse
+                {
+                    Message = "Fail"
+                });
             }
         }
 
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
             try
             {
-                var data = _semesterServ.GetById(id);
-                if(data != null)
+                await _semesterServ.DeleteAsync(id);
+                return Ok(new MessageResponse
                 {
-                    _semesterServ.Delete(id);
-                    return Ok();
-                }
-                else
-                {
-                    return NotFound();
-                }
+                    Message = "Success"
+                });
             }
             catch(Exception e)
             {
-                return BadRequest(e.Message);
+                Console.WriteLine(e.Message);
+                return BadRequest(new MessageResponse
+                {
+                    Message = "Fail"
+                });
             }
         }
     }
