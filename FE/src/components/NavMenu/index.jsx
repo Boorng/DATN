@@ -59,7 +59,7 @@ function NavMenu() {
         },
         {
             id: 8,
-            title: "Quản lý báo cáo tổng kết",
+            title: "Quản lý kết quả đánh giá hạnh kiểm",
             content: [
                 {
                     id: 81,
@@ -85,7 +85,7 @@ function NavMenu() {
         },
         {
             id: 9,
-            title: "Quản lý đào tạo",
+            title: "Quản lý phân công giảng dạy",
             content: [
                 {
                     id: 91,
@@ -112,7 +112,7 @@ function NavMenu() {
         {
             id: 10,
             name: "/manage/chat-app",
-            title: "Ứng dụng chat",
+            title: "Giải đáp thắc mắc",
         },
     ];
 

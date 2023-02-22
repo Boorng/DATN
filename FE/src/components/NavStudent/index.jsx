@@ -73,7 +73,7 @@ function NavStudent() {
             {
                 id: 5,
                 name: "/student/chat-app",
-                title: "Ứng dụng chat",
+                title: "Giải đáp thắc mắc",
             },
         ];
 

@@ -69,7 +69,7 @@ function NavTeacher() {
             {
                 id: 6,
                 name: "/teacher/chat-app",
-                title: "Ứng dụng chat",
+                title: "Giải đáp thắc mắc",
             },
         ];
 
