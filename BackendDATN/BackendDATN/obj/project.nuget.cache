@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "2GpkEPsodaZPiEoC9F6gpLDRTTCD117bpak4o6KDQbZoTRaDZZbcuahbAsgwMSVzH4SUJ99pE08rFU/JSx09Iw==",
+  "dgSpecHash": "E9P3v/N7JDc3TJJfPYJlCDApHRhwI6fWeWkyZ7MiD6lxvJX+O5tcGdR99txQsRVPK/I23vvnMoav1ufyH3xgYw==",
   "success": true,
-  "projectFilePath": "E:\\Workspace\\ProjectDATN\\BackEndDATN\\BackendDATN\\BackendDATN.csproj",
+  "projectFilePath": "E:\\Workspace\\ProjectDATN\\BackendDATN\\BackendDATN\\BackendDATN.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Dell\\.nuget\\packages\\automapper\\12.0.0\\automapper.12.0.0.nupkg.sha512",
     "C:\\Users\\Dell\\.nuget\\packages\\automapper.extensions.microsoft.dependencyinjection\\12.0.0\\automapper.extensions.microsoft.dependencyinjection.12.0.0.nupkg.sha512",
