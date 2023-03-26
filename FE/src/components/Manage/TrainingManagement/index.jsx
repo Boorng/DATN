@@ -45,7 +45,7 @@ function TrainingManageMent() {
         <div className={cx("manage-training-management")}>
             <div className={cx("manage-training-management-header")}>
                 <h2 className={cx("manage-training-management-title")}>
-                    QUẢN LÝ ĐÀO TẠO KHỐI {gradeName}
+                    QUẢN LÝ PHÂN CÔNG GIẢNG DẠY KHỐI {gradeName}
                 </h2>
                 <div className={cx("manage-user")}>
                     <FaUserAlt className={cx("avatar-image")} />

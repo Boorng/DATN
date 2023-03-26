@@ -16,6 +16,7 @@ function AddListStudent({
     listStudentAdd,
     fileName,
     getStudent,
+    currentUser,
 }) {
     const hanelAddList = async () => {
         const status = await postListStudentAPI(listStudentAdd);
@@ -27,6 +28,8 @@ function AddListStudent({
                         item.email,
                         item.password
                     );
+
+                    auth.updateCurrentUser(currentUser);
 
                     await updateProfile(res.user, {
                         displayName: `${item.fullName} - ${item.id}`,

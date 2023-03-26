@@ -1,12 +1,12 @@
 .manage-layout {
     width: 100%;
-    max-height: 765px;
+    max-height: 760px;
 
     .manage {
         background-color: #f2f1eb;
         position: absolute;
         left: 300px;
-        width: calc(80% + 5px);
-        min-height: 765px;
+        width: calc(80% - 5px);
+        min-height: 755px;
     }
 }

@@ -118,10 +118,6 @@ function DetailStudent({ studentShow, show, showDetail }) {
                                         <td>Khóa:</td>
                                         <td>{studentShow.schoolYear}</td>
                                     </tr>
-                                    <tr style={{ fontSize: "14px" }}>
-                                        <td>Mật khẩu:</td>
-                                        <td>{studentShow.password}</td>
-                                    </tr>
                                 </tbody>
                             </Table>
                         </Col>

@@ -6,7 +6,7 @@ import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import Image from "react-bootstrap/Image";
 import { toast } from "react-toastify";
-import { memo } from "react";
+import { memo, useContext, useEffect } from "react";
 import { FaUserAlt } from "react-icons/fa";
 import { useFormik } from "formik";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
@@ -22,7 +22,14 @@ import { Modal } from "react-bootstrap";
 
 const cx = classNames.bind(styles);
 
-function AddEditStudent({ action, studentShow, show, showAdd, getStudent }) {
+function AddEditStudent({
+    action,
+    studentShow,
+    show,
+    showAdd,
+    getStudent,
+    currentUser,
+}) {
     const validate = (values) => {
         const errors = {};
         if (!values.email) {
@@ -122,6 +129,8 @@ function AddEditStudent({ action, studentShow, show, showAdd, getStudent }) {
                         values.email,
                         response.content
                     );
+
+                    auth.updateCurrentUser(currentUser);
 
                     console.log(res);
 

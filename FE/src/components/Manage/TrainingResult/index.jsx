@@ -81,7 +81,7 @@ function TrainingResult() {
         <div className={cx("manage-result")}>
             <div className={cx("manage-result-header")}>
                 <h2 className={cx("manage-result-title")}>
-                    QUẢN LÝ BÁO CÁO TỔNG KẾT KHỐI {gradeName}
+                    KẾT QUẢ ĐÁNH GIÁ HẠNH KIỂM CỦA KHỐI {gradeName}
                 </h2>
                 <div className={cx("manage-user")}>
                     <FaUserAlt className={cx("avatar-image")} />

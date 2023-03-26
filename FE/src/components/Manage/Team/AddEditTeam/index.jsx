@@ -22,6 +22,7 @@ function AddEditTeam({ action, teamShow, show, showAdd, getTeam }) {
 
     const formik = useFormik({
         initialValues: {
+            id: teamShow ? teamShow.id : "",
             name: teamShow ? teamShow.name : "",
             notification: teamShow ? teamShow.notification : "",
         },
@@ -60,7 +61,7 @@ function AddEditTeam({ action, teamShow, show, showAdd, getTeam }) {
                 <Modal.Title>
                     {
                         <h3 className={cx("form-title")}>
-                            {action === "add" ? "Thêm" : "Sửa"} thông tin nhóm
+                            {action === "add" ? "Thêm" : "Sửa"} thông tin tổ
                             chuyên môn
                         </h3>
                     }

@@ -43,7 +43,7 @@ function Team() {
         <div className={cx("manage-team")}>
             <div className={cx("manage-team-header")}>
                 <h2 className={cx("manage-team-title")}>
-                    QUẢN LÝ NHÓM CHUYÊN MÔN
+                    QUẢN LÝ TỔ CHUYÊN MÔN
                 </h2>
                 <div className={cx("manage-user")}>
                     <FaUserAlt className={cx("avatar-image")} />
@@ -56,7 +56,7 @@ function Team() {
                         className={cx("button-show-add")}
                         onClick={handleClickShowAddForm}
                     >
-                        Thêm nhóm
+                        Thêm tổ
                     </button>
                 </div>
                 <ListTeam listTeam={listTeam} getTeam={getTeam} />

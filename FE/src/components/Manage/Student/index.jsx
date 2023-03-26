@@ -3,7 +3,7 @@ import "react-toastify/dist/ReactToastify.css";
 
 import styles from "./Student.module.scss";
 import AddEditStudent from "./AddEditStudent";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import ListStudent from "./ListStudent";
 import { read, utils } from "xlsx";
 import AddListStudent from "./AddListStudent";
@@ -12,10 +12,13 @@ import { Button, Form } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { handleCheck } from "../../../utils/common";
 import { FaUserAlt } from "react-icons/fa";
+import { AuthContext } from "../../../context/AuthContext";
 
 const cx = classNames.bind(styles);
 
 function Student() {
+    const { currentUser } = useContext(AuthContext);
+
     const [isShow, setIsShow] = useState(false);
     const [fileName, setFileName] = useState("");
     const [showAddList, setShowAddList] = useState(false);
@@ -160,6 +163,7 @@ function Student() {
                         listStudentAdd={listAdd}
                         fileName={fileName}
                         getStudent={getStudent}
+                        currentUser={currentUser}
                     />
                 )}
 
@@ -169,6 +173,7 @@ function Student() {
                         show={isShow}
                         showAdd={handleClickShowAddForm}
                         getStudent={getStudent}
+                        currentUser={currentUser}
                     />
                 )}
 

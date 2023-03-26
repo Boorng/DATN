@@ -59,7 +59,7 @@ function NavMenu() {
         },
         {
             id: 8,
-            title: "Quản lý kết quả đánh giá hạnh kiểm",
+            title: "Xem kết quả đánh giá hạnh kiểm",
             content: [
                 {
                     id: 81,

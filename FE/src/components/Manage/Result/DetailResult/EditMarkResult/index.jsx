@@ -40,7 +40,8 @@ function EditMarkResult() {
         setMarkEdit({ ...markEdit, mark: e.target.value });
     };
 
-    const handleEditMark = async () => {
+    const handleEditMark = async (e) => {
+        e.preventDefault();
         const res = await updateTestAPI(markEdit);
         if (res.message === "Success") {
             await getResult();
@@ -174,31 +175,35 @@ function EditMarkResult() {
                             </Modal.Title>
                         </Modal.Header>
                         <Modal.Body>
-                            <Form.Control
-                                className={cx("form-control")}
-                                type="text"
-                                placeholder="Nhập điểm"
-                                required
-                                onChange={handleOnChange}
-                                value={markEdit.mark}
-                                name="mark"
-                            />
+                            <Form onSubmit={handleEditMark}>
+                                <Form.Control
+                                    className={cx("form-control")}
+                                    type="number"
+                                    placeholder="Nhập điểm"
+                                    required
+                                    onChange={handleOnChange}
+                                    value={markEdit.mark}
+                                    name="mark"
+                                    min={0}
+                                    max={10}
+                                />
+                                <Modal.Footer>
+                                    <Button
+                                        type="submit"
+                                        className={cx("button-update")}
+                                    >
+                                        Cập nhật
+                                    </Button>
+                                    <Button
+                                        variant="secondary"
+                                        className={cx("button-back")}
+                                        onClick={() => setShowEdit(false)}
+                                    >
+                                        Quay lại
+                                    </Button>
+                                </Modal.Footer>
+                            </Form>
                         </Modal.Body>
-                        <Modal.Footer>
-                            <Button
-                                className={cx("button-update")}
-                                onClick={handleEditMark}
-                            >
-                                Cập nhật
-                            </Button>
-                            <Button
-                                variant="secondary"
-                                className={cx("button-back")}
-                                onClick={() => setShowEdit(false)}
-                            >
-                                Quay lại
-                            </Button>
-                        </Modal.Footer>
                     </Modal>
                 )}
             </div>

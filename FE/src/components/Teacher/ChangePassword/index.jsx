@@ -64,6 +64,8 @@ function ChangePasswordTeacher() {
             if (res) {
                 if (values.passwordNew !== values.rePasswordNew) {
                     toast.error("Mật khẩu mới nhập lại không đúng");
+                } else if (values.passwordNew === values.passwordOld) {
+                    toast.error("Mật khẩu mới không thể giống mật khẩu cũ");
                 } else {
                     const response = await changePasswordAPI(
                         teacher.accountId,

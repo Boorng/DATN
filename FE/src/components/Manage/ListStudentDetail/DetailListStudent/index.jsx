@@ -23,6 +23,7 @@ function DetailListStudent({ listStudentClass, getStudentClass, className }) {
     const [studentClassShow, setStudentClassShow] = useState({});
     const [listClass, setListClass] = useState([]);
     const [classSelect, SetClassSelect] = useState(classId);
+    const [iseSelect, setIsSelect] = useState(false);
 
     const getClassOption = async () => {
         const dataAPI = await getClassAPI(gradeName, academicYear);
@@ -100,6 +101,9 @@ function DetailListStudent({ listStudentClass, getStudentClass, className }) {
     };
 
     const handleUpdateStudentClass = async () => {
+        if (!iseSelect) {
+            toast.error("Chưa chọn lớp chuyển");
+        }
         const response = await updateStudentClassAPI(idUpdate, classSelect);
         if (response.message === "Success") {
             toast.success("Chuyển lớp thành công");

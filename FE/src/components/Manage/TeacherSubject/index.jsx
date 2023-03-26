@@ -123,7 +123,8 @@ function TeacherSubject() {
         <div className={cx("manage-assign")}>
             <div className={cx("manage-assign-header")}>
                 <h2 className={cx("manage-assign-title")}>
-                    QUẢN LÝ ĐÀO TẠO MÔN {subjectName} KHỐI {gradeName}
+                    QUẢN LÝ PHÂN CÔNG GIẢNG DẠY MÔN {subjectName} KHỐI{" "}
+                    {gradeName}
                 </h2>
                 <div className={cx("manage-user")}>
                     <FaUserAlt className={cx("avatar-image")} />

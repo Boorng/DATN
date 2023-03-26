@@ -42,11 +42,11 @@ function AddMarkSubject({
         const listCopy = listTestStudentAdd;
         listCopy.forEach((item) => {
             if (item.divisionId === divisionId) {
-                if (e.target.name === "mark") {
-                    item[e.target.name] = +e.target.value;
-                } else {
-                    item[e.target.name] = e.target.value;
-                }
+                // if (e.target.name === "mark") {
+                //     item[e.target.name] = e.target.value;
+                // } else {
+                item[e.target.name] = e.target.value;
+                // }
             }
         });
 
@@ -101,7 +101,7 @@ function AddMarkSubject({
                                         </td>
                                         <td className={cx("table-document")}>
                                             <Form.Control
-                                                type="text"
+                                                type="number"
                                                 value={stu.mark}
                                                 name="mark"
                                                 className={cx("form-control")}
@@ -112,6 +112,8 @@ function AddMarkSubject({
                                                         stu.divisionId
                                                     )
                                                 }
+                                                min={0}
+                                                max={10}
                                             />
                                         </td>
                                         <td className={cx("table-document")}>

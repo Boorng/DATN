@@ -34,6 +34,7 @@ function ListAssign({
     const [idEdit, setIdEdit] = useState();
     const [listClass, setListClass] = useState([]);
     const [classSelect, SetClassSelect] = useState("");
+    const [isSelect, setIsSelect] = useState(false);
     const [academicYear, setAcademicYear] = useState("");
 
     //#region Paging
@@ -56,17 +57,21 @@ function ListAssign({
     };
 
     const handleUpdateAssign = async () => {
-        const response = await updateAssignTeacherAPI(idEdit, classSelect);
-        if (response.message === "Success") {
-            toast.success("Chuyển lớp dạy thành công");
-            await getAssign();
+        if (!isSelect) {
+            toast.error("Chưa chọn lớp chuyển");
         } else {
-            toast.error("Chuyển lớp dạy thất bại");
-        }
+            const response = await updateAssignTeacherAPI(idEdit, classSelect);
+            if (response.message === "Success") {
+                toast.success("Chuyển lớp dạy thành công");
+                await getAssign();
+            } else {
+                toast.error("Chuyển lớp dạy thất bại");
+            }
 
-        setIdEdit("");
-        SetClassSelect("");
-        setIsEdit(false);
+            setIdEdit("");
+            SetClassSelect("");
+            setIsEdit(false);
+        }
     };
 
     useEffect(() => {
@@ -153,6 +158,7 @@ function ListAssign({
 
     const handleOnChange = (e) => {
         SetClassSelect(e.target.value);
+        setIsSelect(true);
     };
 
     const handleClickDetailInfo = (tc) => {
