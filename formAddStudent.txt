@@ -1,0 +1,20 @@
+{
+  "id": "2023004",
+  "fullName": "Nguyen Van An",
+  "age": 11,
+  "gender": "Nam",
+  "phone": "0379650818",
+  "ethnic": "Đang học",
+  "address": "Ha Noi",
+  "birthDay": "01/01/2012",
+  "avatar": "none",
+  "fatherName": "Nguyen Van Quan",
+  "fatherCareer": "Kinh doanh",
+  "fatherPhone": "0976084002",
+  "motherName": "Tran Thi Xoan",
+  "motherCareer": "Buônbán",
+  "motherPhone": "0976084003",
+  "status": 1,
+  "schoolYear": "2023-2027",
+  "email": "linh00@gmail.com"
+}

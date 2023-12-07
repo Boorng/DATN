@@ -1,4 +1,4 @@
-import React, { StrictMode } from "react";
+import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter as Router } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -8,16 +8,22 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { AuthContextProvider } from "./context/AuthContext";
 import { ChatContextProvider } from "./context/ChatContext";
+import DetailLayout from "./layouts/DetailLayout";
+import DetailLayoutConductStudent from "./layouts/DetailLayoutConductStudent";
+import ManageLayout from "./layouts/ManageLayout";
+import StudentLayout from "./layouts/StudentLayout";
+import TeacherLayout from "./layouts/TeacherLayout";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
-    <AuthContextProvider>
-        <ChatContextProvider>
-            <Router>
-                <App />
-            </Router>
-        </ChatContextProvider>
-    </AuthContextProvider>
+  <AuthContextProvider>
+    <ChatContextProvider>
+      <Router>
+        <App />
+        {/* <TeacherLayout /> */}
+      </Router>
+    </ChatContextProvider>
+  </AuthContextProvider>
 );
 
 // If you want to start measuring performance in your app, pass a function

@@ -10,3 +10,14 @@ E:\Workspace\ProjectDATN\BE\BE.Model\obj\Debug\net6.0\BE.Model.dll
 E:\Workspace\ProjectDATN\BE\BE.Model\obj\Debug\net6.0\refint\BE.Model.dll
 E:\Workspace\ProjectDATN\BE\BE.Model\obj\Debug\net6.0\BE.Model.pdb
 E:\Workspace\ProjectDATN\BE\BE.Model\obj\Debug\net6.0\ref\BE.Model.dll
+D:\DoAnTotNghiep\ProjectDATN\BE\BE.Model\bin\Debug\net6.0\BE.Model.deps.json
+D:\DoAnTotNghiep\ProjectDATN\BE\BE.Model\bin\Debug\net6.0\BE.Model.dll
+D:\DoAnTotNghiep\ProjectDATN\BE\BE.Model\bin\Debug\net6.0\BE.Model.pdb
+D:\DoAnTotNghiep\ProjectDATN\BE\BE.Model\obj\Debug\net6.0\BE.Model.GeneratedMSBuildEditorConfig.editorconfig
+D:\DoAnTotNghiep\ProjectDATN\BE\BE.Model\obj\Debug\net6.0\BE.Model.AssemblyInfoInputs.cache
+D:\DoAnTotNghiep\ProjectDATN\BE\BE.Model\obj\Debug\net6.0\BE.Model.AssemblyInfo.cs
+D:\DoAnTotNghiep\ProjectDATN\BE\BE.Model\obj\Debug\net6.0\BE.Model.csproj.CoreCompileInputs.cache
+D:\DoAnTotNghiep\ProjectDATN\BE\BE.Model\obj\Debug\net6.0\BE.Model.dll
+D:\DoAnTotNghiep\ProjectDATN\BE\BE.Model\obj\Debug\net6.0\refint\BE.Model.dll
+D:\DoAnTotNghiep\ProjectDATN\BE\BE.Model\obj\Debug\net6.0\BE.Model.pdb
+D:\DoAnTotNghiep\ProjectDATN\BE\BE.Model\obj\Debug\net6.0\ref\BE.Model.dll

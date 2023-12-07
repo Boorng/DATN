@@ -18,7 +18,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<BackendContext>(option =>
 {
-    option.UseSqlServer(builder.Configuration.GetConnectionString("MyDB"));
+    option.UseSqlServer(builder.Configuration.GetConnectionString("ConnectionStrings"));
 });
 
 #region Scope

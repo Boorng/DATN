@@ -1,3 +1,5 @@
+
+
 create table Account 
 (
 	idAccount uniqueidentifier primary key not null,

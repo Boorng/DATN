@@ -18,7 +18,7 @@ function HeaderDefault() {
                         />
                     </a>
                     <div className={cx("header-left-title")}>
-                        <h2>TRƯỜNG TRUNG HỌC CƠ SỞ CHU VĂN AN</h2>
+                        <h2>TRƯỜNG TRUNG HỌC CƠ SỞ TAM ĐẢO</h2>
                         <h1>CỔNG THÔNG TIN ĐIỆN TỬ</h1>
                     </div>
                 </div>
